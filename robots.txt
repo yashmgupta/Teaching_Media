@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://yashmgupta.github.io/Teaching_Media/sitemap.xml
