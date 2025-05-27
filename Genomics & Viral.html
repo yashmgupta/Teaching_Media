@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Genomics & Viral Pathogens in Edible Cricket Farming | Entomophagy Research</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      scroll-behavior: smooth;
+      background-color: #f9fafb;
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, #4ade80 0%, #22d3ee 50%, #3b82f6 100%);
+    }
+
+    .section-header {
+      border-bottom: 4px solid #22c55e;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+      color: #064e3b;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    .footnote {
+      max-width: 900px;
+      margin: 2rem auto 0 auto;
+      padding: 1rem 1.5rem;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: #4b5563;
+      background-color: #e0f2fe;
+      border-radius: 0.75rem;
+      border: 1px solid #bae6fd;
+    }
+
+    /* Flowchart styles */
+    .flowchart-container {
+      max-width: 100%;
+      margin: 2rem auto;
+      background: white;
+      border-radius: 0.75rem;
+      padding: 1rem 3rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .step {
+      border-left: 4px solid #22c55e;
+      padding-left: 1rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .step:hover {
+      background-color: #dcfce7;
+    }
+
+    .step-title {
+      font-weight: 600;
+      color: #065f46;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .step-content {
+      margin-top: 0.5rem;
+      color: #065f46;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      display: none;
+    }
+
+    .step.active .step-content {
+      display: block;
+    }
+
+    .arrow {
+      font-size: 1rem;
+      color: #22c55e;
+      transition: transform 0.3s ease;
+    }
+
+    .step.active .arrow {
+      transform: rotate(90deg);
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Navigation -->
+  <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 flex items-center">
+            <i class="fas fa-dna text-green-500 text-2xl mr-2"></i>
+            <span class="text-xl font-bold text-gray-800">Entomophagy Research</span>
+          </div>
+        </div>
+        <div class="hidden md:flex md:items-center md:space-x-8">
+          <a href="#mitochondrial" class="text-gray-700 hover:text-green-600 px-3 py-2 font-medium">Mitochondrial Genome</a>
+          <a href="#volvovirus" class="text-gray-700 hover:text-green-600 px-3 py-2 font-medium">Volvovirus Study</a>
+          <a href="#summary" class="text-gray-700 hover:text-green-600 px-3 py-2 font-medium">Summary</a>
+          <a href="#references" class="text-gray-700 hover:text-green-600 px-3 py-2 font-medium">References</a>
+          <a href="#contact" class="bg-green-500 text-white px-4 py-2 rounded-md font-medium hover:bg-green-600 transition">Contact</a>
+        </div>
+        <div class="md:hidden flex items-center">
+          <button
+            type="button"
+            class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none"
+            aria-controls="mobile-menu"
+            aria-expanded="false"
+          >
+            <span class="sr-only">Open main menu</span>
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-gradient text-white py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">Genomics & Viral Pathogens in Edible Cricket Farming</h1>
+      <p class="text-xl max-w-3xl mx-auto mb-8">
+        Exploring mitochondrial genome assembly, phylogeny, and viral threats to <em>Acheta domesticus</em> for sustainable cricket production.
+      </p>
+      <a href="#mitochondrial" class="inline-block bg-white text-green-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition text-lg">
+        Start Learning
+      </a>
+    </div>
+  </section>
+
+  <!-- Mitochondrial Genome Section -->
+  <section id="mitochondrial" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold section-header">Mitochondrial Genome Assembly & Phylogeny of <em>Acheta domesticus</em></h2>
+      <div class="md:flex md:space-x-12">
+        <div class="md:w-1/2">
+          <p class="mb-6 text-gray-700 text-lg">
+            The mitochondrial genome is a key genetic marker for species identification and evolutionary studies. It is maternally inherited and evolves faster than nuclear DNA.
+          </p>
+          <p class="mb-6 text-gray-700 text-lg">
+            This study sequenced and assembled the complete mitochondrial genome of <em>Acheta domesticus</em>, the house cricket widely farmed globally.
+          </p>
+          <p class="mb-6 text-gray-700 text-lg">
+            Phylogenetic analysis using Bayesian inference and Principal Component Analysis (PCA) confirmed its distinct evolutionary position.
+          </p>
+        </div>
+        <div class="md:w-1/2">
+          <img src="mitochondrial-genome.jpg" alt="Mitochondrial genome illustration" class="rounded-xl shadow-lg w-full" />
+        </div>
+      </div>
+
+      <div class="mt-10 flowchart-container max-w-full mx-auto px-4 sm:px-8 lg:px-12">
+        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Mitochondrial Genome Assembly Workflow</h3>
+        
+        <div class="step" onclick="toggleStep(this)">
+          <div class="step-title">
+            1. DNA Extraction and Quality Check
+            <i class="fas fa-chevron-right arrow"></i>
+          </div>
+          <div class="step-content">
+            Extract genomic DNA from adult <em>Acheta domesticus</em> specimens. Check quality and quantity using gel electrophoresis and spectrophotometry.
+          </div>
+        </div>
+        
+        <div class="step" onclick="toggleStep(this)">
+          <div class="step-title">
+            2. Next-Generation Sequencing (NGS)
+            <i class="fas fa-chevron-right arrow"></i>
+          </div>
+          <div class="step-content">
+            Perform high-throughput sequencing using Illumina or similar platforms to generate paired-end reads.
+          </div>
+        </div>
+
+        <div class="step" onclick="toggleStep(this)">
+          <div class="step-title">
+            3. Sequence Quality Control
+            <i class="fas fa-chevron-right arrow"></i>
+          </div>
+          <div class="step-content">
+            Trim adapters and low-quality reads using software like Trimmomatic or FastQC.
+          </div>
+        </div>
+
+        <div class="step" onclick="toggleStep(this)">
+          <div class="step-title">
+            4. Mitochondrial Genome Assembly
+            <i class="fas fa-chevron-right arrow"></i>
+          </div>
+          <div class="step-content">
+            Use de novo assemblers (e.g., NOVOPlasty, MitoZ) to assemble mitochondrial genome from quality-filtered reads.
+          </div>
+        </div>
+
+        <div class="step" onclick="toggleStep(this)">
+          <div class="step-title">
+            5. Genome Annotation
+            <i class="fas fa-chevron-right arrow"></i>
+          </div>
+          <div class="step-content">
+            Identify protein-coding genes, tRNAs, and rRNAs using MITOS or similar annotation tools.
+          </div>
+        </div>
+
+        <div class="step" onclick="toggleStep(this)">
+          <div class="step-title">
+            6. Phylogenetic and PCA Analysis
+            <i class="fas fa-chevron-right arrow"></i>
+          </div>
+          <div class="step-content">
+            Construct phylogenetic trees using Bayesian methods. Perform PCA on mitochondrial sequence variation for population differentiation.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Volvovirus Section -->
+  <section id="volvovirus" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold section-header">Acheta domesticus Volvovirus (AdVVV): Viral Threat to Cricket Farming</h2>
+      <div class="md:flex md:space-x-12">
+        <div class="md:w-1/2 order-2 md:order-1">
+          <img src="volvovirus-genome.jpg" alt="Volvovirus genome diagram" class="rounded-xl shadow-lg w-full" />
+        </div>
+        <div class="md:w-1/2 order-1 md:order-2">
+          <p class="mb-6 text-gray-700 text-lg">
+            Viral diseases cause major losses in cricket farms. The newly identified Acheta domesticus volvovirus (AdVVV) infects house crickets.
+          </p>
+          <p class="mb-6 text-gray-700 text-lg">
+            This study detected AdVVV in Thai farms. It assembled and analyzed the viral genome and studied genetic diversity among isolates.
+          </p>
+          <p class="mb-6 text-gray-700 text-lg">
+            PCR tests confirmed infection in breeding stocks, highlighting biosecurity risks.
+          </p>
+        </div>
+      </div>
+
+      <div class="flowchart-container max-w-full mx-auto px-4 sm:px-8 lg:px-12 mt-12">
+        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Viral Genome Detection & Characterization Workflow</h3>
+
+        <div class="step" onclick="toggleStep(this)">
+          <div class="step-title">
+            1. Sample Collection & DNA Extraction
+            <i class="fas fa-chevron-right arrow"></i>
+          </div>
+          <div class="step-content">
+            Collect samples from farmed <em>Acheta domesticus</em> populations. Extract total DNA including viral DNA.
+          </div>
+        </div>
+
+        <div class="step" onclick="toggleStep(this)">
+          <div class="step-title">
+            2. Virus Detection by BLAST
+            <i class="fas fa-chevron-right arrow"></i>
+          </div>
+          <div class="step-content">
+            Search cricket genome assemblies using BLAST to identify viral sequences related to volvovirus.
+          </div>
+        </div>
+
+        <div class="step" onclick="toggleStep(this)">
+          <div class="step-title">
+            3. PCR Validation
+            <i class="fas fa-chevron-right arrow"></i>
+          </div>
+          <div class="step-content">
+            Design primers and perform PCR on DNA samples to confirm presence of viral DNA.
+          </div>
+        </div>
+
+        <div class="step" onclick="toggleStep(this)">
+          <div class="step-title">
+            4. Overlapping Amplicon Sequencing
+            <i class="fas fa-chevron-right arrow"></i>
+          </div>
+          <div class="step-content">
+            Amplify overlapping viral genome fragments by PCR and sequence them.
+          </div>
+        </div>
+
+        <div class="step" onclick="toggleStep(this)">
+          <div class="step-title">
+            5. Genome Assembly and Annotation
+            <i class="fas fa-chevron-right arrow"></i>
+          </div>
+          <div class="step-content">
+            Assemble the complete viral genome. Annotate open reading frames (ORFs) and identify gene functions.
+          </div>
+        </div>
+
+        <div class="step" onclick="toggleStep(this)">
+          <div class="step-title">
+            6. Phylogenetic and Genetic Variability Analysis
+            <i class="fas fa-chevron-right arrow"></i>
+          </div>
+          <div class="step-content">
+            Build phylogenetic trees of viral isolates and analyze genetic variability among ORFs, especially capsid protein genes.
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-10 space-y-6">
+        <h3 class="text-2xl font-semibold text-gray-800">Key Findings</h3>
+        <ul class="list-disc list-inside text-gray-700 text-lg space-y-2">
+          <li>AdVVV genome is 2,516 nucleotides long with four open reading frames.</li>
+          <li>Thai isolate closely related to Japanese, but distinct from American isolates.</li>
+          <li>ORF1, encoding capsid protein, showed high genetic variability.</li>
+          <li>Viral monitoring and control are vital for farm health and sustainability.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Summary Section -->
+  <section id="summary" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl font-bold section-header">Summary & Conclusion</h2>
+      <p class="text-gray-700 max-w-3xl mx-auto text-lg mb-6">
+        Mitochondrial genome analysis provides tools for correct species ID and breeding.  
+        Viral study reveals a new pathogen threatening cricket farms.  
+        Both improve knowledge for sustainable cricket farming.
+      </p>
+    </div>
+  </section>
+
+  <!-- Suggested Activities Section -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold section-header text-center mb-12">Suggested Learning Activities</h2>
+      <ul class="max-w-3xl mx-auto list-disc list-inside text-gray-700 text-lg space-y-4">
+        <li>Assemble and annotate mitochondrial genomes with bioinformatics tools.</li>
+        <li>Build and analyze phylogenetic trees from genetic data.</li>
+        <li>Explore biosecurity and viral disease management in insect farming.</li>
+        <li>Study viral genetic diversity and its impact on pathogen evolution.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- References Section -->
+  <section id="references" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold section-header text-center mb-12">References</h2>
+      <div class="bg-white p-8 rounded-xl shadow-md max-w-4xl mx-auto space-y-6">
+        <p class="text-gray-700 text-lg">
+          Homchan, S., Kutanan, W. and Gupta, Y.M., 2024. <br />
+          <em>A reproducible workflow for assembling the mitochondrial genome of <em>Acheta domesticus</em> (Orthoptera: Gryllidae).</em><br />
+          <strong>Ecology and Evolution</strong>, 14(7), p.e11696.
+        </p>
+
+        <p class="text-gray-700 text-lg">
+          Homchan, S. and Gupta, Y.M., 2024. <br />
+          <em>New volvovirus isolate from Thai domesticated house cricket, <em>Acheta domesticus</em> (Orthoptera: Gryllidae).</em><br />
+          <strong>Journal of Insects as Food and Feed</strong>, 1(aop), pp.1-8.
+        </p>
+
+        <p class="text-gray-700 text-lg">
+          Hanboonsong, Y., Jamjanya, T. and Durst, P.B., 2013. <br />
+          <em>Six-legged livestock: edible insect farming, collection and marketing in Thailand.</em>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="lg:grid lg:grid-cols-2 lg:gap-12">
+        <div class="mb-12 lg:mb-0">
+          <h2 class="text-3xl font-bold text-gray-800 mb-6">Contact & Collaboration</h2>
+          <p class="text-gray-700 mb-6">
+            Interested in collaborating on cricket genomics or insect virology research? Reach out to:
+          </p>
+          <ul class="text-gray-700 space-y-2 text-lg">
+            <li><strong>Dr. Yash M Gupta</strong></li>
+            <li><strong>Dr. Somjit Homach</strong></li>
+            <li>Department of Biology, Naresuan University, Thailand</li>
+            <li>Email: <a href="mailto:yashmunnalalg@nu.ac.th" class="text-green-600 hover:underline">yashmunnalalg@nu.ac.th</a></li>
+          </ul>
+        </div>
+        <div>
+          <img src="contact-lab.jpg" alt="Research lab" class="rounded-xl shadow-lg w-full" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="w-full bg-gray-200 text-gray-700 py-8 px-6 text-center text-sm leading-relaxed">
+    <p>© Dr. Yash M Gupta. All rights reserved.</p>
+    <p class="mt-2 max-w-5xl mx-auto px-4">
+      This page presents curated research on cricket mitochondrial genomics and viral pathogens to support sustainable protein production and food security.
+      All content is cited to honor original research contributions. For collaborations, contact us via the contact section above.
+    </p>
+  </footer>
+
+  <script>
+    function toggleStep(element) {
+      element.classList.toggle("active");
+    }
+  </script>
+
+</body>
+</html>
