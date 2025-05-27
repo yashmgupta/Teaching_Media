@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cricket as Food and Feed | Sustainable Protein Solution</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #4ade80 0%, #22d3ee 50%, #3b82f6 100%);
+        }
+        
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .species-card {
+            transition: all 0.3s ease;
+        }
+        
+        .species-card:hover {
+            transform: scale(1.03);
+        }
+        
+        .nutrition-bar {
+            height: 24px;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #3b82f6, #4ade80);
+        }
+        
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 24px;
+            height: calc(100% - 24px);
+            width: 2px;
+            background-color: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-cricket text-green-500 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-800">Entomophagy</span>
+                    </div>
+                </div>
+                <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
+                    <a href="#overview" class="text-gray-700 hover:text-green-600 px-3 py-2 font-medium">Overview</a>
+                    <a href="#species" class="text-gray-700 hover:text-green-600 px-3 py-2 font-medium">Species</a>
+                    <a href="#nutrition" class="text-gray-700 hover:text-green-600 px-3 py-2 font-medium">Nutrition</a>
+                    <a href="#applications" class="text-gray-700 hover:text-green-600 px-3 py-2 font-medium">Applications</a>
+                    <a href="#sustainability" class="text-gray-700 hover:text-green-600 px-3 py-2 font-medium">Sustainability</a>
+                    <a href="#sources" class="text-gray-700 hover:text-green-600 px-3 py-2 font-medium">Sources</a>
+                    <a href="#contact" class="bg-green-500 text-white px-4 py-2 rounded-md font-medium hover:bg-green-600 transition">Contact</a>
+                </div>
+                <div class="-mr-2 flex items-center md:hidden">
+                    <button
+                      type="button"
+                      class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none"
+                      aria-controls="mobile-menu"
+                      aria-expanded="false"
+                    >
+                        <span class="sr-only">Open main menu</span>
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="md:flex items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6">The Future of Protein is Here</h1>
+                    <p class="text-xl mb-8">Cricket farming offers a sustainable, nutritious solution to global food security challenges with minimal environmental impact.</p>
+                    <div class="flex space-x-4">
+                        <a href="#overview" class="bg-white text-green-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">Learn More</a>
+                        <a href="#contact" class="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-green-600 transition">Get Started</a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <img src="hero-cricket-farming.jpg" alt="Cricket farming" class="rounded-xl shadow-2xl max-w-md w-full" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="stat-card bg-gray-50 p-8 rounded-xl shadow-md text-center">
+                    <div class="text-5xl font-bold text-green-500 mb-4">370B+</div>
+                    <h3 class="text-xl font-semibold mb-2">Crickets Farmed Annually</h3>
+                    <p class="text-gray-600">The IAFF industry processes over 370 billion crickets each year for food and feed applications [1].</p>
+                </div>
+                <div class="stat-card bg-gray-50 p-8 rounded-xl shadow-md text-center">
+                    <div class="text-5xl font-bold text-blue-500 mb-4">70%</div>
+                    <h3 class="text-xl font-semibold mb-2">Protein Content</h3>
+                    <p class="text-gray-600">Crickets contain up to 70% protein by dry weight, surpassing many traditional protein sources [2].</p>
+                </div>
+                <div class="stat-card bg-gray-50 p-8 rounded-xl shadow-md text-center">
+                    <div class="text-5xl font-bold text-cyan-500 mb-4">90%</div>
+                    <h3 class="text-xl font-semibold mb-2">Less Water</h3>
+                    <p class="text-gray-600">Cricket farming uses 90% less water than conventional livestock production [9][13].</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Revolutionizing Global Protein Production</h2>
+                <div class="w-20 h-1 bg-green-500 mx-auto"></div>
+            </div>
+            
+            <div class="md:flex items-center mb-16">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <img src="cricket-farming-overview.jpg" alt="Cricket farming" class="rounded-xl shadow-lg w-full" />
+                </div>
+                <div class="md:w-1/2 md:pl-12">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Sustainable Protein for a Growing Population</h3>
+                    <p class="text-gray-600 mb-6">The insects as food and feed (IAFF) industry has emerged as a promising solution to address global protein security challenges, with crickets representing the most extensively farmed group of hemimetabolous insects in this sector [1].</p>
+                    <p class="text-gray-600 mb-6">Current industry data indicates that over 370 billion cricket individuals are slaughtered and sold annually, primarily focusing on three key species: <em>Acheta domesticus</em>, <em>Gryllus assimilis</em>, and <em>Gryllodes sigillatus</em> [1].</p>
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-green-100 rounded-full p-3">
+                            <i class="fas fa-leaf text-green-600 text-xl"></i>
+                        </div>
+                        <p class="ml-4 text-gray-600">These insects demonstrate exceptional nutritional value while offering significant environmental advantages over conventional animal agriculture [1][2].</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="md:flex items-center flex-row-reverse">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <img src="cricket-products.jpg" alt="Cricket products" class="rounded-xl shadow-lg w-full" />
+                </div>
+                <div class="md:w-1/2 md:pr-12">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Diverse Applications Across Industries</h3>
+                    <p class="text-gray-600 mb-6">Applications span from human food products and exotic animal feed to livestock and aquaculture feed, supported by growing research into mass-rearing optimization and welfare considerations [1][3][4].</p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 bg-blue-100 rounded-full p-2">
+                                <i class="fas fa-utensils text-blue-600 text-lg"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-medium text-gray-800">Human Nutrition</h4>
+                                <p class="text-gray-600">Cricket flour and protein powders for baking, snacks, and supplements [11].</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 bg-cyan-100 rounded-full p-2">
+                                <i class="fas fa-fish text-cyan-600 text-lg"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-medium text-gray-800">Aquaculture Feed</h4>
+                                <p class="text-gray-600">Sustainable alternative to fish meal in fish and shrimp farming [4][8].</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 bg-green-100 rounded-full p-2">
+                                <i class="fas fa-paw text-green-600 text-lg"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-lg font-medium text-gray-800">Pet Food</h4>
+                                <p class="text-gray-600">High-protein ingredient for dogs, cats, and exotic pets [9].</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Species Section -->
+    <section id="species" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Primary Commercial Cricket Species</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">The industry has concentrated on several primary cricket species, each offering distinct advantages for commercial production [1][7].</p>
+                <div class="w-20 h-1 bg-green-500 mx-auto mt-4"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Existing species cards with italicized scientific names -->
+                <div class="species-card bg-gray-50 rounded-xl overflow-hidden shadow-md">
+                    <div class="h-48 bg-green-100 flex items-center justify-center">
+                        <i class="fas fa-bug text-6xl text-green-600"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2"><em>Acheta domesticus</em></h3>
+                        <p class="text-gray-600 mb-4">Commonly known as the house cricket, serves as the most extensively farmed species globally due to efficient feed conversion [9][10].</p>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <i class="fas fa-globe-americas mr-2"></i>
+                            <span>Global distribution</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="species-card bg-gray-50 rounded-xl overflow-hidden shadow-md">
+                    <div class="h-48 bg-blue-100 flex items-center justify-center">
+                        <i class="fas fa-bug text-6xl text-blue-600"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2"><em>Gryllus bimaculatus</em></h3>
+                        <p class="text-gray-600 mb-4">Known as the field cricket or Mediterranean cricket, widely consumed in Africa and studied for adaptability to agro-byproduct feeds [8][7].</p>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <i class="fas fa-globe-africa mr-2"></i>
+                            <span>African markets</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="species-card bg-gray-50 rounded-xl overflow-hidden shadow-md">
+                    <div class="h-48 bg-cyan-100 flex items-center justify-center">
+                        <i class="fas fa-bug text-6xl text-cyan-600"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2"><em>Gryllodes sigillatus</em></h3>
+                        <p class="text-gray-600 mb-4">Completes the trio of primary commercial species, contributing to product diversification with unique nutritional attributes [1][14].</p>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <i class="fas fa-globe-asia mr-2"></i>
+                            <span>Global distribution</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New species cards -->
+                <div class="species-card bg-gray-50 rounded-xl overflow-hidden shadow-md">
+                    <div class="h-48 bg-yellow-100 flex items-center justify-center">
+                        <i class="fas fa-bug text-6xl text-yellow-600"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2"><em>Teleogryllus oceanicus</em></h3>
+                        <p class="text-gray-600 mb-4">Known as the Pacific field cricket, widely farmed in Oceania and valued for its robust adaptability and nutritional value.</p>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <i class="fas fa-globe-americas mr-2"></i>
+                            <span>Oceania distribution</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="species-card bg-gray-50 rounded-xl overflow-hidden shadow-md">
+                    <div class="h-48 bg-pink-100 flex items-center justify-center">
+                        <i class="fas fa-bug text-6xl text-pink-600"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2"><em>Gryllus assimilis</em></h3>
+                        <p class="text-gray-600 mb-4">Commonly known as the Jamaican field cricket, often used in research and commercial cricket farming with good feed conversion rates.</p>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <i class="fas fa-globe-americas mr-2"></i>
+                            <span>Americas distribution</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nutrition Section -->
+    <section id="nutrition" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Exceptional Nutritional Profile</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Cricket species demonstrate exceptional nutritional density, establishing them as viable alternatives to conventional protein sources [2][6].</p>
+                <div class="w-20 h-1 bg-green-500 mx-auto mt-4"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6">Macronutrient Composition</h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium text-gray-700">Protein</span>
+                                <span class="font-bold text-green-600">56-70%</span>
+                            </div>
+                            <div class="nutrition-bar" style="width: 70%;"></div>
+                            <p class="text-sm text-gray-500 mt-1">By dry weight, with Scapsipedus icipe and Gryllus bimaculatus at 56.8% and 56.9% respectively [2][7]</p>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium text-gray-700">Fat</span>
+                                <span class="font-bold text-green-600">10-22%</span>
+                            </div>
+                            <div class="nutrition-bar" style="width: 22%; background: linear-gradient(90deg, #3b82f6, #8b5cf6);"></div>
+                            <p class="text-sm text-gray-500 mt-1">Including essential fatty acids like linoleic and oleic acid [8]</p>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium text-gray-700">Conversion Efficiency</span>
+                                <span class="font-bold text-green-600">8.03-28.95%</span>
+                            </div>
+                            <div class="nutrition-bar" style="width: 29%; background: linear-gradient(90deg, #8b5cf6, #ec4899);"></div>
+                            <p class="text-sm text-gray-500 mt-1">Gryllus bimaculatus shows 8.03% efficiency for protein and 28.95% for fat [3]</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6">Micronutrient Highlights</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="text-blue-500 text-2xl mb-2">
+                                <i class="fas fa-vitamins"></i>
+                            </div>
+                            <h4 class="font-medium text-gray-800 mb-1">Vitamin B12</h4>
+                            <p class="text-sm text-gray-600">Essential for nerve function and blood cell formation [6]</p>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="text-green-500 text-2xl mb-2">
+                                <i class="fas fa-bone"></i>
+                            </div>
+                            <h4 class="font-medium text-gray-800 mb-1">Iron</h4>
+                            <p class="text-sm text-gray-600">Highly bioavailable form for oxygen transport [8][6]</p>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="text-yellow-500 text-2xl mb-2">
+                                <i class="fas fa-atom"></i>
+                            </div>
+                            <h4 class="font-medium text-gray-800 mb-1">Zinc</h4>
+                            <p class="text-sm text-gray-600">Supports immune function and metabolism [6]</p>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="text-purple-500 text-2xl mb-2">
+                                <i class="fas fa-dna"></i>
+                            </div>
+                            <h4 class="font-medium text-gray-800 mb-1">Amino Acids</h4>
+                            <p class="text-sm text-gray-600">Complete profile including all 9 essentials [6][9]</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-16 bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="md:flex">
+                    <div class="md:w-1/2 bg-green-50 p-8 flex items-center">
+                        <div>
+                            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Nutrient Conversion Efficiency</h3>
+                            <p class="text-gray-600 mb-6">Research examining nutrient conversion efficiency in mass-rearing conditions has demonstrated that field crickets can effectively convert ingested feed into body mass with measurable efficiency [3].</p>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                    <span class="text-gray-700">Protein: 8.03% efficiency [3]</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                                    <span class="text-gray-700">Fat: 28.95% efficiency [3]</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                                    <span class="text-gray-700">Fiber: 88.94% efficiency [3]</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 bg-gray-800 text-white p-8">
+                        <h3 class="text-2xl font-semibold mb-4">Compared to Traditional Livestock</h3>
+                        <p class="text-gray-300 mb-6">Crickets require significantly less feed to produce the same amount of protein compared to cattle, pigs, or chickens [9][13].</p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Crickets</span>
+                                    <span class="font-bold text-green-400">1.7kg</span>
+                                </div>
+                                <div class="w-full bg-gray-600 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 20%"></div>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-1">Feed needed to produce 1kg of protein [9]</p>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Chickens</span>
+                                    <span class="font-bold text-yellow-400">2.5kg</span>
+                                </div>
+                                <div class="w-full bg-gray-600 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 30%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Pigs</span>
+                                    <span class="font-bold text-orange-400">5kg</span>
+                                </div>
+                                <div class="w-full bg-gray-600 rounded-full h-2">
+                                    <div class="bg-orange-500 h-2 rounded-full" style="width: 60%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Cattle</span>
+                                    <span class="font-bold text-red-400">10kg</span>
+                                </div>
+                                <div class="w-full bg-gray-600 rounded-full h-2">
+                                    <div class="bg-red-500 h-2 rounded-full" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Applications Section -->
+    <section id="applications" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Diverse Applications</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">From human nutrition to animal feed, cricket protein serves multiple markets with sustainable solutions [5][9].</p>
+                <div class="w-20 h-1 bg-green-500 mx-auto mt-4"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                <div class="bg-gray-50 rounded-xl p-8">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-green-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-utensils text-green-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-gray-800">Human Food Products</h3>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-6">Cricket integration into human food systems has evolved from traditional consumption patterns to modern industrial applications [2][11].</p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-gray-700">Cricket flour for baking shows 74-86% consumer acceptability in studies [11]</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-gray-700">Cricket-enriched biscuits contain 18.7–20.1% protein and 23.5–25.3% fat [11]</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-gray-700">Multi-course meals with cricket powder show positive emotional responses [12]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 rounded-xl p-8">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-blue-100 p-3 rounded-full mr-4">
+                            <i class="fas fa-fish text-blue-600 text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-semibold text-gray-800">Aquaculture Feed</h3>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-6">The aquaculture sector represents a particularly promising application area for cricket-based feeds [4][8].</p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-gray-700">Sustainable alternative to fish meal in fish farming with proven efficiency [4]</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-gray-700">Improved growth rates in striped snakehead juveniles and other aquaculture species [4]</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-gray-700">Ten-week feeding trials show high digestibility of major nutrients and amino acids [4]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl">
+                <div class="md:flex">
+                    <div class="md:w-1/2 p-8 md:p-12 text-white">
+                        <h3 class="text-2xl font-semibold mb-4">Pet Food Innovation</h3>
+                        <p class="text-gray-300 mb-6">The pet food industry has shown considerable interest in cricket protein as an alternative to conventional animal proteins, driven by both sustainability concerns and nutritional benefits [9].</p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <i class="fas fa-check-circle text-green-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-gray-300">Hypoallergenic alternative for pets with food sensitivities [9]</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <i class="fas fa-check-circle text-green-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-gray-300">High protein content supports muscle development [9]</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <i class="fas fa-check-circle text-green-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-gray-300">Sustainable choice for environmentally conscious pet owners [9][13]</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 bg-cover bg-center" style="background-image: url('pet-food-cricket.jpg'); min-height: 300px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Production Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Sustainable Production Methods</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Optimized farming techniques ensure efficient, ethical production at scale [3][10].</p>
+                <div class="w-20 h-1 bg-green-500 mx-auto mt-4"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6">Mass Rearing Optimization</h3>
+                    
+                    <div class="space-y-8">
+                        <div class="flex">
+                            <div class="flex-shrink-0 mr-4">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white">
+                                    <i class="fas fa-temperature-low"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium text-gray-800">Environmental Control</h4>
+                                <p class="text-gray-600 mt-1">Precise management of temperature, humidity, and light cycles for optimal growth [3][10].</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="flex-shrink-0 mr-4">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white">
+                                    <i class="fas fa-utensil-spoon"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium text-gray-800">Feed Formulation</h4>
+                                <p class="text-gray-600 mt-1">Agro-byproducts (e.g., sweet potato leaves, banana peels) and weeds reduce costs while maintaining growth rates [8][10].</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="flex-shrink-0 mr-4">
+                                <div class="flex items-center justify-center h-12 w-12 rounded-md bg-purple-500 text-white">
+                                    <i class="fas fa-project-diagram"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium text-gray-800">Vertical Farming</h4>
+                                <p class="text-gray-600 mt-1">Space-efficient stacked systems for high-density production [10][13].</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6">Welfare Considerations</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="relative pl-8 timeline-item">
+                            <div class="absolute left-0 top-0 h-4 w-4 rounded-full bg-green-500"></div>
+                            <h4 class="font-medium text-gray-800">Humane Handling</h4>
+                            <p class="text-gray-600 mt-1">Minimizing stress during transport and processing [1].</p>
+                        </div>
+                        
+                        <div class="relative pl-8 timeline-item">
+                            <div class="absolute left-0 top-0 h-4 w-4 rounded-full bg-blue-500"></div>
+                            <h4 class="font-medium text-gray-800">Optimal Density</h4>
+                            <p class="text-gray-600 mt-1">Balancing production efficiency with animal welfare using the Five Domains framework [1].</p>
+                        </div>
+                        
+                        <div class="relative pl-8 timeline-item">
+                            <div class="absolute left-0 top-0 h-4 w-4 rounded-full bg-purple-500"></div>
+                            <h4 class="font-medium text-gray-800">Slaughter Methods</h4>
+                            <p class="text-gray-600 mt-1">Developing humane stunning and processing techniques based on precautionary welfare principles [1].</p>
+                        </div>
+                        
+                        <div class="relative pl-8">
+                            <div class="absolute left-0 top-0 h-4 w-4 rounded-full bg-cyan-500"></div>
+                            <h4 class="font-medium text-gray-800">Health Monitoring</h4>
+                            <p class="text-gray-600 mt-1">Preventing parasites, pathogens, and managing environmental parameters [1].</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sustainability Section -->
+    <section id="sustainability" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Environmental Advantages</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Cricket farming offers substantial environmental benefits compared to conventional animal agriculture [9][13].</p>
+                <div class="w-20 h-1 bg-green-500 mx-auto mt-4"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <div class="bg-gray-50 rounded-xl p-8 text-center">
+                    <div class="bg-green-100 p-4 rounded-full inline-block mb-4">
+                        <i class="fas fa-tint text-green-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Water Conservation</h3>
+                    <p class="text-gray-600">Cricket farming uses 90% less water than beef production per kg of protein [9][13]</p>
+                </div>
+                
+                <div class="bg-gray-50 rounded-xl p-8 text-center">
+                    <div class="bg-blue-100 p-4 rounded-full inline-block mb-4">
+                        <i class="fas fa-cloud text-blue-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Lower Emissions</h3>
+                    <p class="text-gray-600">Produces 80% fewer greenhouse gases than conventional livestock [9][13]</p>
+                </div>
+                
+                <div class="bg-gray-50 rounded-xl p-8 text-center">
+                    <div class="bg-cyan-100 p-4 rounded-full inline-block mb-4">
+                        <i class="fas fa-mountain text-cyan-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Land Efficiency</h3>
+                    <p class="text-gray-600">Land footprint 12x smaller than traditional animal agriculture [9][13]</p>
+                </div>
+            </div>
+            
+            <div class="bg-green-50 rounded-xl p-8 md:p-12">
+                <div class="md:flex items-center">
+                    <div class="md:w-1/2 mb-8 md:mb-0">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Circular Economy Potential</h3>
+                        <p class="text-gray-700 mb-6">Cricket farming can utilize organic byproducts and food waste as feed sources, creating closed-loop systems that reduce overall waste [8][10].</p>
+                        
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 bg-green-100 rounded-full p-3">
+                                <i class="fas fa-recycle text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-gray-700">Agro-byproducts and weeds can be converted into high-quality protein through cricket farming while maintaining growth rates [8][10].</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 md:pl-12">
+                        <img src="circular-economy.jpg" alt="Circular economy" class="rounded-lg shadow-md w-full" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Health & Safety Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Health & Safety Considerations</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Research-backed insights on cricket consumption safety and health implications [14].</p>
+                <div class="w-20 h-1 bg-green-500 mx-auto mt-4"></div>
+            </div>
+            
+            <div class="md:flex items-center mb-16">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <img src="cricket-health-research.jpg" alt="Cricket health research" class="rounded-xl shadow-lg w-full" />
+                </div>
+                <div class="md:w-1/2 md:pl-12">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Allergen Considerations</h3>
+                    <p class="text-gray-600 mb-6">Research has identified potential cross-reactivity between cricket proteins and shellfish allergens, requiring appropriate labeling and consumer awareness [14].</p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1 bg-red-100 rounded-full p-1">
+                                <i class="fas fa-exclamation-triangle text-red-500 text-sm"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-gray-700">Cross-reactivity with shellfish allergens demonstrated in multiple studies [14]</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1 bg-yellow-100 rounded-full p-1">
+                                <i class="fas fa-flask text-yellow-500 text-sm"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-gray-700">Enzymatic hydrolysis research shows potential for reducing allergenicity [14]</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1 bg-green-100 rounded-full p-1">
+                                <i class="fas fa-check text-green-500 text-sm"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-gray-700">Safety protocols and proper labeling mitigate consumer risks [6]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-gray-50 rounded-xl p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Quality Control</h3>
+                    <p class="text-gray-600 mb-6">Monitoring potential bacterial contamination and bioaccumulation of heavy metals requires rigorous quality control throughout the production process [6].</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                            <span class="text-gray-700">Feed substrate monitoring for contaminants</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                            <span class="text-gray-700">Processing hygiene protocols</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                            <span class="text-gray-700">Regular microbiological testing</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 rounded-xl p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Public Awareness</h3>
+                    <p class="text-gray-600 mb-6">Expanding cricket-based food systems hinges on public education to overcome cultural barriers and increase acceptance [11].</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                            <span class="text-gray-700">Consumer education campaigns</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                            <span class="text-gray-700">Policy support for standardized farming practices [13]</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                            <span class="text-gray-700">Innovation in food processing for improved sensory appeal [9][12]</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sources Section -->
+    <section id="sources" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Academic & Industry Sources</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Evidence-based research and publications supporting our information on cricket farming and nutrition.</p>
+                <div class="w-20 h-1 bg-green-500 mx-auto mt-4"></div>
+            </div>
+            
+            <div class="bg-white p-8 rounded-xl shadow-md mb-8">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6">References</h3>
+                <div class="space-y-4">
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[1] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8382788/" class="text-blue-600 hover:text-blue-800 transition">PMC8382788</a></p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[2] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9454574/" class="text-blue-600 hover:text-blue-800 transition">PMC9454574</a></p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[3] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9962915/" class="text-blue-600 hover:text-blue-800 transition">PMC9962915</a></p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[4] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11577128/" class="text-blue-600 hover:text-blue-800 transition">PMC11577128</a></p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[5] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11260028/" class="text-blue-600 hover:text-blue-800 transition">PMC11260028</a></p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[6] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8382788/" class="text-blue-600 hover:text-blue-800 transition">PMC8382788</a></p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[7] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11475400/" class="text-blue-600 hover:text-blue-800 transition">PMC11475400</a></p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[8] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11577128/" class="text-blue-600 hover:text-blue-800 transition">PMC11577128</a></p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[9] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6977514/" class="text-blue-600 hover:text-blue-800 transition">PMC6977514</a></p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[10] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10477817/" class="text-blue-600 hover:text-blue-800 transition">PMC10477817</a></p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[11] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9778095/" class="text-blue-600 hover:text-blue-800 transition">PMC9778095</a></p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[12] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10412527/" class="text-blue-600 hover:text-blue-800 transition">PMC10412527</a></p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[13] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8836810/" class="text-blue-600 hover:text-blue-800 transition">PMC8836810</a></p>
+                    </div>
+                    
+                    <div class="border-b border-gray-200 pb-2">
+                        <p class="text-gray-800">[14] <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7835793/" class="text-blue-600 hover:text-blue-800 transition">PMC7835793</a></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Citation by Topic</h3>
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-green-500 pl-4">
+                            <h4 class="font-medium text-gray-800">Nutritional Profile and Species</h4>
+                            <p class="text-gray-600 text-sm">References: [1], [2], [5], [6], [7], [9]</p>
+                        </div>
+                        
+                        <div class="border-l-4 border-blue-500 pl-4">
+                            <h4 class="font-medium text-gray-800">Production & Farming</h4>
+                            <p class="text-gray-600 text-sm">References: [3], [8], [10], [13]</p>
+                        </div>
+                        
+                        <div class="border-l-4 border-purple-500 pl-4">
+                            <h4 class="font-medium text-gray-800">Food Applications</h4>
+                            <p class="text-gray-600 text-sm">References: [5], [9], [11], [12]</p>
+                        </div>
+                        
+                        <div class="border-l-4 border-yellow-500 pl-4">
+                            <h4 class="font-medium text-gray-800">Feed Applications</h4>
+                            <p class="text-gray-600 text-sm">References: [4], [8]</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Research Highlights</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-gray-700">370+ billion crickets processed annually by the global IAFF industry [1]</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-gray-700">56-70% protein content by dry weight, comparable to traditional animal proteins [2]</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-gray-700">Cricket-enriched biscuits show 74-86% consumer acceptability [11]</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-gray-700">90% less water usage and 80% fewer greenhouse gases than beef production [9][13]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 hero-gradient text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Explore Cricket Protein Solutions?</h2>
+            <p class="text-xl mb-8 max-w-3xl mx-auto">Join the sustainable protein revolution with our comprehensive cricket farming and processing solutions.</p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="#contact" class="bg-white text-green-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition text-lg">Get Started</a>
+                <a href="#" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-green-600 transition text-lg">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:grid lg:grid-cols-2 lg:gap-8">
+                <div class="mb-12 lg:mb-0">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Contact Us</h2>
+                    <p class="text-gray-600 mb-8">
+                        Are you interested in research collaborations, consulting, or joint projects involving cricket protein and sustainable agriculture? <br />
+                        <b>Dr. Yash M Gupta, Dr. Somjit Homach, and their research teams</b> specialize in advanced molecular techniques, functional genomics, and insect biotechnology. <br />
+                        Contact us to explore opportunities for cutting-edge research, innovation, and scientific partnership.
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 bg-green-100 p-3 rounded-full">
+                                <i class="fas fa-map-marker-alt text-green-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-800">Research Unit </h3>
+                                <p class="text-gray-600">Department of Biology, Naresuan University</p>
+                            </div>
+                        </div>
+                        <!-- You can add more contact details here -->
+                    </div>
+                </div>
+                <div>
+                    <!-- Possibly add a contact form or map here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Footnote -->
+    <footer
+      class="w-full bg-gray-200 text-gray-700 py-8 px-6 text-center text-sm leading-relaxed"
+    >
+      <p>© Dr. Yash M Gupta. All rights reserved.</p>
+      <p class="mt-2 max-w-5xl mx-auto">
+        This website presents research and industry information on sustainable cricket protein production, nutrition, and applications.
+        All scientific content is provided with the intention to support global food security and sustainable agriculture initiatives.
+        Proper citations and credits are included to honor the extensive work of researchers worldwide.
+        For collaboration inquiries or research details, please contact our team through the contact section.
+      </p>
+    </footer>
+</body>
+</html>
+
