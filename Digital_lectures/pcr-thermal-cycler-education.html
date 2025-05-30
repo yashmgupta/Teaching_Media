@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCR Thermal Cycler Education Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --denaturation: #ef4444;
+            --annealing: #3b82f6;
+            --extension: #10b981;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f1f5f9;
+            --panel-bg: rgba(15, 23, 42, 0.85);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        .platform-container {
+            display: grid;
+            grid-template-columns: 350px 1fr 320px;
+            grid-template-rows: 80px 1fr;
+            height: 100vh;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .platform-container.fullscreen {
+            grid-template-columns: 1fr;
+            grid-template-rows: 80px 1fr;
+            padding: 0;
+            gap: 0;
+        }
+        
+        .header {
+            grid-column: 1 / -1;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .platform-container.fullscreen .header {
+            border-radius: 0;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .logo {
+            font-size: 1.6rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+        }
+        
+        .cycle-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(0, 212, 255, 0.1);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .temperature-display {
+            background: rgba(249, 115, 22, 0.1);
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            color: var(--warning);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .left-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .platform-container.fullscreen .left-panel {
+            display: none;
+        }
+        
+        .main-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .platform-container.fullscreen .main-panel {
+            border-radius: 0;
+        }
+        
+        .right-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .platform-container.fullscreen .right-panel {
+            display: none;
+        }
+        
+        .chart-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            position: relative;
+            height: 400px;
+        }
+        
+        .phase-diagram {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(241, 245, 249, 0.05);
+        }
+        
+        .phase-step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .phase-step:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-left-color: var(--primary);
+        }
+        
+        .phase-step.active {
+            background: rgba(0, 212, 255, 0.2);
+            border-left-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+        
+        .phase-step.denaturation.active {
+            background: rgba(239, 68, 68, 0.2);
+            border-left-color: var(--denaturation);
+        }
+        
+        .phase-step.annealing.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-left-color: var(--annealing);
+        }
+        
+        .phase-step.extension.active {
+            background: rgba(16, 185, 129, 0.2);
+            border-left-color: var(--extension);
+        }
+        
+        .phase-number {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: rgba(0, 212, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .phase-step.active .phase-number {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .phase-step.denaturation.active .phase-number {
+            background: var(--denaturation);
+        }
+        
+        .phase-step.annealing.active .phase-number {
+            background: var(--annealing);
+        }
+        
+        .phase-step.extension.active .phase-number {
+            background: var(--extension);
+        }
+        
+        .control-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .control-btn {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1));
+            border: 1px solid rgba(241, 245, 249, 0.2);
+            color: var(--primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .control-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(124, 58, 237, 0.2));
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .control-btn.active {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3));
+            border-color: var(--primary);
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
+        }
+        
+        .pcr-btn {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(34, 197, 94, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+            padding: 0.875rem 2rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .pcr-btn:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.2));
+            transform: translateY(-2px);
+        }
+        
+        .pcr-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .fullscreen-btn {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(124, 58, 237, 0.2));
+            border: 1px solid var(--primary);
+            border-radius: 0.5rem;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        .fullscreen-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3));
+            transform: scale(1.05);
+        }
+        
+        .panel-section {
+            margin-bottom: 2rem;
+        }
+        
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .data-display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(241, 245, 249, 0.1);
+        }
+        
+        .data-row:last-child {
+            border-bottom: none;
+        }
+        
+        .primer-input {
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid rgba(241, 245, 249, 0.1);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            color: var(--light);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            resize: vertical;
+        }
+        
+        .primer-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+        
+        .design-btn {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            color: var(--secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        
+        .design-btn:hover {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(139, 92, 246, 0.2));
+            transform: translateY(-1px);
+        }
+        
+        .molecular-diagram {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .dna-strand {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            letter-spacing: 0.1em;
+        }
+        
+        .strand-5-3 {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+        }
+        
+        .strand-3-5 {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+        
+        .primer {
+            background: rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+            font-weight: bold;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            border-left: 4px solid var(--primary);
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .notification.show {
+            opacity: 1;
+        }
+        
+        .progress-indicator {
+            width: 100%;
+            height: 0.5rem;
+            background: rgba(241, 245, 249, 0.1);
+            border-radius: 0.25rem;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 0.25rem;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        
+        .phase-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        /* Animation keyframes */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 212, 255, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.6); }
+        }
+        
+        .glow-animation {
+            animation: glow 1.5s infinite;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .platform-container {
+                grid-template-columns: 300px 1fr 280px;
+            }
+        }
+        
+        @media (max-width: 968px) {
+            .platform-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+            
+            .left-panel,
+            .right-panel {
+                display: none;
+            }
+            
+            .header-center {
+                display: none;
+            }
+        }
+        
+        /* Scrollbar styling */
+        .left-panel::-webkit-scrollbar,
+        .right-panel::-webkit-scrollbar,
+        .main-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .left-panel::-webkit-scrollbar-track,
+        .right-panel::-webkit-scrollbar-track,
+        .main-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .left-panel::-webkit-scrollbar-thumb,
+        .right-panel::-webkit-scrollbar-thumb,
+        .main-panel::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="platform-container" id="platform-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <div class="logo">🌡️ PCR Thermal Cycler</div>
+                <div class="text-sm opacity-80">Temperature Profile Education Platform</div>
+            </div>
+            <div class="header-center">
+                <div class="cycle-status">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Cycle <span id="current-cycle">0</span> of <span id="total-cycles">35</span></span>
+                </div>
+                <div class="temperature-display" id="temperature-display">
+                    25°C
+                </div>
+                <div class="text-sm" id="current-phase-name">
+                    Initialization
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="text-xs">
+                    <span class="opacity-80">User:</span>
+                    <span class="text-primary">yashmgupta</span>
+                </div>
+                <div class="text-xs">
+                    <span class="opacity-80">Time:</span>
+                    <span class="text-primary font-mono">2025-05-30 06:58:52</span>
+                </div>
+                <button class="fullscreen-btn" id="fullscreen-btn" title="Toggle Fullscreen">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Left Panel: PCR Protocol & Primer Design -->
+        <div class="left-panel">
+            <!-- PCR Protocol -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-list-ol"></i>
+                    PCR Protocol Steps
+                </div>
+                <div class="phase-diagram">
+                    <div class="phase-step denaturation" onclick="setPhase('denaturation')">
+                        <div class="phase-number">1</div>
+                        <div>
+                            <div class="font-medium">Initial Denaturation</div>
+                            <div class="text-xs opacity-80">95°C • 5 minutes</div>
+                        </div>
+                    </div>
+                    <div class="phase-step denaturation" onclick="setPhase('denaturation')">
+                        <div class="phase-number">2</div>
+                        <div>
+                            <div class="font-medium">Denaturation</div>
+                            <div class="text-xs opacity-80">95°C • 30 seconds</div>
+                        </div>
+                    </div>
+                    <div class="phase-step annealing" onclick="setPhase('annealing')">
+                        <div class="phase-number">3</div>
+                        <div>
+                            <div class="font-medium">Annealing</div>
+                            <div class="text-xs opacity-80">58°C • 30 seconds</div>
+                        </div>
+                    </div>
+                    <div class="phase-step extension" onclick="setPhase('extension')">
+                        <div class="phase-number">4</div>
+                        <div>
+                            <div class="font-medium">Extension</div>
+                            <div class="text-xs opacity-80">72°C • 1 minute</div>
+                        </div>
+                    </div>
+                    <div class="phase-step extension" onclick="setPhase('extension')">
+                        <div class="phase-number">5</div>
+                        <div>
+                            <div class="font-medium">Final Extension</div>
+                            <div class="text-xs opacity-80">72°C • 10 minutes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Primer Design -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-drafting-compass"></i>
+                    Primer Design
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-2">Target Sequence:</label>
+                    <textarea 
+                        id="target-sequence" 
+                        class="primer-input" 
+                        placeholder="Enter DNA sequence..."
+                        rows="3"
+                    >ATGCGATCGTAGCAATCGGGCCAATTGGCCAATTGGATCGATCGATCGATCGATCG</textarea>
+                </div>
+                
+                <div class="grid grid-cols-1 gap-2 mb-3">
+                    <button class="design-btn" onclick="designPrimers()">
+                        <i class="fas fa-magic"></i> Auto Design Primers
+                    </button>
+                    <button class="design-btn" onclick="validatePrimers()">
+                        <i class="fas fa-check"></i> Validate Primers
+                    </button>
+                </div>
+                
+                <div class="text-xs space-y-1">
+                    <div class="data-row">
+                        <span>Forward Primer:</span>
+                        <span id="forward-primer" class="font-mono">-</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Reverse Primer:</span>
+                        <span id="reverse-primer" class="font-mono">-</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Tm (avg):</span>
+                        <span id="avg-tm">-</span>
+                    </div>
+                    <div class="data-row">
+                        <span>GC Content:</span>
+                        <span id="avg-gc">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PCR Components -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-flask"></i>
+                    PCR Mix Components
+                </div>
+                <div class="data-display">
+                    <div class="data-row">
+                        <span>Template DNA:</span>
+                        <span class="text-blue-400">10-100 ng</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Forward Primer:</span>
+                        <span class="text-green-400">0.2-1.0 μM</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Reverse Primer:</span>
+                        <span class="text-red-400">0.2-1.0 μM</span>
+                    </div>
+                    <div class="data-row">
+                        <span>dNTPs:</span>
+                        <span class="text-purple-400">200 μM each</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Taq Polymerase:</span>
+                        <span class="text-orange-400">1-2.5 units</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Mg²⁺:</span>
+                        <span class="text-yellow-400">1.5-3.0 mM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Panel: Temperature Chart & Molecular Diagram -->
+        <div class="main-panel">
+            <!-- Temperature Chart -->
+            <div class="chart-container">
+                <div class="phase-indicator" id="phase-indicator">
+                    Initialization Phase
+                </div>
+                <canvas id="temperatureChart"></canvas>
+            </div>
+            
+            <!-- Molecular Process Diagram -->
+            <div class="molecular-diagram" id="molecular-diagram">
+                <h3 class="text-lg font-semibold mb-3">PCR Molecular Process</h3>
+                <div id="dna-visualization">
+                    <div class="text-sm opacity-80 mb-4">
+                        Temperature: <span id="current-temp-display">25°C</span> • 
+                        Phase: <span id="current-process">Initialization</span>
+                    </div>
+                    <div id="dna-strands">
+                        <div class="dna-strand strand-5-3">
+                            5'-ATGCGATCGTAGCAATCGGGCCAA-3'
+                        </div>
+                        <div class="dna-strand strand-3-5">
+                            3'-TACGCTAGCATCGTTACCCGGTT-5'
+                        </div>
+                    </div>
+                    <div class="mt-4 text-sm" id="process-description">
+                        PCR reaction mixture at room temperature. Double-stranded DNA template with primers ready for thermal cycling.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progress Indicator -->
+            <div class="progress-indicator">
+                <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+            </div>
+            
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="control-group">
+                    <button id="prev-btn" class="control-btn" title="Previous" onclick="previousStep()">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button id="play-pause-btn" class="control-btn" title="Play/Pause" onclick="toggleAnimation()">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button id="next-btn" class="control-btn" title="Next" onclick="nextStep()">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                </div>
+                
+                <div class="control-group">
+                    <span class="text-sm">Speed:</span>
+                    <input type="range" id="speed-control" min="0.5" max="5" step="0.5" value="1" 
+                           class="w-20 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <span id="speed-display" class="text-xs opacity-80 w-8">1.0x</span>
+                </div>
+                
+                <div class="control-group">
+                    <button id="reset-btn" class="control-btn" title="Reset" onclick="resetPCR()">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button class="pcr-btn" onclick="startPCR()" id="start-pcr-btn">Start PCR</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel: Real-time Data & Analysis -->
+        <div class="right-panel">
+            <!-- Current Phase Info -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-info-circle"></i>
+                    Current Phase
+                </div>
+                <div class="data-display" id="phase-info">
+                    <h4 class="font-medium text-primary mb-2">Initialization</h4>
+                    <p class="text-sm mb-3">PCR reaction mixture is prepared and loaded into thermal cycler. All components are at room temperature.</p>
+                    <div class="text-xs space-y-1">
+                        <div class="data-row">
+                            <span>Temperature:</span>
+                            <span>25°C</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Duration:</span>
+                            <span>Setup phase</span>
+                        </div>
+                        <div class="data-row">
+                            <span>DNA State:</span>
+                            <span>Double-stranded</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Real-time Analysis -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-chart-line"></i>
+                    Real-time Analysis
+                </div>
+                <div class="data-display">
+                    <div class="data-row">
+                        <span>Current Cycle:</span>
+                        <span id="cycle-number" class="text-primary font-bold">0</span>
+                    </div>
+                    <div class="data-row">
+                        <span>DNA Copies:</span>
+                        <span id="dna-copies" class="text-success">1</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Amplification:</span>
+                        <span id="amplification" class="text-warning">1x</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Time Elapsed:</span>
+                        <span id="time-elapsed" class="text-info">00:00</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Efficiency:</span>
+                        <span id="efficiency" class="text-purple-400">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Temperature Profile -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-thermometer-half"></i>
+                    Temperature Profile
+                </div>
+                <div class="data-display">
+                    <div class="text-xs space-y-2">
+                        <div class="p-2 bg-red-500/20 rounded">
+                            <div class="font-medium text-red-400">Denaturation</div>
+                            <div>95°C - DNA strands separate</div>
+                            <div>Duration: 30 seconds</div>
+                        </div>
+                        <div class="p-2 bg-blue-500/20 rounded">
+                            <div class="font-medium text-blue-400">Annealing</div>
+                            <div>58°C - Primers bind to template</div>
+                            <div>Duration: 30 seconds</div>
+                        </div>
+                        <div class="p-2 bg-green-500/20 rounded">
+                            <div class="font-medium text-green-400">Extension</div>
+                            <div>72°C - DNA synthesis occurs</div>
+                            <div>Duration: 1 minute</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PCR Theory -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    PCR Theory
+                </div>
+                <div class="text-xs space-y-2">
+                    <div class="p-2 bg-primary/10 rounded">
+                        <div class="font-medium mb-1">Exponential Amplification:</div>
+                        <div>Each cycle doubles the amount of target DNA, resulting in exponential growth: 2ⁿ where n = cycle number</div>
+                    </div>
+                    <div class="p-2 bg-secondary/10 rounded">
+                        <div class="font-medium mb-1">Primer Specificity:</div>
+                        <div>Primers must be complementary to target sequence and have similar melting temperatures</div>
+                    </div>
+                    <div class="p-2 bg-success/10 rounded">
+                        <div class="font-medium mb-1">Thermal Cycling:</div>
+                        <div>Precise temperature control enables denaturation, annealing, and extension phases</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notification-text"></span>
+    </div>
+
+    <script>
+        // Global variables
+        let temperatureChart;
+        let currentCycle = 0;
+        let totalCycles = 35;
+        let currentPhase = 'init';
+        let isRunning = false;
+        let isAnimating = false;
+        let animationSpeed = 1;
+        let timeElapsed = 0;
+        let chartData = [];
+        let currentTemp = 25;
+        let isFullscreen = false;
+        
+        // PCR parameters
+        const PCR_PHASES = {
+            init: { temp: 25, duration: 0, name: 'Initialization', color: '#64748b' },
+            initial_denaturation: { temp: 95, duration: 300, name: 'Initial Denaturation', color: '#ef4444' },
+            denaturation: { temp: 95, duration: 30, name: 'Denaturation', color: '#ef4444' },
+            annealing: { temp: 58, duration: 30, name: 'Annealing', color: '#3b82f6' },
+            extension: { temp: 72, duration: 60, name: 'Extension', color: '#10b981' },
+            final_extension: { temp: 72, duration: 600, name: 'Final Extension', color: '#10b981' },
+            hold: { temp: 4, duration: Infinity, name: 'Hold', color: '#64748b' }
+        };
+        
+        // Current primer sequences
+        let currentTarget = 'ATGCGATCGTAGCAATCGGGCCAATTGGCCAATTGGATCGATCGATCGATCGATCG';
+        let forwardPrimer = '';
+        let reversePrimer = '';
+        
+        // Initialize the platform
+        function init() {
+            console.log('🌡️ PCR Thermal Cycler Platform initializing...');
+            console.log('📅 Current Date:', '2025-05-30 06:58:52');
+            console.log('👤 User:', 'yashmgupta');
+            
+            setupChart();
+            setupEventListeners();
+            updateDisplay();
+            designPrimers();
+            
+            showNotification('Welcome to PCR Thermal Cycler Education Platform, yashmgupta!');
+            console.log('✅ PCR Platform initialization complete');
+        }
+        
+        function setupChart() {
+            const ctx = document.getElementById('temperatureChart').getContext('2d');
+            
+            temperatureChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Temperature (°C)',
+                        data: [],
+                        borderColor: '#00d4ff',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.1,
+                        pointBackgroundColor: '#00d4ff',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#f1f5f9',
+                                font: {
+                                    family: 'Space Grotesk',
+                                    size: 12
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time (minutes)',
+                                color: '#f1f5f9',
+                                font: {
+                                    family: 'Space Grotesk',
+                                    size: 14
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(241, 245, 249, 0.1)'
+                            },
+                            ticks: {
+                                color: '#f1f5f9',
+                                font: {
+                                    family: 'JetBrains Mono',
+                                    size: 11
+                                }
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Temperature (°C)',
+                                color: '#f1f5f9',
+                                font: {
+                                    family: 'Space Grotesk',
+                                    size: 14
+                                }
+                            },
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(241, 245, 249, 0.1)'
+                            },
+                            ticks: {
+                                color: '#f1f5f9',
+                                font: {
+                                    family: 'JetBrains Mono',
+                                    size: 11
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 500
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+        
+        function setupEventListeners() {
+            window.addEventListener('resize', onWindowResize);
+            document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
+            document.getElementById('speed-control').addEventListener('input', onSpeedChange);
+            document.getElementById('target-sequence').addEventListener('input', onSequenceChange);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (event) => {
+                switch (event.key) {
+                    case ' ':
+                        event.preventDefault();
+                        toggleAnimation();
+                        break;
+                    case 'ArrowRight':
+                        nextStep();
+                        break;
+                    case 'ArrowLeft':
+                        previousStep();
+                        break;
+                    case 'r':
+                        resetPCR();
+                        break;
+                    case 'p':
+                        designPrimers();
+                        break;
+                }
+            });
+        }
+        
+        // Primer design functions
+        function designPrimers() {
+            const sequence = document.getElementById('target-sequence').value.toUpperCase().replace(/[^ATGC]/g, '');
+            if (sequence.length < 40) {
+                showNotification('Sequence too short. Minimum 40 bases required.');
+                return;
+            }
+            
+            currentTarget = sequence;
+            
+            // Design forward primer (first 20 bases)
+            forwardPrimer = sequence.substring(0, 20);
+            
+            // Design reverse primer (complement of last 20 bases, reversed)
+            const reverseRegion = sequence.substring(sequence.length - 20);
+            reversePrimer = getComplement(reverseRegion).split('').reverse().join('');
+            
+            // Update display
+            document.getElementById('forward-primer').textContent = forwardPrimer;
+            document.getElementById('reverse-primer').textContent = reversePrimer;
+            
+            // Calculate average properties
+            const avgTm = (calculateTm(forwardPrimer) + calculateTm(reversePrimer)) / 2;
+            const avgGC = (calculateGC(forwardPrimer) + calculateGC(reversePrimer)) / 2;
+            
+            document.getElementById('avg-tm').textContent = avgTm.toFixed(1) + '°C';
+            document.getElementById('avg-gc').textContent = avgGC.toFixed(1) + '%';
+            
+            updateDNAVisualization();
+            showNotification(`Primers designed! Tm: ${avgTm.toFixed(1)}°C, GC: ${avgGC.toFixed(1)}%`);
+        }
+        
+        function getComplement(sequence) {
+            const complement = { 'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G' };
+            return sequence.split('').map(base => complement[base] || base).join('');
+        }
+        
+        function calculateTm(sequence) {
+            // Simple Tm calculation
+            const atCount = (sequence.match(/[AT]/g) || []).length;
+            const gcCount = (sequence.match(/[GC]/g) || []).length;
+            return (atCount * 2) + (gcCount * 4);
+        }
+        
+        function calculateGC(sequence) {
+            const gcCount = (sequence.match(/[GC]/g) || []).length;
+            return (gcCount / sequence.length) * 100;
+        }
+        
+        function validatePrimers() {
+            if (!forwardPrimer || !reversePrimer) {
+                showNotification('Please design primers first.');
+                return;
+            }
+            
+            const fwdTm = calculateTm(forwardPrimer);
+            const revTm = calculateTm(reversePrimer);
+            const tmDiff = Math.abs(fwdTm - revTm);
+            
+            let score = 100;
+            let issues = [];
+            
+            if (forwardPrimer.length < 18 || forwardPrimer.length > 25) {
+                issues.push('Forward primer length should be 18-25 bp');
+                score -= 20;
+            }
+            
+            if (reversePrimer.length < 18 || reversePrimer.length > 25) {
+                issues.push('Reverse primer length should be 18-25 bp');
+                score -= 20;
+            }
+            
+            if (tmDiff > 5) {
+                issues.push('Melting temperature difference > 5°C');
+                score -= 15;
+            }
+            
+            const fwdGC = calculateGC(forwardPrimer);
+            const revGC = calculateGC(reversePrimer);
+            
+            if (fwdGC < 40 || fwdGC > 60) {
+                issues.push('Forward primer GC content should be 40-60%');
+                score -= 10;
+            }
+            
+            if (revGC < 40 || revGC > 60) {
+                issues.push('Reverse primer GC content should be 40-60%');
+                score -= 10;
+            }
+            
+            if (issues.length === 0) {
+                showNotification(`✅ Primer validation passed! Score: ${score}%`);
+            } else {
+                showNotification(`⚠️ Issues found (Score: ${score}%): ${issues[0]}`);
+            }
+        }
+        
+        function onSequenceChange() {
+            const sequence = document.getElementById('target-sequence').value.toUpperCase().replace(/[^ATGC]/g, '');
+            if (sequence.length >= 40) {
+                setTimeout(designPrimers, 500);
+            }
+        }
+        
+        // PCR simulation functions
+        function startPCR() {
+            if (!forwardPrimer || !reversePrimer) {
+                showNotification('Please design primers before starting PCR.');
+                return;
+            }
+            
+            isRunning = true;
+            isAnimating = true;
+            currentCycle = 0;
+            timeElapsed = 0;
+            chartData = [];
+            
+            document.getElementById('start-pcr-btn').textContent = 'Running...';
+            document.getElementById('start-pcr-btn').disabled = true;
+            document.getElementById('play-pause-btn').classList.add('active');
+            document.getElementById('play-pause-btn').innerHTML = '<i class="fas fa-pause"></i>';
+            
+            showNotification('PCR started! Running thermal cycling...');
+            runPCRProtocol();
+        }
+        
+        async function runPCRProtocol() {
+            // Initial denaturation
+            await runPhase('initial_denaturation');
+            
+            // Main cycling
+            for (let cycle = 1; cycle <= totalCycles; cycle++) {
+                currentCycle = cycle;
+                updateDisplay();
+                
+                await runPhase('denaturation');
+                await runPhase('annealing');
+                await runPhase('extension');
+                
+                if (!isRunning) return; // Stop if reset
+            }
+            
+            // Final extension
+            await runPhase('final_extension');
+            
+            // Hold
+            setPhase('hold');
+            isRunning = false;
+            isAnimating = false;
+            
+            document.getElementById('start-pcr-btn').textContent = 'Complete';
+            document.getElementById('play-pause-btn').classList.remove('active');
+            document.getElementById('play-pause-btn').innerHTML = '<i class="fas fa-play"></i>';
+            
+            showNotification('PCR completed successfully! 35 cycles finished.');
+        }
+        
+        async function runPhase(phaseName) {
+            const phase = PCR_PHASES[phaseName];
+            setPhase(phaseName);
+            
+            // Simulate temperature ramp
+            const startTemp = currentTemp;
+            const targetTemp = phase.temp;
+            const rampTime = Math.abs(targetTemp - startTemp) / 10; // 10°C per second ramp rate
+            
+            // Temperature ramp
+            await animateTemperatureChange(startTemp, targetTemp, rampTime);
+            
+            // Hold at temperature
+            if (phase.duration > 0) {
+                await holdTemperature(targetTemp, phase.duration);
+            }
+        }
+        
+        async function animateTemperatureChange(startTemp, targetTemp, duration) {
+            const steps = Math.max(10, duration * 2); // At least 10 steps
+            const tempStep = (targetTemp - startTemp) / steps;
+            const timeStep = duration / steps;
+            
+            for (let i = 0; i <= steps; i++) {
+                if (!isRunning || !isAnimating) return;
+                
+                currentTemp = startTemp + (tempStep * i);
+                timeElapsed += timeStep;
+                
+                updateChart();
+                updateTemperatureDisplay();
+                updateDNAVisualization();
+                
+                await sleep((timeStep * 1000) / animationSpeed);
+            }
+        }
+        
+        async function holdTemperature(temp, duration) {
+            const steps = Math.max(10, duration / 5); // Update every 5 seconds or minimum 10 steps
+            const timeStep = duration / steps;
+            
+            for (let i = 0; i < steps; i++) {
+                if (!isRunning || !isAnimating) return;
+                
+                currentTemp = temp;
+                timeElapsed += timeStep;
+                
+                updateChart();
+                updateTemperatureDisplay();
+                
+                await sleep((timeStep * 1000) / animationSpeed);
+            }
+        }
+        
+        function setPhase(phaseName) {
+            currentPhase = phaseName;
+            const phase = PCR_PHASES[phaseName];
+            
+            // Update phase indicator
+            document.getElementById('phase-indicator').textContent = phase.name;
+            document.getElementById('current-phase-name').textContent = phase.name;
+            
+            // Update phase info panel
+            updatePhaseInfo(phase);
+            
+            // Update DNA visualization
+            updateDNAVisualization();
+            
+            // Update active phase step
+            updateActivePhaseStep(phaseName);
+        }
+        
+        function updatePhaseInfo(phase) {
+            const phaseDescriptions = {
+                init: 'PCR reaction mixture is prepared and loaded into thermal cycler. All components are at room temperature.',
+                initial_denaturation: 'Initial high temperature step to completely denature template DNA and activate hot-start polymerase.',
+                denaturation: 'High temperature breaks hydrogen bonds between DNA strands, separating the double helix into single strands.',
+                annealing: 'Lower temperature allows primers to bind specifically to their complementary sequences on the template.',
+                extension: 'Optimal temperature for Taq polymerase activity. New DNA strands are synthesized from the 3\' end of primers.',
+                final_extension: 'Extended time at polymerase optimal temperature to complete synthesis of all DNA strands.',
+                hold: 'Low temperature storage to maintain PCR products until analysis.'
+            };
+            
+            const phaseInfo = document.getElementById('phase-info');
+            phaseInfo.innerHTML = `
+                <h4 class="font-medium text-primary mb-2">${phase.name}</h4>
+                <p class="text-sm mb-3">${phaseDescriptions[currentPhase]}</p>
+                <div class="text-xs space-y-1">
+                    <div class="data-row">
+                        <span>Temperature:</span>
+                        <span>${phase.temp}°C</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Duration:</span>
+                        <span>${phase.duration === Infinity ? 'Hold' : phase.duration + ' seconds'}</span>
+                    </div>
+                    <div class="data-row">
+                        <span>DNA State:</span>
+                        <span>${getDNAState(currentPhase)}</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function getDNAState(phase) {
+            const states = {
+                init: 'Double-stranded',
+                initial_denaturation: 'Denaturing',
+                denaturation: 'Single-stranded',
+                annealing: 'Primer binding',
+                extension: 'Synthesis in progress',
+                final_extension: 'Synthesis completing',
+                hold: 'Double-stranded products'
+            };
+            return states[phase] || 'Unknown';
+        }
+        
+        function updateActivePhaseStep(phaseName) {
+            // Remove active class from all steps
+            document.querySelectorAll('.phase-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            // Add active class to current phase
+            const phaseMap = {
+                initial_denaturation: 0,
+                denaturation: 1,
+                annealing: 2,
+                extension: 3,
+                final_extension: 4
+            };
+            
+            const stepIndex = phaseMap[phaseName];
+            if (stepIndex !== undefined) {
+                const steps = document.querySelectorAll('.phase-step');
+                if (steps[stepIndex]) {
+                    steps[stepIndex].classList.add('active');
+                }
+            }
+        }
+        
+        function updateDNAVisualization() {
+            const targetSeq = currentTarget.substring(0, 24);
+            const complementSeq = getComplement(targetSeq);
+            
+            let visualization = '';
+            
+            switch (currentPhase) {
+                case 'init':
+                case 'hold':
+                    visualization = `
+                        <div class="dna-strand strand-5-3">5'-${targetSeq}-3'</div>
+                        <div class="dna-strand strand-3-5">3'-${complementSeq}-5'</div>
+                        <div class="mt-2 text-xs opacity-80">Double-stranded DNA template</div>
+                    `;
+                    break;
+                    
+                case 'initial_denaturation':
+                case 'denaturation':
+                    visualization = `
+                        <div class="dna-strand strand-5-3" style="transform: translateY(-10px);">5'-${targetSeq}-3'</div>
+                        <div class="dna-strand strand-3-5" style="transform: translateY(10px);">3'-${complementSeq}-5'</div>
+                        <div class="mt-2 text-xs opacity-80">DNA strands separating at ${currentTemp}°C</div>
+                    `;
+                    break;
+                    
+                case 'annealing':
+                    const fwdPrimerDisplay = forwardPrimer || 'ATGCGATCGTAGCAATCGGG';
+                    const revPrimerDisplay = reversePrimer || 'TTGGCCAATTGGCCAATTGG';
+                    visualization = `
+                        <div class="dna-strand strand-5-3">5'-${targetSeq}-3'</div>
+                        <div class="dna-strand primer">   ${fwdPrimerDisplay} → Forward Primer</div>
+                        <div class="dna-strand strand-3-5">3'-${complementSeq}-5'</div>
+                        <div class="dna-strand primer">   ${revPrimerDisplay} ← Reverse Primer</div>
+                        <div class="mt-2 text-xs opacity-80">Primers annealing at ${currentTemp}°C</div>
+                    `;
+                    break;
+                    
+                case 'extension':
+                case 'final_extension':
+                    visualization = `
+                        <div class="dna-strand strand-5-3">5'-${targetSeq}-3'</div>
+                        <div class="dna-strand primer pulse-animation">${forwardPrimer || 'ATGCGATCGTAGCAATCGGG'}████████ → Extending</div>
+                        <div class="dna-strand strand-3-5">3'-${complementSeq}-5'</div>
+                        <div class="dna-strand primer pulse-animation">${reversePrimer || 'TTGGCCAATTGGCCAATTGG'}████████ ← Extending</div>
+                        <div class="mt-2 text-xs opacity-80">DNA synthesis at ${currentTemp}°C</div>
+                    `;
+                    break;
+            }
+            
+            document.getElementById('dna-strands').innerHTML = visualization;
+            document.getElementById('current-temp-display').textContent = currentTemp.toFixed(1) + '°C';
+            document.getElementById('current-process').textContent = PCR_PHASES[currentPhase].name;
+        }
+        
+        function updateChart() {
+            const timeMinutes = (timeElapsed / 60).toFixed(2);
+            
+            chartData.push({
+                x: parseFloat(timeMinutes),
+                y: currentTemp
+            });
+            
+            // Keep only last 1000 points for performance
+            if (chartData.length > 1000) {
+                chartData = chartData.slice(-1000);
+            }
+            
+            temperatureChart.data.labels = chartData.map(point => point.x.toFixed(1));
+            temperatureChart.data.datasets[0].data = chartData.map(point => point.y);
+            temperatureChart.update('none');
+        }
+        
+        function updateTemperatureDisplay() {
+            document.getElementById('temperature-display').textContent = currentTemp.toFixed(1) + '°C';
+            
+            // Color code temperature
+            const tempDisplay = document.getElementById('temperature-display');
+            if (currentTemp >= 90) {
+                tempDisplay.style.color = '#ef4444';
+                tempDisplay.style.textShadow = '0 0 10px #ef4444';
+            } else if (currentTemp >= 60) {
+                tempDisplay.style.color = '#f59e0b';
+                tempDisplay.style.textShadow = '0 0 10px #f59e0b';
+            } else {
+                tempDisplay.style.color = '#06b6d4';
+                tempDisplay.style.textShadow = '0 0 10px #06b6d4';
+            }
+        }
+        
+        function updateDisplay() {
+            document.getElementById('current-cycle').textContent = currentCycle;
+            document.getElementById('cycle-number').textContent = currentCycle;
+            
+            const copies = Math.pow(2, currentCycle);
+            document.getElementById('dna-copies').textContent = copies.toLocaleString();
+            document.getElementById('amplification').textContent = copies.toLocaleString() + 'x';
+            
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = Math.floor(timeElapsed % 60);
+            document.getElementById('time-elapsed').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            const efficiency = currentCycle > 0 ? ((copies / Math.pow(2, currentCycle)) * 100).toFixed(1) + '%' : '-';
+            document.getElementById('efficiency').textContent = efficiency;
+            
+            const progress = (currentCycle / totalCycles) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+        }
+        
+        // Control functions
+        function toggleAnimation() {
+            isAnimating = !isAnimating;
+            const btn = document.getElementById('play-pause-btn');
+            btn.classList.toggle('active');
+            
+            const icon = btn.querySelector('i');
+            icon.className = isAnimating ? 'fas fa-pause' : 'fas fa-play';
+            
+            showNotification(isAnimating ? 'Animation resumed' : 'Animation paused');
+        }
+        
+        function nextStep() {
+            // Manual step through phases
+            const phases = ['init', 'initial_denaturation', 'denaturation', 'annealing', 'extension', 'final_extension', 'hold'];
+            const currentIndex = phases.indexOf(currentPhase);
+            if (currentIndex < phases.length - 1) {
+                setPhase(phases[currentIndex + 1]);
+                currentTemp = PCR_PHASES[phases[currentIndex + 1]].temp;
+                updateTemperatureDisplay();
+                updateChart();
+            }
+        }
+        
+        function previousStep() {
+            const phases = ['init', 'initial_denaturation', 'denaturation', 'annealing', 'extension', 'final_extension', 'hold'];
+            const currentIndex = phases.indexOf(currentPhase);
+            if (currentIndex > 0) {
+                setPhase(phases[currentIndex - 1]);
+                currentTemp = PCR_PHASES[phases[currentIndex - 1]].temp;
+                updateTemperatureDisplay();
+                updateChart();
+            }
+        }
+        
+        function resetPCR() {
+            isRunning = false;
+            isAnimating = false;
+            currentCycle = 0;
+            timeElapsed = 0;
+            currentTemp = 25;
+            chartData = [];
+            
+            setPhase('init');
+            
+            document.getElementById('start-pcr-btn').textContent = 'Start PCR';
+            document.getElementById('start-pcr-btn').disabled = false;
+            document.getElementById('play-pause-btn').classList.remove('active');
+            document.getElementById('play-pause-btn').innerHTML = '<i class="fas fa-play"></i>';
+            
+            // Clear chart
+            temperatureChart.data.labels = [];
+            temperatureChart.data.datasets[0].data = [];
+            temperatureChart.update();
+            
+            updateDisplay();
+            updateTemperatureDisplay();
+            updateDNAVisualization();
+            
+            showNotification('PCR reset to initial state');
+        }
+        
+        function toggleFullscreen() {
+            isFullscreen = !isFullscreen;
+            const container = document.getElementById('platform-container');
+            const btn = document.getElementById('fullscreen-btn');
+            const icon = btn.querySelector('i');
+            
+            if (isFullscreen) {
+                container.classList.add('fullscreen');
+                icon.className = 'fas fa-compress';
+                showNotification('Fullscreen mode activated');
+            } else {
+                container.classList.remove('fullscreen');
+                icon.className = 'fas fa-expand';
+                showNotification('Dashboard mode restored');
+            }
+            
+            setTimeout(() => {
+                if (temperatureChart) {
+                    temperatureChart.resize();
+                }
+            }, 100);
+        }
+        
+        function onSpeedChange() {
+            const speedControl = document.getElementById('speed-control');
+            animationSpeed = parseFloat(speedControl.value);
+            document.getElementById('speed-display').textContent = animationSpeed.toFixed(1) + 'x';
+            showNotification(`Animation speed set to ${animationSpeed.toFixed(1)}x`);
+        }
+        
+        function onWindowResize() {
+            if (temperatureChart) {
+                temperatureChart.resize();
+            }
+        }
+        
+        // Utility functions
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const text = document.getElementById('notification-text');
+            
+            text.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Advanced PCR analysis functions
+        function calculatePCREfficiency() {
+            if (currentCycle < 2) return 0;
+            
+            // Simulate realistic PCR efficiency (usually 90-110%)
+            const baseEfficiency = 95;
+            const cycleVariation = Math.sin(currentCycle * 0.1) * 5; // Small variation
+            const temperatureEffect = currentTemp > 95 ? -2 : (currentTemp < 50 ? -5 : 0);
+            
+            return Math.max(80, Math.min(110, baseEfficiency + cycleVariation + temperatureEffect));
+        }
+        
+        function simulateRealTimePCR() {
+            // Simulate real-time PCR fluorescence data
+            const cycles = Array.from({length: currentCycle}, (_, i) => i + 1);
+            const fluorescence = cycles.map(cycle => {
+                const exponentialPhase = cycle < 15 ? 0.1 : Math.pow(1.8, cycle - 15);
+                const plateauEffect = cycle > 30 ? Math.max(0.5, 1 - (cycle - 30) * 0.1) : 1;
+                const noise = (Math.random() - 0.5) * 0.1;
+                
+                return Math.max(0.1, exponentialPhase * plateauEffect + noise);
+            });
+            
+            return { cycles, fluorescence };
+        }
+        
+        function calculateMeltingCurve() {
+            if (!forwardPrimer || !reversePrimer) return null;
+            
+            const temps = Array.from({length: 81}, (_, i) => 50 + i * 0.5); // 50-90°C
+            const derivative = temps.map(temp => {
+                const fwdTm = calculateTm(forwardPrimer);
+                const revTm = calculateTm(reversePrimer);
+                const avgTm = (fwdTm + revTm) / 2;
+                
+                // Gaussian curve centered at Tm
+                const sigma = 2; // Peak width
+                return Math.exp(-Math.pow(temp - avgTm, 2) / (2 * Math.pow(sigma, 2)));
+            });
+            
+            return { temperatures: temps, derivative };
+        }
+        
+        // Educational content functions
+        function showPCRTheory() {
+            const theoryContent = `
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-primary">PCR Theory & Principles</h3>
+                    
+                    <div class="bg-black/20 p-4 rounded-lg">
+                        <h4 class="font-medium mb-2">Exponential Amplification</h4>
+                        <p class="text-sm">PCR amplifies DNA exponentially: 2^n copies after n cycles. This means:</p>
+                        <ul class="text-xs mt-2 space-y-1 list-disc list-inside">
+                            <li>Cycle 10: 1,024 copies</li>
+                            <li>Cycle 20: 1,048,576 copies</li>
+                            <li>Cycle 30: 1,073,741,824 copies</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-black/20 p-4 rounded-lg">
+                        <h4 class="font-medium mb-2">Temperature Dependencies</h4>
+                        <ul class="text-xs space-y-1 list-disc list-inside">
+                            <li><strong>95°C:</strong> Denatures DNA (breaks H-bonds)</li>
+                            <li><strong>50-65°C:</strong> Primer annealing (depends on Tm)</li>
+                            <li><strong>72°C:</strong> Optimal Taq polymerase activity</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-black/20 p-4 rounded-lg">
+                        <h4 class="font-medium mb-2">Critical Factors</h4>
+                        <ul class="text-xs space-y-1 list-disc list-inside">
+                            <li>Primer design and specificity</li>
+                            <li>Mg²⁺ concentration (affects polymerase activity)</li>
+                            <li>dNTP concentration and balance</li>
+                            <li>Template quality and quantity</li>
+                            <li>Thermal cycler accuracy and uniformity</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            showModal('PCR Theory', theoryContent);
+        }
+        
+        function showTroubleshooting() {
+            const troubleshootingContent = `
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-primary">PCR Troubleshooting Guide</h3>
+                    
+                    <div class="bg-red-900/20 p-4 rounded-lg border border-red-500/30">
+                        <h4 class="font-medium mb-2 text-red-400">No Amplification</h4>
+                        <ul class="text-xs space-y-1 list-disc list-inside">
+                            <li>Check primer design and concentration</li>
+                            <li>Verify template quality and quantity</li>
+                            <li>Optimize annealing temperature</li>
+                            <li>Check polymerase activity and expiration</li>
+                            <li>Verify thermocycler program</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-yellow-900/20 p-4 rounded-lg border border-yellow-500/30">
+                        <h4 class="font-medium mb-2 text-yellow-400">Non-specific Amplification</h4>
+                        <ul class="text-xs space-y-1 list-disc list-inside">
+                            <li>Increase annealing temperature</li>
+                            <li>Redesign primers for higher specificity</li>
+                            <li>Reduce primer concentration</li>
+                            <li>Use hot-start polymerase</li>
+                            <li>Optimize Mg²⁺ concentration</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-blue-900/20 p-4 rounded-lg border border-blue-500/30">
+                        <h4 class="font-medium mb-2 text-blue-400">Weak Amplification</h4>
+                        <ul class="text-xs space-y-1 list-disc list-inside">
+                            <li>Increase template concentration</li>
+                            <li>Optimize primer concentration</li>
+                            <li>Extend extension time</li>
+                            <li>Check dNTP concentration</li>
+                            <li>Increase cycle number (max 40)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-green-900/20 p-4 rounded-lg border border-green-500/30">
+                        <h4 class="font-medium mb-2 text-green-400">Optimization Tips</h4>
+                        <ul class="text-xs space-y-1 list-disc list-inside">
+                            <li>Use gradient PCR to find optimal annealing temperature</li>
+                            <li>Perform primer BLAST to check specificity</li>
+                            <li>Include positive and negative controls</li>
+                            <li>Use fresh reagents and proper storage</li>
+                            <li>Calibrate thermocycler regularly</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            showModal('PCR Troubleshooting', troubleshootingContent);
+        }
+        
+        function showApplications() {
+            const applicationsContent = `
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-primary">PCR Applications</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-black/20 p-4 rounded-lg">
+                            <h4 class="font-medium mb-2 text-blue-400">Medical Diagnostics</h4>
+                            <ul class="text-xs space-y-1 list-disc list-inside">
+                                <li>Pathogen detection (COVID-19, HIV, etc.)</li>
+                                <li>Genetic disease screening</li>
+                                <li>Cancer biomarker detection</li>
+                                <li>Pharmacogenomics</li>
+                                <li>Prenatal diagnosis</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-black/20 p-4 rounded-lg">
+                            <h4 class="font-medium mb-2 text-green-400">Research Applications</h4>
+                            <ul class="text-xs space-y-1 list-disc list-inside">
+                                <li>Gene cloning and sequencing</li>
+                                <li>Site-directed mutagenesis</li>
+                                <li>Gene expression analysis</li>
+                                <li>Phylogenetic studies</li>
+                                <li>Environmental monitoring</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-black/20 p-4 rounded-lg">
+                            <h4 class="font-medium mb-2 text-purple-400">Forensics</h4>
+                            <ul class="text-xs space-y-1 list-disc list-inside">
+                                <li>DNA fingerprinting</li>
+                                <li>Paternity testing</li>
+                                <li>Criminal investigations</li>
+                                <li>Mass disaster victim identification</li>
+                                <li>Ancient DNA analysis</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-black/20 p-4 rounded-lg">
+                            <h4 class="font-medium mb-2 text-orange-400">Agriculture & Food</h4>
+                            <ul class="text-xs space-y-1 list-disc list-inside">
+                                <li>GMO detection</li>
+                                <li>Plant pathogen identification</li>
+                                <li>Food authenticity testing</li>
+                                <li>Crop improvement</li>
+                                <li>Food safety monitoring</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showModal('PCR Applications', applicationsContent);
+        }
+        
+        function showModal(title, content) {
+            // Create modal dynamically
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50 opacity-0 transition-opacity duration-300';
+            modal.innerHTML = `
+                <div class="bg-slate-900 rounded-xl p-6 max-w-4xl max-h-[80vh] overflow-y-auto border border-primary/30">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-primary">${title}</h2>
+                        <button class="text-2xl hover:text-primary transition-colors" onclick="this.closest('.fixed').remove()">
+                            &times;
+                        </button>
+                    </div>
+                    <div class="text-sm text-gray-300">
+                        ${content}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            setTimeout(() => modal.classList.add('opacity-100'), 10);
+            
+            // Close on backdrop click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+        
+        // Advanced visualization functions
+        function createRealTimeChart() {
+            const rtData = simulateRealTimePCR();
+            
+            const rtChartContainer = document.createElement('div');
+            rtChartContainer.className = 'chart-container mt-4';
+            rtChartContainer.innerHTML = '<canvas id="realTimeChart"></canvas>';
+            
+            document.querySelector('.main-panel').appendChild(rtChartContainer);
+            
+            const rtCtx = document.getElementById('realTimeChart').getContext('2d');
+            new Chart(rtCtx, {
+                type: 'line',
+                data: {
+                    labels: rtData.cycles,
+                    datasets: [{
+                        label: 'Fluorescence (RFU)',
+                        data: rtData.fluorescence,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Real-time PCR Amplification Curve',
+                            color: '#f1f5f9'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Cycle Number', color: '#f1f5f9' },
+                            ticks: { color: '#f1f5f9' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Fluorescence', color: '#f1f5f9' },
+                            type: 'logarithmic',
+                            ticks: { color: '#f1f5f9' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function exportPCRData() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                user: 'yashmgupta',
+                protocol: {
+                    initialDenaturation: '95°C for 5 minutes',
+                    denaturation: '95°C for 30 seconds',
+                    annealing: `${PCR_PHASES.annealing.temp}°C for 30 seconds`,
+                    extension: '72°C for 1 minute',
+                    finalExtension: '72°C for 10 minutes',
+                    cycles: totalCycles
+                },
+                primers: {
+                    forward: forwardPrimer,
+                    reverse: reversePrimer,
+                    forwardTm: forwardPrimer ? calculateTm(forwardPrimer) : null,
+                    reverseTm: reversePrimer ? calculateTm(reversePrimer) : null
+                },
+                results: {
+                    totalCycles: currentCycle,
+                    finalCopies: Math.pow(2, currentCycle),
+                    efficiency: calculatePCREfficiency(),
+                    totalTime: timeElapsed
+                },
+                temperatureProfile: chartData
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `PCR_Data_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('PCR data exported successfully!');
+        }
+        
+        // Interactive tutorial functions
+        function startTutorial() {
+            const tutorialSteps = [
+                {
+                    element: '#target-sequence',
+                    title: 'Step 1: Enter Target Sequence',
+                    content: 'Start by entering your target DNA sequence here. This is the region you want to amplify.'
+                },
+                {
+                    element: '.design-btn',
+                    title: 'Step 2: Design Primers',
+                    content: 'Click to automatically design primers optimized for your target sequence.'
+                },
+                {
+                    element: '#temperatureChart',
+                    title: 'Step 3: Monitor Temperature',
+                    content: 'This chart shows the thermal cycling profile in real-time during PCR.'
+                },
+                {
+                    element: '#start-pcr-btn',
+                    title: 'Step 4: Start PCR',
+                    content: 'Click to begin the PCR simulation with your designed primers.'
+                },
+                {
+                    element: '#molecular-diagram',
+                    title: 'Step 5: Watch DNA Process',
+                    content: 'Observe how DNA behaves during each phase of the thermal cycle.'
+                }
+            ];
+            
+            let currentStep = 0;
+            
+            function showTutorialStep(step) {
+                // Remove previous highlights
+                document.querySelectorAll('.tutorial-highlight').forEach(el => {
+                    el.classList.remove('tutorial-highlight');
+                });
+                
+                // Highlight current element
+                const element = document.querySelector(tutorialSteps[step].element);
+                if (element) {
+                    element.classList.add('tutorial-highlight');
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                const tutorial = tutorialSteps[step];
+                showModal(tutorial.title, `
+                    <div class="space-y-4">
+                        <p>${tutorial.content}</p>
+                        <div class="flex justify-between">
+                            <button onclick="this.closest('.fixed').remove()" 
+                                    class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500 transition-colors">
+                                Skip Tutorial
+                            </button>
+                            <div class="space-x-2">
+                                ${step > 0 ? '<button onclick="previousTutorialStep()" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-500 transition-colors">Previous</button>' : ''}
+                                ${step < tutorialSteps.length - 1 ? '<button onclick="nextTutorialStep()" class="px-4 py-2 bg-primary rounded hover:bg-primary/80 transition-colors">Next</button>' : '<button onclick="this.closest(\'.fixed\').remove()" class="px-4 py-2 bg-green-600 rounded hover:bg-green-500 transition-colors">Finish</button>'}
+                            </div>
+                        </div>
+                    </div>
+                `);
+            }
+            
+            window.nextTutorialStep = () => {
+                if (currentStep < tutorialSteps.length - 1) {
+                    currentStep++;
+                    document.querySelector('.fixed').remove();
+                    setTimeout(() => showTutorialStep(currentStep), 300);
+                }
+            };
+            
+            window.previousTutorialStep = () => {
+                if (currentStep > 0) {
+                    currentStep--;
+                    document.querySelector('.fixed').remove();
+                    setTimeout(() => showTutorialStep(currentStep), 300);
+                }
+            };
+            
+            showTutorialStep(0);
+        }
+        
+        // Add tutorial highlight styles
+        const tutorialStyles = document.createElement('style');
+        tutorialStyles.textContent = `
+            .tutorial-highlight {
+                animation: tutorialGlow 2s infinite;
+                position: relative;
+                z-index: 10;
+            }
+            
+            @keyframes tutorialGlow {
+                0%, 100% { 
+                    box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7);
+                    border-color: rgba(0, 212, 255, 0.3);
+                }
+                50% { 
+                    box-shadow: 0 0 0 10px rgba(0, 212, 255, 0);
+                    border-color: rgba(0, 212, 255, 1);
+                }
+            }
+        `;
+        document.head.appendChild(tutorialStyles);
+        
+        // Initialize platform when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🌡️ PCR Thermal Cycler Platform initializing...');
+            console.log('📅 Current Date:', '2025-05-30 07:03:17');
+            console.log('👤 User:', 'yashmgupta');
+            
+            init();
+            
+            // Add menu buttons for additional features
+            const headerRight = document.querySelector('.header-right');
+            const menuBtn = document.createElement('button');
+            menuBtn.className = 'control-btn';
+            menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            menuBtn.title = 'Menu';
+            menuBtn.onclick = showMainMenu;
+            headerRight.insertBefore(menuBtn, headerRight.firstChild);
+            
+            // Auto-start tutorial for new users
+            setTimeout(() => {
+                if (!localStorage.getItem('pcr_tutorial_completed')) {
+                    if (confirm('Would you like to take a quick tutorial to learn how to use the PCR platform?')) {
+                        startTutorial();
+                        localStorage.setItem('pcr_tutorial_completed', 'true');
+                    }
+                }
+            }, 2000);
+            
+            console.log('✅ PCR Thermal Cycler Platform initialization complete');
+        });
+        
+        function showMainMenu() {
+            const menuContent = `
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="showPCRTheory(); this.closest('.fixed').remove();" 
+                            class="p-4 bg-blue-600/20 border border-blue-500/30 rounded-lg hover:bg-blue-600/30 transition-colors">
+                        <i class="fas fa-book text-2xl mb-2 text-blue-400"></i>
+                        <div class="font-medium">PCR Theory</div>
+                        <div class="text-xs opacity-80">Learn the science</div>
+                    </button>
+                    
+                    <button onclick="showTroubleshooting(); this.closest('.fixed').remove();" 
+                            class="p-4 bg-red-600/20 border border-red-500/30 rounded-lg hover:bg-red-600/30 transition-colors">
+                        <i class="fas fa-tools text-2xl mb-2 text-red-400"></i>
+                        <div class="font-medium">Troubleshooting</div>
+                        <div class="text-xs opacity-80">Fix common issues</div>
+                    </button>
+                    
+                    <button onclick="showApplications(); this.closest('.fixed').remove();" 
+                            class="p-4 bg-green-600/20 border border-green-500/30 rounded-lg hover:bg-green-600/30 transition-colors">
+                        <i class="fas fa-flask text-2xl mb-2 text-green-400"></i>
+                        <div class="font-medium">Applications</div>
+                        <div class="text-xs opacity-80">Real-world uses</div>
+                    </button>
+                    
+                    <button onclick="exportPCRData(); this.closest('.fixed').remove();" 
+                            class="p-4 bg-purple-600/20 border border-purple-500/30 rounded-lg hover:bg-purple-600/30 transition-colors">
+                        <i class="fas fa-download text-2xl mb-2 text-purple-400"></i>
+                        <div class="font-medium">Export Data</div>
+                        <div class="text-xs opacity-80">Save results</div>
+                    </button>
+                    
+                    <button onclick="startTutorial(); this.closest('.fixed').remove();" 
+                            class="p-4 bg-yellow-600/20 border border-yellow-500/30 rounded-lg hover:bg-yellow-600/30 transition-colors">
+                        <i class="fas fa-graduation-cap text-2xl mb-2 text-yellow-400"></i>
+                        <div class="font-medium">Tutorial</div>
+                        <div class="text-xs opacity-80">Learn the platform</div>
+                    </button>
+                    
+                    <button onclick="createRealTimeChart(); this.closest('.fixed').remove();" 
+                            class="p-4 bg-cyan-600/20 border border-cyan-500/30 rounded-lg hover:bg-cyan-600/30 transition-colors">
+                        <i class="fas fa-chart-line text-2xl mb-2 text-cyan-400"></i>
+                        <div class="font-medium">Real-time Data</div>
+                        <div class="text-xs opacity-80">Advanced analysis</div>
+                    </button>
+                </div>
+            `;
+            
+            showModal('PCR Platform Menu', menuContent);
+        }
+        
+        // Error handling and cleanup
+        window.addEventListener('beforeunload', () => {
+            if (isRunning) {
+                return 'PCR is currently running. Are you sure you want to leave?';
+            }
+        });
+        
+        window.addEventListener('error', (event) => {
+            console.error('PCR Platform Error:', event.error);
+            showNotification('An error occurred. Please refresh the page if issues persist.');
+        });
+        
+        // Auto-save functionality
+        setInterval(() => {
+            if (currentCycle > 0) {
+                const saveData = {
+                    cycle: currentCycle,
+                    phase: currentPhase,
+                    timeElapsed: timeElapsed,
+                    primers: { forward: forwardPrimer, reverse: reversePrimer },
+                    target: currentTarget
+                };
+                localStorage.setItem('pcr_autosave', JSON.stringify(saveData));
+            }
+        }, 30000); // Auto-save every 30 seconds
+        
+        // Load auto-saved data on startup
+        function loadAutoSave() {
+            const savedData = localStorage.getItem('pcr_autosave');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    if (confirm('Found auto-saved PCR data. Would you like to restore it?')) {
+                        currentCycle = data.cycle;
+                        currentPhase = data.phase;
+                        timeElapsed = data.timeElapsed;
+                        forwardPrimer = data.primers.forward;
+                        reversePrimer = data.primers.reverse;
+                        currentTarget = data.target;
+                        
+                        document.getElementById('target-sequence').value = currentTarget;
+                        document.getElementById('forward-primer').textContent = forwardPrimer;
+                        document.getElementById('reverse-primer').textContent = reversePrimer;
+                        
+                        updateDisplay();
+                        showNotification('Auto-saved data restored successfully!');
+                    }
+                } catch (e) {
+                    console.error('Error loading auto-save:', e);
+                }
+            }
+        }
+        
+        // Call loadAutoSave after a short delay
+        setTimeout(loadAutoSave, 1000);
+    </script>
+</body>
+</html>

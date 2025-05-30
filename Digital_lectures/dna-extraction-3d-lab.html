@@ -1,0 +1,2141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNA Extraction Lab - Interactive 3D Learning Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --cell-membrane: #ff6b9d;
+            --nucleus: #4d7c0f;
+            --dna: #3b82f6;
+            --protein: #f97316;
+            --buffer: #06b6d4;
+            --enzyme: #8b5cf6;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f1f5f9;
+            --panel-bg: rgba(15, 23, 42, 0.85);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            color: var(--light);
+            overflow: hidden;
+        }
+        
+        .lab-container {
+            display: grid;
+            grid-template-columns: 320px 1fr 280px;
+            grid-template-rows: 70px 1fr 80px;
+            height: 100vh;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .lab-container.fullscreen {
+            grid-template-columns: 1fr;
+            grid-template-rows: 70px 1fr 80px;
+            padding: 0;
+            gap: 0;
+        }
+        
+        .header {
+            grid-column: 1 / -1;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .lab-container.fullscreen .header {
+            border-radius: 0;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+        }
+        
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 212, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .left-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .lab-container.fullscreen .left-panel {
+            display: none;
+        }
+        
+        .viewer-container {
+            position: relative;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .lab-container.fullscreen .viewer-container {
+            border-radius: 0;
+        }
+        
+        #canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .viewer-overlay {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            right: 1rem;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            padding: 1rem;
+            z-index: 10;
+        }
+        
+        .step-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .step-description {
+            font-size: 0.9rem;
+            color: var(--light);
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+        
+        .right-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .lab-container.fullscreen .right-panel {
+            display: none;
+        }
+        
+        .controls-bar {
+            grid-column: 1 / -1;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .lab-container.fullscreen .controls-bar {
+            border-radius: 0;
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .control-btn {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1));
+            border: 1px solid rgba(241, 245, 249, 0.2);
+            color: var(--primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .control-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(124, 58, 237, 0.2));
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .control-btn.active {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3));
+            border-color: var(--primary);
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
+        }
+        
+        .step-btn {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(34, 197, 94, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .step-btn:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.2));
+            transform: translateY(-2px);
+        }
+        
+        .step-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .fullscreen-btn {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(124, 58, 237, 0.2));
+            border: 1px solid var(--primary);
+            border-radius: 0.5rem;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        .fullscreen-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3));
+            transform: scale(1.05);
+        }
+        
+        .panel-section {
+            margin-bottom: 2rem;
+        }
+        
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .step-list {
+            list-style: none;
+        }
+        
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .step-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-left-color: var(--primary);
+        }
+        
+        .step-item.active {
+            background: rgba(0, 212, 255, 0.2);
+            border-left-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        }
+        
+        .step-item.completed {
+            background: rgba(16, 185, 129, 0.1);
+            border-left-color: var(--success);
+        }
+        
+        .step-number {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: rgba(0, 212, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .step-item.completed .step-number {
+            background: var(--success);
+            color: white;
+        }
+        
+        .step-item.active .step-number {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .chemical-tag {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin: 0.125rem;
+        }
+        
+        .tag-membrane { background: rgba(255, 107, 157, 0.2); color: var(--cell-membrane); }
+        .tag-nucleus { background: rgba(77, 124, 15, 0.2); color: var(--nucleus); }
+        .tag-dna { background: rgba(59, 130, 246, 0.2); color: var(--dna); }
+        .tag-protein { background: rgba(249, 115, 22, 0.2); color: var(--protein); }
+        .tag-buffer { background: rgba(6, 182, 212, 0.2); color: var(--buffer); }
+        .tag-enzyme { background: rgba(139, 92, 246, 0.2); color: var(--enzyme); }
+        
+        .progress-bar {
+            width: 100%;
+            height: 0.5rem;
+            background: rgba(241, 245, 249, 0.1);
+            border-radius: 0.25rem;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 0.25rem;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        
+        .equipment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .equipment-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: white;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 6, 23, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal-content {
+            background: var(--darker);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.2);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            border-left: 4px solid var(--primary);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .notification.show {
+            opacity: 1;
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .loading-overlay.show {
+            opacity: 1;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(0, 212, 255, 0.3);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .neon-text {
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        
+        /* Scrollbar styling */
+        .left-panel::-webkit-scrollbar,
+        .right-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .left-panel::-webkit-scrollbar-track,
+        .right-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .left-panel::-webkit-scrollbar-thumb,
+        .right-panel::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .lab-container {
+                grid-template-columns: 280px 1fr 250px;
+            }
+        }
+        
+        @media (max-width: 968px) {
+            .lab-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto;
+            }
+            
+            .left-panel,
+            .right-panel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lab-container" id="lab-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <div class="logo neon-text">🧬 DNA Extraction Lab</div>
+                <div class="text-sm opacity-80">Interactive 3D Learning Platform</div>
+            </div>
+            <div class="header-right">
+                <div class="step-indicator">
+                    <i class="fas fa-flask"></i>
+                    <span>Step <span id="current-step-number">1</span> of <span id="total-steps">8</span></span>
+                </div>
+                <div class="text-xs">
+                    <span class="opacity-80">User:</span>
+                    <span class="text-primary">yashmgupta</span>
+                </div>
+                <div class="text-xs">
+                    <span class="opacity-80">Progress:</span>
+                    <span id="progress-percentage" class="text-primary font-mono">0%</span>
+                </div>
+                <button class="fullscreen-btn" id="fullscreen-btn" title="Toggle Fullscreen">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Left Panel: Steps & Equipment -->
+        <div class="left-panel">
+            <!-- Extraction Steps -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-list-ol"></i>
+                    Extraction Steps
+                </div>
+                <ul class="step-list" id="step-list">
+                    <li class="step-item active" onclick="goToStep(1)">
+                        <div class="step-number">1</div>
+                        <div>
+                            <div class="font-medium">Cell Collection</div>
+                            <div class="text-xs opacity-80">Gather biological sample</div>
+                        </div>
+                    </li>
+                    <li class="step-item" onclick="goToStep(2)">
+                        <div class="step-number">2</div>
+                        <div>
+                            <div class="font-medium">Cell Lysis</div>
+                            <div class="text-xs opacity-80">Break cell membranes</div>
+                        </div>
+                    </li>
+                    <li class="step-item" onclick="goToStep(3)">
+                        <div class="step-number">3</div>
+                        <div>
+                            <div class="font-medium">Protein Removal</div>
+                            <div class="text-xs opacity-80">Separate proteins from DNA</div>
+                        </div>
+                    </li>
+                    <li class="step-item" onclick="goToStep(4)">
+                        <div class="step-number">4</div>
+                        <div>
+                            <div class="font-medium">DNA Precipitation</div>
+                            <div class="text-xs opacity-80">Precipitate DNA with alcohol</div>
+                        </div>
+                    </li>
+                    <li class="step-item" onclick="goToStep(5)">
+                        <div class="step-number">5</div>
+                        <div>
+                            <div class="font-medium">DNA Washing</div>
+                            <div class="text-xs opacity-80">Remove impurities</div>
+                        </div>
+                    </li>
+                    <li class="step-item" onclick="goToStep(6)">
+                        <div class="step-number">6</div>
+                        <div>
+                            <div class="font-medium">DNA Drying</div>
+                            <div class="text-xs opacity-80">Remove excess liquid</div>
+                        </div>
+                    </li>
+                    <li class="step-item" onclick="goToStep(7)">
+                        <div class="step-number">7</div>
+                        <div>
+                            <div class="font-medium">DNA Resuspension</div>
+                            <div class="text-xs opacity-80">Dissolve in buffer</div>
+                        </div>
+                    </li>
+                    <li class="step-item" onclick="goToStep(8)">
+                        <div class="step-number">8</div>
+                        <div>
+                            <div class="font-medium">Quality Check</div>
+                            <div class="text-xs opacity-80">Verify DNA integrity</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Equipment & Reagents -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-flask"></i>
+                    Equipment & Reagents
+                </div>
+                <div id="equipment-list">
+                    <div class="equipment-item">
+                        <div class="equipment-icon"><i class="fas fa-vial"></i></div>
+                        <span>Sample Collection Tube</span>
+                    </div>
+                    <div class="equipment-item">
+                        <div class="equipment-icon"><i class="fas fa-tint"></i></div>
+                        <span>Lysis Buffer</span>
+                    </div>
+                    <div class="equipment-item">
+                        <div class="equipment-icon"><i class="fas fa-atom"></i></div>
+                        <span>Protease Enzyme</span>
+                    </div>
+                    <div class="equipment-item">
+                        <div class="equipment-icon"><i class="fas fa-wine-glass"></i></div>
+                        <span>Isopropanol</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chemical Components -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-atom"></i>
+                    Key Components
+                </div>
+                <div class="space-y-2">
+                    <div class="chemical-tag tag-membrane">Cell Membrane</div>
+                    <div class="chemical-tag tag-nucleus">Nuclear Membrane</div>
+                    <div class="chemical-tag tag-dna">DNA Strands</div>
+                    <div class="chemical-tag tag-protein">Histone Proteins</div>
+                    <div class="chemical-tag tag-buffer">Lysis Buffer</div>
+                    <div class="chemical-tag tag-enzyme">Protease Enzymes</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Center Panel: 3D Viewer -->
+        <div class="viewer-container">
+            <div id="canvas-container" style="width: 100%; height: 100%;"></div>
+            
+            <!-- Loading Overlay -->
+            <div class="loading-overlay" id="loading-overlay">
+                <div class="spinner"></div>
+            </div>
+            
+            <!-- Viewer Overlay -->
+            <div class="viewer-overlay">
+                <div class="step-info">
+                    <div class="step-title" id="step-title">Step 1: Cell Collection</div>
+                    <div class="text-xs opacity-70" id="step-timer">Duration: ~5 minutes</div>
+                </div>
+                <div class="step-description" id="step-description">
+                    Collect biological sample containing cells with DNA. Common sources include cheek swabs, blood samples, or plant tissue.
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 12.5%;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel: Details & Analysis -->
+        <div class="right-panel">
+            <!-- Current Step Details -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-microscope"></i>
+                    Step Details
+                </div>
+                <div id="step-details" class="text-sm space-y-3">
+                    <div>
+                        <h4 class="font-medium text-primary mb-1">Objective:</h4>
+                        <p>Obtain a biological sample containing cells with intact DNA.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-primary mb-1">Method:</h4>
+                        <p>Use a sterile swab to collect cells from the inside of the cheek or collect blood/tissue samples.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-primary mb-1">Key Points:</h4>
+                        <ul class="text-xs space-y-1 list-disc list-inside">
+                            <li>Ensure sample sterility</li>
+                            <li>Collect sufficient cell material</li>
+                            <li>Store at appropriate temperature</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Scientific Principles -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    Scientific Principles
+                </div>
+                <div id="scientific-principles" class="text-xs space-y-2">
+                    <div class="p-2 bg-primary/10 rounded">
+                        <div class="font-medium mb-1">Cell Structure:</div>
+                        <div>Eukaryotic cells contain DNA in the nucleus, protected by nuclear and cell membranes.</div>
+                    </div>
+                    <div class="p-2 bg-secondary/10 rounded">
+                        <div class="font-medium mb-1">DNA Organization:</div>
+                        <div>DNA is packaged with histone proteins into chromatin within the nucleus.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Real-time Analysis -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-chart-line"></i>
+                    Analysis
+                </div>
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between">
+                        <span>Cell Viability:</span>
+                        <span id="cell-viability" class="text-success">95%</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>DNA Integrity:</span>
+                        <span id="dna-integrity" class="text-primary">Intact</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Contamination:</span>
+                        <span id="contamination" class="text-warning">Low</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Estimated Yield:</span>
+                        <span id="estimated-yield" class="text-info">50-100 μg</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Learning Objectives -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-bullseye"></i>
+                    Learning Objectives
+                </div>
+                <div class="text-xs space-y-1">
+                    <div>✓ Understand cell structure and DNA location</div>
+                    <div>✓ Learn proper sample collection techniques</div>
+                    <div>✓ Recognize importance of sterile procedures</div>
+                    <div>✓ Identify factors affecting DNA quality</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Controls Bar -->
+        <div class="controls-bar">
+            <div class="control-group">
+                <button id="prev-btn" class="control-btn" title="Previous Step" onclick="previousStep()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button id="play-pause-btn" class="control-btn active" title="Play/Pause Animation" onclick="toggleAnimation()">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button id="next-btn" class="control-btn" title="Next Step" onclick="nextStep()">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            
+            <div class="control-group">
+                <span class="text-sm">Animation Speed:</span>
+                <input type="range" id="speed-control" min="0.1" max="3" step="0.1" value="1" 
+                       class="w-20 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                <span id="speed-display" class="text-xs opacity-80 w-8">1.0x</span>
+            </div>
+            
+            <div class="control-group">
+                <button id="reset-btn" class="control-btn" title="Reset Experiment" onclick="resetExperiment()">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button id="info-btn" class="control-btn" title="Information" onclick="openInfoModal()">
+                    <i class="fas fa-info-circle"></i>
+                </button>
+                <button class="step-btn" onclick="completeStep()">Complete Step</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notification-text"></span>
+    </div>
+    
+    <!-- Information Modal -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold neon-text">DNA Extraction Principles</h2>
+                <button class="text-2xl hover:text-primary transition-colors" onclick="closeInfoModal()">&times;</button>
+            </div>
+            
+            <div class="space-y-4 text-sm">
+                <div>
+                    <h3 class="font-medium mb-2 text-primary">Overview:</h3>
+                    <p>DNA extraction is a molecular biology technique used to isolate DNA from cells. The process involves breaking down cellular structures and separating DNA from other cellular components.</p>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium mb-2 text-primary">Key Steps:</h3>
+                    <ol class="text-xs space-y-1 list-decimal list-inside">
+                        <li><strong>Cell Lysis:</strong> Breaking cell and nuclear membranes</li>
+                        <li><strong>Protein Denaturation:</strong> Removing histone and other proteins</li>
+                        <li><strong>DNA Precipitation:</strong> Using alcohol to precipitate DNA</li>
+                        <li><strong>Purification:</strong> Washing and resuspending pure DNA</li>
+                    </ol>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium mb-2 text-primary">Applications:</h3>
+                    <ul class="text-xs space-y-1 list-disc list-inside">
+                        <li>Genetic testing and diagnostics</li>
+                        <li>Forensic analysis</li>
+                        <li>Research and biotechnology</li>
+                        <li>Evolutionary studies</li>
+                        <li>Medical research</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-medium mb-2 text-primary">Quality Factors:</h3>
+                    <ul class="text-xs space-y-1 list-disc list-inside">
+                        <li>Sample freshness and storage</li>
+                        <li>Contamination prevention</li>
+                        <li>Proper buffer pH and ionic strength</li>
+                        <li>Temperature control</li>
+                        <li>Complete protein removal</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let scene, camera, renderer, controls;
+        let currentStep = 1;
+        let totalSteps = 8;
+        let isAnimating = false;
+        let isFullscreen = false;
+        let animationSpeed = 1;
+        let cellGroup = new THREE.Group();
+        let dnaGroup = new THREE.Group();
+        let reagentGroup = new THREE.Group();
+        
+        // Colors for different components
+        const COLORS = {
+            CELL_MEMBRANE: 0xff6b9d,
+            NUCLEUS: 0x4d7c0f,
+            DNA: 0x3b82f6,
+            PROTEIN: 0xf97316,
+            BUFFER: 0x06b6d4,
+            ENZYME: 0x8b5cf6,
+            ALCOHOL: 0xf1f5f9,
+            BACKGROUND: 0x0f172a
+        };
+        
+        // Step configurations
+        const EXTRACTION_STEPS = {
+            1: {
+                title: "Cell Collection",
+                description: "Collect biological sample containing cells with DNA. Common sources include cheek swabs, blood samples, or plant tissue.",
+                duration: "~5 minutes",
+                objective: "Obtain a biological sample containing cells with intact DNA.",
+                method: "Use a sterile swab to collect cells from the inside of the cheek or collect blood/tissue samples.",
+                keyPoints: [
+                    "Ensure sample sterility",
+                    "Collect sufficient cell material",
+                    "Store at appropriate temperature"
+                ],
+                principles: [
+                    {
+                        title: "Cell Structure",
+                        description: "Eukaryotic cells contain DNA in the nucleus, protected by nuclear and cell membranes."
+                    },
+                    {
+                        title: "DNA Organization",
+                        description: "DNA is packaged with histone proteins into chromatin within the nucleus."
+                    }
+                ]
+            },
+            2: {
+                title: "Cell Lysis",
+                description: "Break down cell and nuclear membranes using lysis buffer to release DNA from cells.",
+                duration: "~10 minutes",
+                objective: "Disrupt cellular membranes to release intracellular contents including DNA.",
+                method: "Add lysis buffer containing detergents and salts. Mix gently and incubate.",
+                keyPoints: [
+                    "Detergents disrupt lipid membranes",
+                    "Salt maintains DNA stability",
+                    "Gentle mixing prevents DNA shearing"
+                ],
+                principles: [
+                    {
+                        title: "Membrane Disruption",
+                        description: "Detergents break down phospholipid bilayers by disrupting hydrophobic interactions."
+                    },
+                    {
+                        title: "Osmotic Pressure",
+                        description: "Hypotonic solutions cause cells to swell and burst, releasing contents."
+                    }
+                ]
+            },
+            3: {
+                title: "Protein Removal",
+                description: "Remove histone proteins and other cellular proteins that are bound to DNA using protease enzymes.",
+                duration: "~15 minutes",
+                objective: "Separate DNA from associated proteins to obtain pure nucleic acids.",
+                method: "Add protease enzymes and incubate at optimal temperature to digest proteins.",
+                keyPoints: [
+                    "Proteases cleave protein bonds",
+                    "Temperature affects enzyme activity",
+                    "Complete protein removal is crucial"
+                ],
+                principles: [
+                    {
+                        title: "Enzyme Action",
+                        description: "Proteases hydrolyze peptide bonds, breaking down proteins into amino acids."
+                    },
+                    {
+                        title: "DNA-Protein Interactions",
+                        description: "Histones and other proteins must be removed to access pure DNA."
+                    }
+                ]
+            },
+            4: {
+                title: "DNA Precipitation",
+                description: "Add cold alcohol (isopropanol or ethanol) to precipitate DNA out of solution.",
+                duration: "~5 minutes",
+                objective: "Concentrate DNA by making it insoluble in alcohol solution.",
+                method: "Slowly add cold isopropanol while gently mixing to precipitate DNA strands.",
+                keyPoints: [
+                    "Cold temperature improves precipitation",
+                    "DNA becomes visible as white strands",
+                    "Gentle mixing prevents DNA damage"
+                ],
+                principles: [
+                    {
+                        title: "Polarity Change",
+                        description: "Alcohol changes solution polarity, making DNA insoluble and causing precipitation."
+                    },
+                    {
+                        title: "Concentration Effect",
+                        description: "High alcohol concentration forces DNA out of solution."
+                    }
+                ]
+            },
+            5: {
+                title: "DNA Washing",
+                description: "Wash precipitated DNA with alcohol to remove impurities and salt residues.",
+                duration: "~3 minutes",
+                objective: "Remove contaminants and purify the DNA sample.",
+                method: "Rinse DNA pellet with 70% ethanol to remove salts and other impurities.",
+                keyPoints: [
+                    "70% ethanol is optimal concentration",
+                    "Removes salt and protein residues",
+                    "Preserves DNA integrity"
+                ],
+                principles: [
+                    {
+                        title: "Selective Dissolution",
+                        description: "70% ethanol dissolves salts and contaminants while keeping DNA insoluble."
+                    },
+                    {
+                        title: "Purification",
+                        description: "Multiple washes increase DNA purity by removing remaining impurities."
+                    }
+                ]
+            },
+            6: {
+                title: "DNA Drying",
+                description: "Remove excess alcohol by air drying or brief centrifugation.",
+                duration: "~10 minutes",
+                objective: "Remove alcohol while preserving DNA structure and integrity.",
+                method: "Allow DNA pellet to air dry until alcohol evaporates completely.",
+                keyPoints: [
+                    "Avoid over-drying DNA",
+                    "Room temperature drying is sufficient",
+                    "DNA should appear translucent when ready"
+                ],
+                principles: [
+                    {
+                        title: "Evaporation",
+                        description: "Alcohol evaporates at room temperature, leaving concentrated DNA."
+                    },
+                    {
+                        title: "Hydration Balance",
+                        description: "DNA needs some moisture to maintain proper structure."
+                    }
+                ]
+            },
+            7: {
+                title: "DNA Resuspension",
+                description: "Dissolve dried DNA in appropriate buffer solution for storage and use.",
+                duration: "~5 minutes",
+                objective: "Dissolve DNA in a stable buffer solution for long-term storage.",
+                method: "Add TE buffer or water to dissolve DNA. Mix gently until completely dissolved.",
+                keyPoints: [
+                    "Use appropriate buffer pH",
+                    "Gentle mixing to avoid shearing",
+                    "Store at proper temperature"
+                ],
+                principles: [
+                    {
+                        title: "Buffer Systems",
+                        description: "TE buffer maintains pH and protects DNA from degradation."
+                    },
+                    {
+                        title: "DNA Stability",
+                        description: "Proper storage conditions preserve DNA integrity over time."
+                    }
+                ]
+            },
+            8: {
+                title: "Quality Check",
+                description: "Verify DNA concentration, purity, and integrity using spectrophotometry or gel electrophoresis.",
+                duration: "~15 minutes",
+                objective: "Assess the quality and quantity of extracted DNA.",
+                method: "Measure DNA concentration and purity using UV spectrophotometry at 260/280 nm.",
+                keyPoints: [
+                    "260/280 ratio indicates purity",
+                    "Concentration determines yield",
+                    "Gel electrophoresis shows integrity"
+                ],
+                principles: [
+                    {
+                        title: "UV Absorption",
+                        description: "DNA absorbs UV light at 260nm, allowing concentration measurement."
+                    },
+                    {
+                        title: "Purity Assessment",
+                        description: "260/280 ratio helps identify protein and other contamination."
+                    }
+                ]
+            }
+        };
+        
+        // Initialize the application
+        function init() {
+            console.log('🧬 DNA Extraction Lab initializing...');
+            console.log('📅 Current Date:', '2025-05-30 05:35:03');
+            console.log('👤 User:', 'yashmgupta');
+            
+            setupThreeJS();
+            setupEventListeners();
+            updateStepDisplay();
+            createStep1Scene();
+            animate();
+            
+            showNotification('Welcome to DNA Extraction Lab! Ready to explore molecular biology.');
+            console.log('✅ DNA Extraction Lab initialization complete');
+        }
+        
+        // Setup Three.js scene
+        function setupThreeJS() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(COLORS.BACKGROUND);
+            scene.fog = new THREE.FogExp2(COLORS.BACKGROUND, 0.001);
+            
+            const container = document.getElementById('canvas-container');
+            const rect = container.getBoundingClientRect();
+            
+            camera = new THREE.PerspectiveCamera(75, rect.width / rect.height, 0.1, 2000);
+            camera.position.set(30, 20, 30);
+            
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(rect.width, rect.height);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.setClearColor(COLORS.BACKGROUND, 1);
+            container.appendChild(renderer.domElement);
+            
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxDistance = 100;
+            controls.minDistance = 5;
+            
+            setupLighting();
+            
+            scene.add(cellGroup);
+            scene.add(dnaGroup);
+            scene.add(reagentGroup);
+        }
+        
+        function setupLighting() {
+            // Ambient light
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            scene.add(ambientLight);
+            
+            // Main directional light
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(50, 50, 50);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            scene.add(directionalLight);
+            
+            // Colored accent lights
+            const blueLight = new THREE.PointLight(COLORS.DNA, 0.3, 100);
+            blueLight.position.set(-20, 20, 20);
+            scene.add(blueLight);
+            
+            const pinkLight = new THREE.PointLight(COLORS.CELL_MEMBRANE, 0.3, 100);
+            pinkLight.position.set(20, -20, -20);
+            scene.add(pinkLight);
+        }
+        
+        function setupEventListeners() {
+            window.addEventListener('resize', onWindowResize);
+            
+            document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
+            document.getElementById('speed-control').addEventListener('input', onSpeedChange);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (event) => {
+                switch (event.key) {
+                    case 'ArrowLeft':
+                        previousStep();
+                        break;
+                    case 'ArrowRight':
+                        nextStep();
+                        break;
+                    case ' ':
+                        event.preventDefault();
+                        toggleAnimation();
+                        break;
+                    case 'r':
+                        resetExperiment();
+                        break;
+                    case 'f':
+                        if (event.ctrlKey) {
+                            event.preventDefault();
+                            toggleFullscreen();
+                        }
+                        break;
+                }
+            });
+        }
+        
+        // Create 3D scene for Step 1: Cell Collection
+        function createStep1Scene() {
+            clearScene();
+            
+            // Create a cell with nucleus
+            const cellGeometry = new THREE.SphereGeometry(8, 32, 32);
+            const cellMaterial = new THREE.MeshPhongMaterial({
+                color: COLORS.CELL_MEMBRANE,
+                transparent: true,
+                opacity: 0.3,
+                side: THREE.DoubleSide
+            });
+            const cell = new THREE.Mesh(cellGeometry, cellMaterial);
+            cellGroup.add(cell);
+            
+            // Create nucleus
+            const nucleusGeometry = new THREE.SphereGeometry(4, 24, 24);
+            const nucleusMaterial = new THREE.MeshPhongMaterial({
+                color: COLORS.NUCLEUS,
+                transparent: true,
+                opacity: 0.5
+            });
+            const nucleus = new THREE.Mesh(nucleusGeometry, nucleusMaterial);
+            cellGroup.add(nucleus);
+            
+            // Create DNA strands inside nucleus
+            for (let i = 0; i < 15; i++) {
+                const dnaStrand = createDNAStrand();
+                dnaStrand.position.set(
+                    (Math.random() - 0.5) * 6,
+                    (Math.random() - 0.5) * 6,
+                    (Math.random() - 0.5) * 6
+                );
+                dnaStrand.rotation.set(
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI
+                );
+                dnaGroup.add(dnaStrand);
+            }
+            
+            // Create collection swab
+            const swabGeometry = new THREE.CylinderGeometry(0.5, 0.5, 15, 8);
+            const swabMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
+            const swab = new THREE.Mesh(swabGeometry, swabMaterial);
+            swab.position.set(15, 0, 0);
+            swab.rotation.z = Math.PI / 2;
+            scene.add(swab);
+            
+            // Animate collection process
+            if (isAnimating) {
+                animateStep1();
+            }
+        }
+        
+        function createDNAStrand() {
+            const curve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-2, -1, 0),
+                new THREE.Vector3(-1, 0, 1),
+                new THREE.Vector3(0, 1, 0),
+                new THREE.Vector3(1, 0, -1),
+                new THREE.Vector3(2, -1, 0)
+            ]);
+            
+            const geometry = new THREE.TubeGeometry(curve, 20, 0.2, 8, false);
+            const material = new THREE.MeshPhongMaterial({
+                color: COLORS.DNA,
+                shininess: 100
+            });
+            
+            return new THREE.Mesh(geometry, material);
+        }
+        
+        function createStep2Scene() {
+            clearScene();
+            
+            // Create multiple cells being lysed
+            for (let i = 0; i < 5; i++) {
+                const cell = createLysedCell();
+                cell.position.set(
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 10,
+                    (Math.random() - 0.5) * 20
+                );
+                cellGroup.add(cell);
+            }
+            
+            // Create lysis buffer particles
+            createBufferParticles();
+            
+            if (isAnimating) {
+                animateStep2();
+            }
+        }
+        
+        function createLysedCell() {
+            const group = new THREE.Group();
+            
+            // Broken cell membrane fragments
+            for (let i = 0; i < 8; i++) {
+                const fragmentGeometry = new THREE.SphereGeometry(1, 8, 8);
+                const fragmentMaterial = new THREE.MeshPhongMaterial({
+                    color: COLORS.CELL_MEMBRANE,
+                    transparent: true,
+                    opacity: 0.6
+                });
+                const fragment = new THREE.Mesh(fragmentGeometry, fragmentMaterial);
+                fragment.position.set(
+                    (Math.random() - 0.5) * 10,
+                    (Math.random() - 0.5) * 10,
+                    (Math.random() - 0.5) * 10
+                );
+                group.add(fragment);
+            }
+            
+            // Released DNA
+            for (let i = 0; i < 3; i++) {
+                const dna = createDNAStrand();
+                dna.position.set(
+                    (Math.random() - 0.5) * 8,
+                    (Math.random() - 0.5) * 8,
+                    (Math.random() - 0.5) * 8
+                );
+                group.add(dna);
+            }
+            
+            return group;
+        }
+        
+        function createBufferParticles() {
+            const particleGeometry = new THREE.SphereGeometry(0.3, 8, 8);
+            const particleMaterial = new THREE.MeshPhongMaterial({
+                color: COLORS.BUFFER,
+                transparent: true,
+                opacity: 0.7
+            });
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+                particle.position.set(
+                    (Math.random() - 0.5) * 40,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 40
+                );
+                reagentGroup.add(particle);
+            }
+        }
+        
+        function createStep3Scene() {
+            clearScene();
+            
+            // Create DNA with attached proteins
+            const dnaWithProteins = createDNAWithProteins();
+            dnaGroup.add(dnaWithProteins);
+            
+            // Create protease enzymes
+            createProteaseEnzymes();
+            
+            if (isAnimating) {
+                animateStep3();
+            }
+        }
+        
+        function createDNAWithProteins() {
+            const group = new THREE.Group();
+            
+            // Main DNA strand
+            const dnaStrand = createDNAStrand();
+            dnaStrand.scale.set(2, 2, 2);
+            group.add(dnaStrand);
+            
+            // Histone proteins attached to DNA
+            for (let i = 0; i < 12; i++) {
+                const proteinGeometry = new THREE.OctahedronGeometry(0.8);
+                const proteinMaterial = new THREE.MeshPhongMaterial({
+                    color: COLORS.PROTEIN,
+                    shininess: 50
+                });
+                const protein = new THREE.Mesh(proteinGeometry, proteinMaterial);
+                protein.position.set(
+                    (Math.random() - 0.5) * 8,
+                    (Math.random() - 0.5) * 4,
+                    (Math.random() - 0.5) * 8
+                );
+                group.add(protein);
+            }
+            
+            return group;
+        }
+        
+        function createProteaseEnzymes() {
+            const enzymeGeometry = new THREE.DodecahedronGeometry(0.6);
+            const enzymeMaterial = new THREE.MeshPhongMaterial({
+                color: COLORS.ENZYME,
+                shininess: 100
+            });
+            
+            for (let i = 0; i < 20; i++) {
+                const enzyme = new THREE.Mesh(enzymeGeometry, enzymeMaterial);
+                enzyme.position.set(
+                    (Math.random() - 0.5) * 30,
+                    (Math.random() - 0.5) * 15,
+                    (Math.random() - 0.5) * 30
+                );
+                reagentGroup.add(enzyme);
+            }
+        }
+        
+        function createStep4Scene() {
+            clearScene();
+            
+            // Create DNA in solution
+            for (let i = 0; i < 8; i++) {
+                const dna = createDNAStrand();
+                dna.position.set(
+                    (Math.random() - 0.5) * 15,
+                    (Math.random() - 0.5) * 10,
+                    (Math.random() - 0.5) * 15
+                );
+                dnaGroup.add(dna);
+            }
+            
+            // Create alcohol molecules
+            createAlcoholMolecules();
+            
+            // Create precipitated DNA clump
+            const precipitateGeometry = new THREE.SphereGeometry(3, 16, 16);
+            const precipitateMaterial = new THREE.MeshPhongMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.8
+            });
+            const precipitate = new THREE.Mesh(precipitateGeometry, precipitateMaterial);
+            precipitate.position.set(0, -5, 0);
+            dnaGroup.add(precipitate);
+            
+            if (isAnimating) {
+                animateStep4();
+            }
+        }
+        
+        function createAlcoholMolecules() {
+            const alcoholGeometry = new THREE.SphereGeometry(0.4, 8, 8);
+            const alcoholMaterial = new THREE.MeshPhongMaterial({
+                color: COLORS.ALCOHOL,
+                transparent: true,
+                opacity: 0.6
+            });
+            
+            for (let i = 0; i < 100; i++) {
+                const alcohol = new THREE.Mesh(alcoholGeometry, alcoholMaterial);
+                alcohol.position.set(
+                    (Math.random() - 0.5) * 40,
+                    Math.random() * 20,
+                    (Math.random() - 0.5) * 40
+                );
+                reagentGroup.add(alcohol);
+            }
+        }
+        
+        // Animation functions for each step
+        function animateStep1() {
+            // Animate cell collection - swab movement and cell capture
+            const time = Date.now() * 0.001 * animationSpeed;
+            
+            cellGroup.children.forEach((child, index) => {
+                if (child.geometry && child.geometry.type === 'SphereGeometry') {
+                    child.rotation.y = time * 0.5 + index;
+                    child.scale.setScalar(1 + Math.sin(time * 2 + index) * 0.1);
+                }
+            });
+            
+            dnaGroup.children.forEach((child, index) => {
+                child.rotation.x = time * 0.3 + index * 0.1;
+                child.rotation.z = time * 0.2 + index * 0.15;
+            });
+        }
+        
+        function animateStep2() {
+            // Animate cell lysis - membrane breakdown
+            const time = Date.now() * 0.001 * animationSpeed;
+            
+            cellGroup.children.forEach((child, index) => {
+                child.rotation.y = time * 0.8 + index;
+                child.children.forEach((fragment, fragIndex) => {
+                    const distance = Math.sin(time * 2 + fragIndex) * 2;
+                    fragment.position.setLength(fragment.position.length() + distance * 0.01);
+                });
+            });
+            
+            reagentGroup.children.forEach((particle, index) => {
+                particle.position.x += Math.sin(time * 3 + index) * 0.02;
+                particle.position.z += Math.cos(time * 2 + index) * 0.02;
+            });
+        }
+        
+        function animateStep3() {
+            // Animate protein removal - enzymes attacking proteins
+            const time = Date.now() * 0.001 * animationSpeed;
+            
+            reagentGroup.children.forEach((enzyme, index) => {
+                enzyme.position.x += Math.sin(time * 4 + index) * 0.03;
+                enzyme.position.y += Math.cos(time * 3 + index) * 0.02;
+                enzyme.rotation.x = time * 2 + index;
+                enzyme.rotation.y = time * 1.5 + index;
+            });
+            
+            dnaGroup.children.forEach((group) => {
+                if (group.children) {
+                    group.children.forEach((child, index) => {
+                        if (child.material && child.material.color.getHex() === COLORS.PROTEIN) {
+                            child.scale.setScalar(Math.max(0.1, 1 - time * 0.1));
+                            child.material.opacity = Math.max(0, 1 - time * 0.2);
+                        }
+                    });
+                }
+            });
+        }
+        
+        function animateStep4() {
+            // Animate DNA precipitation
+            const time = Date.now() * 0.001 * animationSpeed;
+            
+            dnaGroup.children.forEach((child, index) => {
+                if (child.position.y > -4) {
+                    child.position.y -= 0.02 * animationSpeed;
+                }
+                child.rotation.x = time * 0.5 + index;
+            });
+            
+            reagentGroup.children.forEach((alcohol, index) => {
+                alcohol.position.y -= 0.01 * animationSpeed;
+                if (alcohol.position.y < -10) {
+                    alcohol.position.y = 20;
+                }
+            });
+        }
+        
+        // Step navigation functions
+        function goToStep(stepNumber) {
+            if (stepNumber < 1 || stepNumber > totalSteps) return;
+            
+            currentStep = stepNumber;
+            updateStepDisplay();
+            updateStepList();
+            updateProgressBar();
+            
+            // Create appropriate scene for the step
+            switch (stepNumber) {
+                case 1:
+                    createStep1Scene();
+                    break;
+                case 2:
+                    createStep2Scene();
+                    break;
+                case 3:
+                    createStep3Scene();
+                    break;
+                case 4:
+                    createStep4Scene();
+                    break;
+                case 5:
+                    createStep5Scene();
+                    break;
+                case 6:
+                    createStep6Scene();
+                    break;
+                case 7:
+                    createStep7Scene();
+                    break;
+                case 8:
+                    createStep8Scene();
+                    break;
+            }
+            
+            showNotification(`Step ${stepNumber}: ${EXTRACTION_STEPS[stepNumber].title}`);
+        }
+        
+        function createStep5Scene() {
+            clearScene();
+            
+            // Create DNA pellet being washed
+            const pelletGeometry = new THREE.SphereGeometry(2, 16, 16);
+            const pelletMaterial = new THREE.MeshPhongMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.9
+            });
+            const pellet = new THREE.Mesh(pelletGeometry, pelletMaterial);
+            pellet.position.set(0, -3, 0);
+            dnaGroup.add(pellet);
+            
+            // Create washing ethanol
+            createWashingEthanol();
+            
+            // Create impurity particles being removed
+            createImpurityParticles();
+            
+            if (isAnimating) {
+                animateStep5();
+            }
+        }
+        
+        function createStep6Scene() {
+            clearScene();
+            
+            // Create drying DNA pellet
+            const dryingPelletGeometry = new THREE.SphereGeometry(1.5, 16, 16);
+            const dryingPelletMaterial = new THREE.MeshPhongMaterial({
+                color: 0xf0f0f0,
+                transparent: true,
+                opacity: 0.95
+            });
+            const dryingPellet = new THREE.Mesh(dryingPelletGeometry, dryingPelletMaterial);
+            dryingPellet.position.set(0, -2, 0);
+            dnaGroup.add(dryingPellet);
+            
+            // Create evaporating alcohol molecules
+            createEvaporatingAlcohol();
+            
+            if (isAnimating) {
+                animateStep6();
+            }
+        }
+        
+        function createStep7Scene() {
+            clearScene();
+            
+            // Create resuspended DNA solution
+            const solutionGeometry = new THREE.CylinderGeometry(4, 4, 8, 32);
+            const solutionMaterial = new THREE.MeshPhongMaterial({
+                color: COLORS.BUFFER,
+                transparent: true,
+                opacity: 0.3
+            });
+            const solution = new THREE.Mesh(solutionGeometry, solutionMaterial);
+            solution.position.set(0, 0, 0);
+            scene.add(solution);
+            
+            // Create dissolved DNA strands
+            for (let i = 0; i < 10; i++) {
+                const dna = createDNAStrand();
+                dna.position.set(
+                    (Math.random() - 0.5) * 6,
+                    (Math.random() - 0.5) * 6,
+                    (Math.random() - 0.5) * 6
+                );
+                dna.scale.set(0.8, 0.8, 0.8);
+                dnaGroup.add(dna);
+            }
+            
+            // Create buffer molecules
+            createBufferMolecules();
+            
+            if (isAnimating) {
+                animateStep7();
+            }
+        }
+        
+        function createStep8Scene() {
+            clearScene();
+            
+            // Create spectrophotometer representation
+            const spectrometerGeometry = new THREE.BoxGeometry(8, 4, 6);
+            const spectrometerMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
+            const spectrometer = new THREE.Mesh(spectrometerGeometry, spectrometerMaterial);
+            spectrometer.position.set(0, 0, 0);
+            scene.add(spectrometer);
+            
+            // Create light beam
+            const beamGeometry = new THREE.CylinderGeometry(0.2, 0.2, 12, 8);
+            const beamMaterial = new THREE.MeshBasicMaterial({
+                color: 0x00ff00,
+                transparent: true,
+                opacity: 0.8
+            });
+            const beam = new THREE.Mesh(beamGeometry, beamMaterial);
+            beam.rotation.z = Math.PI / 2;
+            beam.position.set(0, 1, 0);
+            scene.add(beam);
+            
+            // Create DNA sample cuvette
+            const cuvetteGeometry = new THREE.BoxGeometry(1, 3, 1);
+            const cuvetteMaterial = new THREE.MeshPhongMaterial({
+                color: COLORS.DNA,
+                transparent: true,
+                opacity: 0.7
+            });
+            const cuvette = new THREE.Mesh(cuvetteGeometry, cuvetteMaterial);
+            cuvette.position.set(0, 1, 0);
+            scene.add(cuvette);
+            
+            // Create quality indicators
+            createQualityIndicators();
+            
+            if (isAnimating) {
+                animateStep8();
+            }
+        }
+        
+        function createWashingEthanol() {
+            const ethanolGeometry = new THREE.SphereGeometry(0.3, 8, 8);
+            const ethanolMaterial = new THREE.MeshPhongMaterial({
+                color: 0x87ceeb,
+                transparent: true,
+                opacity: 0.7
+            });
+            
+            for (let i = 0; i < 60; i++) {
+                const ethanol = new THREE.Mesh(ethanolGeometry, ethanolMaterial);
+                ethanol.position.set(
+                    (Math.random() - 0.5) * 20,
+                    Math.random() * 15 + 5,
+                    (Math.random() - 0.5) * 20
+                );
+                reagentGroup.add(ethanol);
+            }
+        }
+        
+        function createImpurityParticles() {
+            const impurityGeometry = new THREE.SphereGeometry(0.2, 6, 6);
+            const impurityMaterial = new THREE.MeshPhongMaterial({
+                color: 0x8b4513,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            for (let i = 0; i < 30; i++) {
+                const impurity = new THREE.Mesh(impurityGeometry, impurityMaterial);
+                impurity.position.set(
+                    (Math.random() - 0.5) * 8,
+                    Math.random() * 5,
+                    (Math.random() - 0.5) * 8
+                );
+                reagentGroup.add(impurity);
+            }
+        }
+        
+        function createEvaporatingAlcohol() {
+            const vaporGeometry = new THREE.SphereGeometry(0.15, 6, 6);
+            const vaporMaterial = new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.5
+            });
+            
+            for (let i = 0; i < 40; i++) {
+                const vapor = new THREE.Mesh(vaporGeometry, vaporMaterial);
+                vapor.position.set(
+                    (Math.random() - 0.5) * 10,
+                    Math.random() * 15,
+                    (Math.random() - 0.5) * 10
+                );
+                reagentGroup.add(vapor);
+            }
+        }
+        
+        function createBufferMolecules() {
+            const bufferGeometry = new THREE.SphereGeometry(0.25, 8, 8);
+            const bufferMaterial = new THREE.MeshPhongMaterial({
+                color: COLORS.BUFFER,
+                transparent: true,
+                opacity: 0.6
+            });
+            
+            for (let i = 0; i < 50; i++) {
+                const buffer = new THREE.Mesh(bufferGeometry, bufferMaterial);
+                buffer.position.set(
+                    (Math.random() - 0.5) * 8,
+                    (Math.random() - 0.5) * 8,
+                    (Math.random() - 0.5) * 8
+                );
+                reagentGroup.add(buffer);
+            }
+        }
+        
+        function createQualityIndicators() {
+            // Create data visualization particles
+            const dataGeometry = new THREE.SphereGeometry(0.1, 6, 6);
+            const dataMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            
+            for (let i = 0; i < 20; i++) {
+                const dataPoint = new THREE.Mesh(dataGeometry, dataMaterial);
+                dataPoint.position.set(
+                    i * 0.5 - 5,
+                    Math.sin(i * 0.5) * 2,
+                    5
+                );
+                scene.add(dataPoint);
+            }
+        }
+        
+        // Additional animation functions
+        function animateStep5() {
+            const time = Date.now() * 0.001 * animationSpeed;
+            
+            // Animate washing flow
+            reagentGroup.children.forEach((particle, index) => {
+                if (particle.material.color.getHex() === 0x87ceeb) { // Ethanol
+                    particle.position.y -= 0.03 * animationSpeed;
+                    if (particle.position.y < -5) {
+                        particle.position.y = 20;
+                    }
+                } else { // Impurities
+                    particle.position.y -= 0.05 * animationSpeed;
+                    particle.material.opacity = Math.max(0, particle.material.opacity - 0.001 * animationSpeed);
+                }
+            });
+            
+            // DNA pellet washing effect
+            dnaGroup.children.forEach(child => {
+                child.material.opacity = 0.9 + Math.sin(time * 3) * 0.1;
+            });
+        }
+        
+        function animateStep6() {
+            const time = Date.now() * 0.001 * animationSpeed;
+            
+            // Animate evaporation
+            reagentGroup.children.forEach((vapor, index) => {
+                vapor.position.y += 0.02 * animationSpeed;
+                vapor.material.opacity = Math.max(0, 0.5 - vapor.position.y * 0.02);
+                if (vapor.position.y > 20) {
+                    vapor.position.y = 0;
+                    vapor.material.opacity = 0.5;
+                }
+            });
+            
+            // DNA pellet drying effect
+            dnaGroup.children.forEach(child => {
+                const dryness = Math.min(1, time * 0.1);
+                child.material.opacity = 0.95 - dryness * 0.2;
+                child.scale.setScalar(1 - dryness * 0.1);
+            });
+        }
+        
+        function animateStep7() {
+            const time = Date.now() * 0.001 * animationSpeed;
+            
+            // Animate DNA dissolution
+            dnaGroup.children.forEach((dna, index) => {
+                dna.rotation.x = time * 0.5 + index * 0.1;
+                dna.rotation.y = time * 0.3 + index * 0.15;
+                dna.position.x += Math.sin(time * 2 + index) * 0.01;
+                dna.position.z += Math.cos(time * 1.5 + index) * 0.01;
+            });
+            
+            // Animate buffer mixing
+            reagentGroup.children.forEach((buffer, index) => {
+                const radius = 3;
+                const angle = time + index * 0.1;
+                buffer.position.x = Math.cos(angle) * radius;
+                buffer.position.z = Math.sin(angle) * radius;
+                buffer.position.y = Math.sin(time * 3 + index) * 2;
+            });
+        }
+        
+        function animateStep8() {
+            const time = Date.now() * 0.001 * animationSpeed;
+            
+            // Animate spectrophotometer light
+            scene.children.forEach(child => {
+                if (child.material && child.material.color.getHex() === 0x00ff00) {
+                    child.material.opacity = 0.8 + Math.sin(time * 5) * 0.2;
+                }
+            });
+            
+            // Animate quality data visualization
+            scene.children.forEach((child, index) => {
+                if (child.position.z === 5) { // Data points
+                    child.position.y = Math.sin(time * 2 + index * 0.5) * 2 + Math.random() * 0.5;
+                    child.scale.setScalar(1 + Math.sin(time * 4 + index) * 0.2);
+                }
+            });
+        }
+        
+        function clearScene() {
+            // Clear all groups
+            cellGroup.clear();
+            dnaGroup.clear();
+            reagentGroup.clear();
+            
+            // Remove any additional objects
+            const objectsToRemove = [];
+            scene.traverse((child) => {
+                if (child.isMesh && !child.parent.isGroup) {
+                    objectsToRemove.push(child);
+                }
+            });
+            
+            objectsToRemove.forEach(obj => {
+                scene.remove(obj);
+            });
+        }
+        
+        function updateStepDisplay() {
+            const step = EXTRACTION_STEPS[currentStep];
+            
+            document.getElementById('current-step-number').textContent = currentStep;
+            document.getElementById('step-title').textContent = `Step ${currentStep}: ${step.title}`;
+            document.getElementById('step-description').textContent = step.description;
+            document.getElementById('step-timer').textContent = `Duration: ${step.duration}`;
+            
+            // Update step details in right panel
+            const stepDetailsElement = document.getElementById('step-details');
+            stepDetailsElement.innerHTML = `
+                <div>
+                    <h4 class="font-medium text-primary mb-1">Objective:</h4>
+                    <p>${step.objective}</p>
+                </div>
+                <div>
+                    <h4 class="font-medium text-primary mb-1">Method:</h4>
+                    <p>${step.method}</p>
+                </div>
+                <div>
+                    <h4 class="font-medium text-primary mb-1">Key Points:</h4>
+                    <ul class="text-xs space-y-1 list-disc list-inside">
+                        ${step.keyPoints.map(point => `<li>${point}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            
+            // Update scientific principles
+            const principlesElement = document.getElementById('scientific-principles');
+            principlesElement.innerHTML = step.principles.map(principle => `
+                <div class="p-2 bg-primary/10 rounded">
+                    <div class="font-medium mb-1">${principle.title}:</div>
+                    <div>${principle.description}</div>
+                </div>
+            `).join('');
+            
+            // Update analysis data based on step
+            updateAnalysisData();
+        }
+        
+        function updateStepList() {
+            const stepItems = document.querySelectorAll('.step-item');
+            stepItems.forEach((item, index) => {
+                const stepNumber = index + 1;
+                item.classList.remove('active', 'completed');
+                
+                if (stepNumber === currentStep) {
+                    item.classList.add('active');
+                } else if (stepNumber < currentStep) {
+                    item.classList.add('completed');
+                }
+            });
+        }
+        
+        function updateProgressBar() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            document.getElementById('progress-percentage').textContent = `${Math.round(progress)}%`;
+        }
+        
+        function updateAnalysisData() {
+            const analysisData = {
+                1: { viability: '95%', integrity: 'Intact', contamination: 'Low', yield: '50-100 μg' },
+                2: { viability: '85%', integrity: 'Released', contamination: 'Moderate', yield: '45-95 μg' },
+                3: { viability: '80%', integrity: 'Purifying', contamination: 'Reducing', yield: '40-90 μg' },
+                4: { viability: '75%', integrity: 'Precipitated', contamination: 'Low', yield: '35-85 μg' },
+                5: { viability: '70%', integrity: 'Washed', contamination: 'Very Low', yield: '30-80 μg' },
+                6: { viability: '90%', integrity: 'Concentrated', contamination: 'Minimal', yield: '25-75 μg' },
+                7: { viability: '95%', integrity: 'Dissolved', contamination: 'Minimal', yield: '20-70 μg' },
+                8: { viability: '98%', integrity: 'Verified', contamination: 'None', yield: '20-65 μg' }
+            };
+            
+            const data = analysisData[currentStep];
+            document.getElementById('cell-viability').textContent = data.viability;
+            document.getElementById('dna-integrity').textContent = data.integrity;
+            document.getElementById('contamination').textContent = data.contamination;
+            document.getElementById('estimated-yield').textContent = data.yield;
+        }
+        
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                goToStep(currentStep + 1);
+            }
+        }
+        
+        function previousStep() {
+            if (currentStep > 1) {
+                goToStep(currentStep - 1);
+            }
+        }
+        
+        function completeStep() {
+            if (currentStep < totalSteps) {
+                showNotification(`Step ${currentStep} completed successfully!`);
+                nextStep();
+            } else {
+                showNotification('Congratulations! DNA extraction process completed successfully!');
+                // Show completion modal or certificate
+                showCompletionModal();
+            }
+        }
+        
+        function showCompletionModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="text-center">
+                        <h2 class="text-2xl font-bold neon-text mb-4">🎉 Extraction Complete!</h2>
+                        <p class="text-lg mb-4">Congratulations, yashmgupta!</p>
+                        <p class="mb-6">You have successfully completed the DNA extraction process. Your understanding of molecular biology techniques has been enhanced!</p>
+                        <div class="space-y-2 text-sm">
+                            <div>✅ All 8 extraction steps completed</div>
+                            <div>✅ Scientific principles understood</div>
+                            <div>✅ Laboratory techniques mastered</div>
+                        </div>
+                        <button onclick="closeCompletionModal()" class="mt-6 step-btn">Continue Learning</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            window.closeCompletionModal = () => {
+                document.body.removeChild(modal);
+                resetExperiment();
+            };
+        }
+        
+        function resetExperiment() {
+            currentStep = 1;
+            isAnimating = false;
+            
+            document.getElementById('play-pause-btn').classList.remove('active');
+            document.getElementById('play-pause-btn').innerHTML = '<i class="fas fa-play"></i>';
+            
+            updateStepDisplay();
+            updateStepList();
+            updateProgressBar();
+            goToStep(1);
+            
+            showNotification('Experiment reset to beginning');
+        }
+        
+        function toggleAnimation() {
+            isAnimating = !isAnimating;
+            const btn = document.getElementById('play-pause-btn');
+            btn.classList.toggle('active');
+            
+            const icon = btn.querySelector('i');
+            icon.className = isAnimating ? 'fas fa-pause' : 'fas fa-play';
+            
+            showNotification(isAnimating ? 'Animation started' : 'Animation paused');
+        }
+        
+        function toggleFullscreen() {
+            isFullscreen = !isFullscreen;
+            const container = document.getElementById('lab-container');
+            const btn = document.getElementById('fullscreen-btn');
+            const icon = btn.querySelector('i');
+            
+            if (isFullscreen) {
+                container.classList.add('fullscreen');
+                icon.className = 'fas fa-compress';
+                showNotification('Fullscreen mode activated');
+            } else {
+                container.classList.remove('fullscreen');
+                icon.className = 'fas fa-expand';
+                showNotification('Dashboard mode restored');
+            }
+            
+            setTimeout(onWindowResize, 100);
+        }
+        
+        function onSpeedChange() {
+            const speedControl = document.getElementById('speed-control');
+            animationSpeed = parseFloat(speedControl.value);
+            document.getElementById('speed-display').textContent = animationSpeed.toFixed(1) + 'x';
+        }
+        
+        function onWindowResize() {
+            const container = document.getElementById('canvas-container');
+            if (!container) return;
+            
+            const rect = container.getBoundingClientRect();
+            camera.aspect = rect.width / rect.height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(rect.width, rect.height);
+        }
+        
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const text = document.getElementById('notification-text');
+            
+            text.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        function openInfoModal() {
+            document.getElementById('infoModal').classList.add('active');
+        }
+        
+        function closeInfoModal() {
+            document.getElementById('infoModal').classList.remove('active');
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            controls.update();
+            
+            // Run step-specific animations
+            if (isAnimating) {
+                switch (currentStep) {
+                    case 1: animateStep1(); break;
+                    case 2: animateStep2(); break;
+                    case 3: animateStep3(); break;
+                    case 4: animateStep4(); break;
+                    case 5: animateStep5(); break;
+                    case 6: animateStep6(); break;
+                    case 7: animateStep7(); break;
+                    case 8: animateStep8(); break;
+                }
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🧬 DNA Extraction Lab initializing...');
+            console.log('📅 Current Date:', '2025-05-30 05:39:13');
+            console.log('👤 User:', 'yashmgupta');
+            
+            init();
+            
+            // Welcome message
+            setTimeout(() => {
+                showNotification(`Welcome to DNA Extraction Lab, yashmgupta! Ready to learn molecular biology.`);
+            }, 1000);
+            
+            console.log('✅ DNA Extraction Lab initialization complete');
+        });
+        
+        // Cleanup
+        window.addEventListener('beforeunload', () => {
+            if (renderer) {
+                renderer.dispose();
+            }
+            if (scene) {
+                scene.clear();
+            }
+        });
+        
+        // Error handling
+        window.addEventListener('error', (event) => {
+            console.error('DNA Extraction Lab Error:', event.error);
+            showNotification('An error occurred. Please refresh the page.');
+        });
+    </script>
+</body>
+</html>
