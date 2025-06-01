@@ -1,0 +1,1941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genome Assembly Education Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --read-color: #8b5cf6;
+            --contig-color: #06b6d4;
+            --scaffold-color: #10b981;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f1f5f9;
+            --panel-bg: rgba(15, 23, 42, 0.85);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        .platform-container {
+            display: grid;
+            grid-template-columns: 350px 1fr 320px;
+            grid-template-rows: 80px 1fr;
+            height: 100vh;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .platform-container.fullscreen {
+            grid-template-columns: 1fr;
+            grid-template-rows: 80px 1fr;
+            padding: 0;
+            gap: 0;
+        }
+        
+        .header {
+            grid-column: 1 / -1;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .platform-container.fullscreen .header {
+            border-radius: 0;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .logo {
+            font-size: 1.6rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+        }
+        
+        .assembly-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(0, 212, 255, 0.1);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .assembly-progress {
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .left-panel, .right-panel, .main-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .platform-container.fullscreen .left-panel,
+        .platform-container.fullscreen .right-panel {
+            display: none;
+        }
+        
+        .platform-container.fullscreen .main-panel {
+            border-radius: 0;
+        }
+        
+        /* Flowchart Styles */
+        .flowchart-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            position: relative;
+            min-height: 400px;
+        }
+        
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .flowchart-step {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            min-width: 250px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .flowchart-step.active {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3));
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .flowchart-step.completed {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.2));
+            border-color: var(--success);
+        }
+        
+        .flowchart-step-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .flowchart-step-desc {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+        
+        .flowchart-arrow {
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(180deg, var(--primary), transparent);
+            position: relative;
+        }
+        
+        .flowchart-arrow::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: -3px;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 8px solid var(--primary);
+        }
+        
+        /* Assembly Visualization */
+        .assembly-visualization {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            min-height: 400px;
+        }
+        
+        .reads-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            min-height: 150px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .read-fragment {
+            position: absolute;
+            height: 8px;
+            background: var(--read-color);
+            border-radius: 4px;
+            opacity: 0.8;
+            transition: all 0.5s ease;
+            border: 1px solid rgba(139, 92, 246, 0.5);
+        }
+        
+        .contig-display {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            min-height: 100px;
+            position: relative;
+        }
+        
+        .contig {
+            height: 15px;
+            background: var(--contig-color);
+            border-radius: 7px;
+            margin: 5px 0;
+            position: relative;
+            transition: all 0.5s ease;
+            border: 1px solid rgba(6, 182, 212, 0.5);
+        }
+        
+        .scaffold {
+            height: 20px;
+            background: var(--scaffold-color);
+            border-radius: 10px;
+            margin: 10px 0;
+            position: relative;
+            transition: all 0.5s ease;
+            border: 1px solid rgba(16, 185, 129, 0.5);
+        }
+        
+        .gap {
+            height: 3px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--warning),
+                var(--warning) 5px,
+                transparent 5px,
+                transparent 10px
+            );
+            margin: 8px 0;
+            border-radius: 1px;
+        }
+        
+        /* FASTQ File Display */
+        .fastq-display {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            line-height: 1.2;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .fastq-header {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .fastq-sequence {
+            color: var(--success);
+            word-break: break-all;
+        }
+        
+        .fastq-plus {
+            color: var(--warning);
+        }
+        
+        .fastq-quality {
+            color: var(--info);
+            word-break: break-all;
+        }
+        
+        /* Statistics Display */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .stat-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+        
+        /* Fixed Control Panel */
+        .fixed-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .control-btn {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1));
+            border: 1px solid rgba(241, 245, 249, 0.2);
+            color: var(--primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .control-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(124, 58, 237, 0.2));
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .control-btn.active {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3));
+            border-color: var(--primary);
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
+        }
+        
+        .assembly-btn {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(34, 197, 94, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+            padding: 0.875rem 2rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .assembly-btn:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.2));
+            transform: translateY(-2px);
+        }
+        
+        .assembly-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .fullscreen-btn {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(124, 58, 237, 0.2));
+            border: 1px solid var(--primary);
+            border-radius: 0.5rem;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        .fullscreen-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3));
+            transform: scale(1.05);
+        }
+        
+        .panel-section {
+            margin-bottom: 2rem;
+        }
+        
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .data-display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(241, 245, 249, 0.1);
+        }
+        
+        .data-row:last-child {
+            border-bottom: none;
+        }
+        
+        .method-btn {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            color: var(--secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        
+        .method-btn:hover {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(139, 92, 246, 0.2));
+            transform: translateY(-1px);
+        }
+        
+        .method-btn.active {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(139, 92, 246, 0.3));
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            border-left: 4px solid var(--primary);
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .notification.show {
+            opacity: 1;
+        }
+        
+        .progress-indicator {
+            width: 100%;
+            height: 0.5rem;
+            background: rgba(241, 245, 249, 0.1);
+            border-radius: 0.25rem;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 0.25rem;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        
+        .phase-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        /* Animation keyframes */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 212, 255, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.6); }
+        }
+        
+        .glow-animation {
+            animation: glow 1.5s infinite;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes assembleReads {
+            0% { transform: translateX(-20px); opacity: 0; }
+            50% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(0); opacity: 0.8; }
+        }
+        
+        .assembling {
+            animation: assembleReads 1s ease-in-out;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .platform-container {
+                grid-template-columns: 300px 1fr 280px;
+            }
+        }
+        
+        @media (max-width: 968px) {
+            .platform-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+            
+            .left-panel,
+            .right-panel {
+                display: none;
+            }
+            
+            .header-center {
+                display: none;
+            }
+            
+            .fixed-controls {
+                flex-wrap: wrap;
+                padding: 0.75rem 1rem;
+            }
+        }
+        
+        /* Scrollbar styling */
+        .left-panel::-webkit-scrollbar,
+        .right-panel::-webkit-scrollbar,
+        .main-panel::-webkit-scrollbar,
+        .fastq-display::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .left-panel::-webkit-scrollbar-track,
+        .right-panel::-webkit-scrollbar-track,
+        .main-panel::-webkit-scrollbar-track,
+        .fastq-display::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .left-panel::-webkit-scrollbar-thumb,
+        .right-panel::-webkit-scrollbar-thumb,
+        .main-panel::-webkit-scrollbar-thumb,
+        .fastq-display::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="platform-container" id="platform-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <div class="logo">🧬 Genome Assembly</div>
+                <div class="text-sm opacity-80">From FASTQ to Assembled Genome</div>
+            </div>
+            <div class="header-center">
+                <div class="assembly-status">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <span>Step <span id="current-step">1</span> of <span id="total-steps">7</span></span>
+                </div>
+                <div class="assembly-progress" id="assembly-progress">
+                    0%
+                </div>
+                <div class="text-sm" id="current-phase-name">
+                    FASTQ Processing
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="text-xs">
+                    <span class="opacity-80">User:</span>
+                    <span class="text-primary">yashmgupta</span>
+                </div>
+                <div class="text-xs">
+                    <span class="opacity-80">Time:</span>
+                    <span class="text-primary font-mono">2025-06-01 05:54:00</span>
+                </div>
+                <button class="fullscreen-btn" id="fullscreen-btn" title="Toggle Fullscreen">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Left Panel: Input & Parameters -->
+        <div class="left-panel">
+            <!-- FASTQ Input -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-file-alt"></i>
+                    FASTQ Input
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-2">Sequencing Data:</label>
+                    <div class="data-display">
+                        <div class="data-row">
+                            <span>File Format:</span>
+                            <span class="text-success">FASTQ</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Read Count:</span>
+                            <span id="read-count" class="text-primary font-mono">10,000</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Read Length:</span>
+                            <span id="read-length" class="text-info">150 bp</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Coverage:</span>
+                            <span id="coverage" class="text-warning">30x</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 gap-2 mb-3">
+                    <button class="method-btn active" onclick="loadDataset('bacterial')">
+                        <i class="fas fa-bacteria"></i> Bacterial Genome (5 Mb)
+                    </button>
+                    <button class="method-btn" onclick="loadDataset('viral')">
+                        <i class="fas fa-virus"></i> Viral Genome (30 kb)
+                    </button>
+                    <button class="method-btn" onclick="loadDataset('plasmid')">
+                        <i class="fas fa-circle"></i> Plasmid (10 kb)
+                    </button>
+                    <button class="method-btn" onclick="loadDataset('human_chr')">
+                        <i class="fas fa-dna"></i> Human Chromosome
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Assembly Methods -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-cogs"></i>
+                    Assembly Method
+                </div>
+                <div class="space-y-2">
+                    <button class="method-btn active" id="overlap-method" onclick="selectAssembler('overlap')">
+                        <i class="fas fa-link"></i> Overlap-Layout-Consensus
+                    </button>
+                    <button class="method-btn" id="debruijn-method" onclick="selectAssembler('debruijn')">
+                        <i class="fas fa-project-diagram"></i> De Bruijn Graph
+                    </button>
+                    <button class="method-btn" id="string-method" onclick="selectAssembler('string')">
+                        <i class="fas fa-font"></i> String Graph
+                    </button>
+                    <button class="method-btn" id="hybrid-method" onclick="selectAssembler('hybrid')">
+                        <i class="fas fa-layer-group"></i> Hybrid Assembly
+                    </button>
+                </div>
+                
+                <div class="mt-4 text-xs">
+                    <div class="p-2 bg-primary/10 rounded">
+                        <div class="font-medium mb-1">Current: Overlap-Layout-Consensus</div>
+                        <div>Identifies overlaps between reads, arranges them in layout, and generates consensus sequence.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Assembly Parameters -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-sliders-h"></i>
+                    Parameters
+                </div>
+                <div class="data-display">
+                    <div class="data-row">
+                        <span>Min Overlap:</span>
+                        <span class="text-warning">50 bp</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Min Identity:</span>
+                        <span class="text-success">95%</span>
+                    </div>
+                    <div class="data-row">
+                        <span>K-mer Size:</span>
+                        <span class="text-info">31</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Error Rate:</span>
+                        <span class="text-danger">1%</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Gap Penalty:</span>
+                        <span class="text-secondary">-2</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Panel: Assembly Visualization -->
+        <div class="main-panel">
+            <!-- Assembly Process Flowchart -->
+            <div class="flowchart-container">
+                <div class="phase-indicator" id="phase-indicator">
+                    Genome Assembly Pipeline
+                </div>
+                <div class="flowchart" id="flowchart">
+                    <div class="flowchart-step active" id="step-1">
+                        <div class="flowchart-step-title">
+                            <i class="fas fa-file-alt"></i> FASTQ Processing
+                        </div>
+                        <div class="flowchart-step-desc">
+                            Quality control, trimming, and read preprocessing
+                        </div>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    
+                    <div class="flowchart-step" id="step-2">
+                        <div class="flowchart-step-title">
+                            <i class="fas fa-search"></i> Overlap Detection
+                        </div>
+                        <div class="flowchart-step-desc">
+                            Finding overlaps between sequencing reads
+                        </div>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    
+                    <div class="flowchart-step" id="step-3">
+                        <div class="flowchart-step-title">
+                            <i class="fas fa-project-diagram"></i> Graph Construction
+                        </div>
+                        <div class="flowchart-step-desc">
+                            Building overlap or De Bruijn graph structure
+                        </div>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    
+                    <div class="flowchart-step" id="step-4">
+                        <div class="flowchart-step-title">
+                            <i class="fas fa-route"></i> Path Finding
+                        </div>
+                        <div class="flowchart-step-desc">
+                            Identifying paths through the assembly graph
+                        </div>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    
+                    <div class="flowchart-step" id="step-5">
+                        <div class="flowchart-step-title">
+                            <i class="fas fa-puzzle-piece"></i> Contig Assembly
+                        </div>
+                        <div class="flowchart-step-desc">
+                            Creating contiguous sequences (contigs) from paths
+                        </div>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    
+                    <div class="flowchart-step" id="step-6">
+                        <div class="flowchart-step-title">
+                            <i class="fas fa-link"></i> Scaffolding
+                        </div>
+                        <div class="flowchart-step-desc">
+                            Linking contigs using paired-end information
+                        </div>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    
+                    <div class="flowchart-step" id="step-7">
+                        <div class="flowchart-step-title">
+                            <i class="fas fa-check-circle"></i> Gap Filling
+                        </div>
+                        <div class="flowchart-step-desc">
+                            Filling gaps and polishing final assembly
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Assembly Visualization -->
+            <div class="assembly-visualization">
+                <h3 class="text-lg font-semibold mb-3">Assembly Process Visualization</h3>
+                
+                <!-- FASTQ Display -->
+                <div id="fastq-section" class="mb-4">
+                    <div class="text-sm opacity-80 mb-2">
+                        FASTQ File Sample: <span id="current-reads">Showing first 5 reads</span>
+                    </div>
+                    <div class="fastq-display" id="fastq-display">
+                        <div class="fastq-header">@read_1</div>
+                        <div class="fastq-sequence">ATGCGATCGTAGCAATCGGGCCAATTGGCCAATTGGATCGATCGATCGATCGATCG</div>
+                        <div class="fastq-plus">+</div>
+                        <div class="fastq-quality">IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII</div>
+                        <br>
+                        <div class="fastq-header">@read_2</div>
+                        <div class="fastq-sequence">CCAATTGGCCAATTGGATCGATCGATCGATCGATCGAATTCCGGATCCGTCGAC</div>
+                        <div class="fastq-plus">+</div>
+                        <div class="fastq-quality">IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII</div>
+                    </div>
+                </div>
+                
+                <!-- Reads Visualization -->
+                <div id="reads-section" class="mb-4">
+                    <div class="text-sm opacity-80 mb-2">
+                        Sequencing Reads: <span id="reads-info">Random overlapping fragments</span>
+                    </div>
+                    <div class="reads-container" id="reads-container">
+                        <!-- Reads will be dynamically generated here -->
+                    </div>
+                </div>
+                
+                <!-- Contigs Display -->
+                <div id="contigs-section" class="mb-4">
+                    <div class="text-sm opacity-80 mb-2">
+                        Assembled Contigs: <span id="contigs-info">Continuous sequences</span>
+                    </div>
+                    <div class="contig-display" id="contig-display">
+                        <!-- Contigs will be displayed here -->
+                    </div>
+                </div>
+                
+                <!-- Scaffolds Display -->
+                <div id="scaffolds-section" class="mb-4">
+                    <div class="text-sm opacity-80 mb-2">
+                        Scaffolds: <span id="scaffolds-info">Linked contigs with gaps</span>
+                    </div>
+                    <div class="contig-display" id="scaffold-display">
+                        <!-- Scaffolds will be displayed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Assembly Statistics -->
+            <div class="stats-grid" id="assembly-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="n50-value">0</div>
+                    <div class="stat-label">N50 (bp)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="contigs-count">0</div>
+                    <div class="stat-label">Contigs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-length">0</div>
+                    <div class="stat-label">Total Length</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="largest-contig">0</div>
+                    <div class="stat-label">Largest Contig</div>
+                </div>
+            </div>
+            
+            <!-- Progress Indicator -->
+            <div class="progress-indicator">
+                <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+            </div>
+        </div>
+        
+        <!-- Right Panel: Theory & Analysis -->
+        <div class="right-panel">
+            <!-- Current Step Info -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-info-circle"></i>
+                    Current Step
+                </div>
+                <div class="data-display" id="step-info">
+                    <h4 class="font-medium text-primary mb-2">FASTQ Processing</h4>
+                    <p class="text-sm mb-3">Processing raw sequencing data, performing quality control, and preparing reads for assembly.</p>
+                    <div class="text-xs space-y-1">
+                        <div class="data-row">
+                            <span>Step:</span>
+                            <span>1 of 7</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Status:</span>
+                            <span class="text-yellow-400">Ready</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Next:</span>
+                            <span>Overlap Detection</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Assembly Quality Metrics -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Quality Metrics
+                </div>
+                <div class="data-display">
+                    <div class="data-row">
+                        <span>Assembly Size:</span>
+                        <span id="assembly-size" class="text-primary font-bold">0 bp</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Number of Contigs:</span>
+                        <span id="num-contigs" class="text-success">0</span>
+                    </div>
+                    <div class="data-row">
+                        <span>N50 Length:</span>
+                        <span id="n50-length" class="text-warning">0 bp</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Coverage Depth:</span>
+                        <span id="coverage-depth" class="text-info">30x</span>
+                    </div>
+                    <div class="data-row">
+                        <span>GC Content:</span>
+                        <span id="gc-content" class="text-purple-400">45%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Assembly Algorithms -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-brain"></i>
+                    Algorithm Details
+                </div>
+                <div class="data-display">
+                    <div class="text-xs space-y-2">
+                        <div class="p-2 bg-blue-500/20 rounded">
+                            <div class="font-medium text-blue-400 mb-1">Overlap-Layout-Consensus (OLC)</div>
+                            <div>• Find overlaps between reads</div>
+                            <div>• Create layout graph</div>
+                            <div>• Generate consensus sequence</div>
+                        </div>
+                        <div class="p-2 bg-purple-500/20 rounded">
+                            <div class="font-medium text-purple-400 mb-1">De Bruijn Graph</div>
+                            <div>• Break reads into k-mers</div>
+                            <div>• Build graph from k-mer overlaps</div>
+                            <div>• Find Eulerian paths</div>
+                        </div>
+                        <div class="p-2 bg-green-500/20 rounded">
+                            <div class="font-medium text-green-400 mb-1">String Graph</div>
+                            <div>• Compress redundant paths</div>
+                            <div>• Remove transitive edges</div>
+                            <div>• Simplify graph structure</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Assembly Challenges -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Common Challenges
+                </div>
+                <div class="text-xs space-y-2">
+                    <div class="p-2 bg-red-500/20 rounded">
+                        <div class="font-medium mb-1">Repetitive Sequences:</div>
+                        <div>Regions longer than read length cause assembly breaks</div>
+                    </div>
+                    <div class="p-2 bg-yellow-500/20 rounded">
+                        <div class="font-medium mb-1">Sequencing Errors:</div>
+                        <div>Base calling errors create false branches in graph</div>
+                    </div>
+                    <div class="p-2 bg-orange-500/20 rounded">
+                        <div class="font-medium mb-1">Coverage Bias:</div>
+                        <div>Uneven coverage leads to gaps and misassemblies</div>
+                    </div>
+                    <div class="p-2 bg-purple-500/20 rounded">
+                        <div class="font-medium mb-1">Heterozygosity:</div>
+                        <div>Diploid genomes create bubble structures in graph</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fixed Control Panel -->
+    <div class="fixed-controls" id="fixed-controls">
+        <button id="fixed-prev-btn" class="control-btn" title="Previous Step" onclick="previousStep()">
+            <i class="fas fa-step-backward"></i>
+        </button>
+        <button id="fixed-play-pause-btn" class="control-btn" title="Play/Pause" onclick="toggleAssembly()">
+            <i class="fas fa-play"></i>
+        </button>
+        <button id="fixed-next-btn" class="control-btn" title="Next Step" onclick="nextStep()">
+            <i class="fas fa-step-forward"></i>
+        </button>
+        <div class="text-sm opacity-80">|</div>
+        <button class="assembly-btn" onclick="startAssembly()" id="fixed-start-btn">Start Assembly</button>
+        <button id="fixed-reset-btn" class="control-btn" title="Reset" onclick="resetAssembly()">
+            <i class="fas fa-undo"></i>
+        </button>
+    </div>
+    
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notification-text"></span>
+    </div>
+
+    <script>
+        // Global variables
+        let currentStep = 1;
+        let totalSteps = 7;
+        let currentPhase = 'fastq';
+        let isRunning = false;
+        let isAssembling = false;
+        let assemblySpeed = 1;
+        let isFullscreen = false;
+        let animationFrame;
+        let currentAssembler = 'overlap';
+        let currentDataset = 'bacterial';
+        
+        // Dataset configurations
+        const DATASETS = {
+            bacterial: {
+                name: 'Bacterial Genome',
+                size: '5.0 Mb',
+                readCount: 100000,
+                readLength: 150,
+                coverage: '30x',
+                description: 'E. coli genome assembly'
+            },
+            viral: {
+                name: 'Viral Genome',
+                size: '30 kb',
+                readCount: 5000,
+                readLength: 150,
+                coverage: '50x',
+                description: 'Small viral genome'
+            },
+            plasmid: {
+                name: 'Plasmid',
+                size: '10 kb',
+                readCount: 2000,
+                readLength: 150,
+                coverage: '40x',
+                description: 'Circular plasmid DNA'
+            },
+            human_chr: {
+                name: 'Human Chromosome',
+                size: '150 Mb',
+                readCount: 5000000,
+                readLength: 150,
+                coverage: '25x',
+                description: 'Human chromosome segment'
+            }
+        };
+        
+        // Assembly phases
+        const ASSEMBLY_PHASES = {
+            fastq: { name: 'FASTQ Processing', description: 'Quality control and read preprocessing' },
+            overlap: { name: 'Overlap Detection', description: 'Finding overlaps between sequencing reads' },
+            graph: { name: 'Graph Construction', description: 'Building assembly graph structure' },
+            paths: { name: 'Path Finding', description: 'Identifying paths through assembly graph' },
+            contigs: { name: 'Contig Assembly', description: 'Creating contiguous sequences from paths' },
+            scaffolds: { name: 'Scaffolding', description: 'Linking contigs using paired-end information' },
+            gaps: { name: 'Gap Filling', description: 'Filling gaps and polishing final assembly' }
+        };
+        
+        // Assembly statistics
+        let assemblyStats = {
+            totalLength: 0,
+            numContigs: 0,
+            n50: 0,
+            largestContig: 0,
+            coverage: 30,
+            gcContent: 45
+        };
+        
+        // Initialize the platform
+        function init() {
+            console.log('🧬 Genome Assembly Platform initializing...');
+            console.log('📅 Current Date:', '2025-06-01 05:54:00');
+            console.log('👤 User:', 'yashmgupta');
+            
+            setupEventListeners();
+            updateDisplay();
+            updateDatasetInfo();
+            updateFlowchart();
+            generateInitialReads();
+            
+            showNotification('Welcome to Genome Assembly Platform, yashmgupta!');
+            console.log('✅ Assembly Platform initialization complete');
+        }
+        
+        function updateFlowchart() {
+            const steps = document.querySelectorAll('.flowchart-step');
+            steps.forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index + 1 === currentStep) {
+                    step.classList.add('active');
+                } else if (index + 1 < currentStep) {
+                    step.classList.add('completed');
+                }
+            });
+        }
+        
+        function setupEventListeners() {
+            // Fullscreen toggle
+            document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                switch(e.key) {
+                    case ' ':
+                    case 'k':
+                        e.preventDefault();
+                        toggleAssembly();
+                        break;
+                    case 'ArrowRight':
+                    case 'l':
+                        e.preventDefault();
+                        nextStep();
+                        break;
+                    case 'ArrowLeft':
+                    case 'j':
+                        e.preventDefault();
+                        previousStep();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        resetAssembly();
+                        break;
+                    case 'f':
+                        e.preventDefault();
+                        toggleFullscreen();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        startAssembly();
+                        break;
+                }
+            });
+        }
+        
+        function loadDataset(type) {
+            // Remove active class from all dataset buttons
+            document.querySelectorAll('.method-btn').forEach(btn => {
+                if (btn.textContent.includes('Genome') || btn.textContent.includes('Plasmid')) {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Add active class to selected dataset
+            event.target.classList.add('active');
+            
+            currentDataset = type;
+            updateDatasetInfo();
+            resetAssembly();
+            showNotification(`Loaded ${DATASETS[type].name} dataset`);
+        }
+        
+        function selectAssembler(method) {
+            // Remove active class from all assembler buttons
+            document.querySelectorAll('#overlap-method, #debruijn-method, #string-method, #hybrid-method')
+                .forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to selected assembler
+            document.getElementById(method + '-method').classList.add('active');
+            
+            currentAssembler = method;
+            resetAssembly();
+            
+            // Update method description
+            const descriptions = {
+                overlap: 'Identifies overlaps between reads, arranges them in layout, and generates consensus sequence.',
+                debruijn: 'Breaks reads into k-mers, builds De Bruijn graph, and finds Eulerian paths.',
+                string: 'Uses string graph approach with compressed paths and simplified structure.',
+                hybrid: 'Combines multiple assembly strategies for improved accuracy and completeness.'
+            };
+            
+            const methodNames = {
+                overlap: 'Overlap-Layout-Consensus',
+                debruijn: 'De Bruijn Graph',
+                string: 'String Graph',
+                hybrid: 'Hybrid Assembly'
+            };
+            
+            document.querySelector('.p-2.bg-primary\\/10 .font-medium').textContent = `Current: ${methodNames[method]}`;
+            document.querySelector('.p-2.bg-primary\\/10 div:last-child').textContent = descriptions[method];
+            
+            showNotification(`Selected ${methodNames[method]} assembler`);
+        }
+        
+        function updateDatasetInfo() {
+            const dataset = DATASETS[currentDataset];
+            document.getElementById('read-count').textContent = dataset.readCount.toLocaleString();
+            document.getElementById('read-length').textContent = dataset.readLength + ' bp';
+            document.getElementById('coverage').textContent = dataset.coverage;
+        }
+        
+        function updateDisplay() {
+            document.getElementById('current-step').textContent = currentStep;
+            document.getElementById('total-steps').textContent = totalSteps;
+            
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('assembly-progress').textContent = Math.round(progress) + '%';
+            document.getElementById('progress-fill').style.width = progress + '%';
+            
+            const phaseKeys = Object.keys(ASSEMBLY_PHASES);
+            const currentPhaseKey = phaseKeys[currentStep - 1];
+            const phase = ASSEMBLY_PHASES[currentPhaseKey];
+            
+            if (phase) {
+                document.getElementById('current-phase-name').textContent = phase.name;
+                document.getElementById('phase-indicator').textContent = phase.name;
+                
+                // Update step info
+                const stepInfo = document.getElementById('step-info');
+                stepInfo.innerHTML = `
+                    <h4 class="font-medium text-primary mb-2">${phase.name}</h4>
+                    <p class="text-sm mb-3">${phase.description}</p>
+                    <div class="text-xs space-y-1">
+                        <div class="data-row">
+                            <span>Step:</span>
+                            <span>${currentStep} of ${totalSteps}</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Status:</span>
+                            <span class="text-yellow-400">${isRunning ? 'Running' : 'Ready'}</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Next:</span>
+                            <span>${currentStep < totalSteps ? Object.values(ASSEMBLY_PHASES)[currentStep].name : 'Complete'}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            updateFlowchart();
+            updateAssemblyStats();
+        }
+        
+        function updateAssemblyStats() {
+            document.getElementById('n50-value').textContent = assemblyStats.n50.toLocaleString();
+            document.getElementById('contigs-count').textContent = assemblyStats.numContigs.toLocaleString();
+            document.getElementById('total-length').textContent = formatSize(assemblyStats.totalLength);
+            document.getElementById('largest-contig').textContent = formatSize(assemblyStats.largestContig);
+            
+            // Update right panel stats
+            document.getElementById('assembly-size').textContent = formatSize(assemblyStats.totalLength);
+            document.getElementById('num-contigs').textContent = assemblyStats.numContigs.toLocaleString();
+            document.getElementById('n50-length').textContent = formatSize(assemblyStats.n50);
+            document.getElementById('coverage-depth').textContent = assemblyStats.coverage + 'x';
+            document.getElementById('gc-content').textContent = assemblyStats.gcContent + '%';
+        }
+        
+        function formatSize(bytes) {
+            if (bytes === 0) return '0 bp';
+            const k = 1000;
+            const sizes = ['bp', 'kb', 'Mb', 'Gb'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+        
+        function generateInitialReads() {
+            const container = document.getElementById('reads-container');
+            container.innerHTML = '';
+            
+            // Generate random read fragments
+            for (let i = 0; i < 20; i++) {
+                const read = document.createElement('div');
+                read.className = 'read-fragment';
+                read.style.width = (80 + Math.random() * 40) + 'px';
+                read.style.left = Math.random() * (container.offsetWidth - 120) + 'px';
+                read.style.top = (i * 7 + Math.random() * 10) + 'px';
+                container.appendChild(read);
+            }
+        }
+        
+        function toggleAssembly() {
+            isRunning = !isRunning;
+            const playBtn = document.getElementById('fixed-play-pause-btn');
+            
+            if (isRunning) {
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                playBtn.classList.add('active');
+                runAssembly();
+            } else {
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                playBtn.classList.remove('active');
+                if (animationFrame) {
+                    cancelAnimationFrame(animationFrame);
+                }
+            }
+        }
+        
+        function runAssembly() {
+            if (!isRunning) return;
+            
+            // Simulate assembly progress
+            if (currentStep < totalSteps) {
+                setTimeout(() => {
+                    if (isRunning) {
+                        nextStep();
+                        runAssembly();
+                    }
+                }, 3000 / assemblySpeed);
+            } else {
+                // Assembly complete
+                isRunning = false;
+                document.getElementById('fixed-play-pause-btn').innerHTML = '<i class="fas fa-play"></i>';
+                document.getElementById('fixed-play-pause-btn').classList.remove('active');
+                showNotification('Genome assembly completed successfully!', 'success');
+            }
+        }
+        
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateDisplay();
+                simulateAssemblyStep();
+            }
+        }
+        
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateDisplay();
+            }
+        }
+        
+        function startAssembly() {
+            resetAssembly();
+            toggleAssembly();
+            showNotification('Starting genome assembly process...', 'info');
+        }
+        
+        function resetAssembly() {
+            currentStep = 1;
+            isRunning = false;
+            assemblyStats = {
+                totalLength: 0,
+                numContigs: 0,
+                n50: 0,
+                largestContig: 0,
+                coverage: 30,
+                gcContent: 45
+            };
+            
+            // Reset UI
+            document.getElementById('fixed-play-pause-btn').innerHTML = '<i class="fas fa-play"></i>';
+            document.getElementById('fixed-play-pause-btn').classList.remove('active');
+            
+            // Clear visualization containers
+            document.getElementById('contig-display').innerHTML = '';
+            document.getElementById('scaffold-display').innerHTML = '';
+            
+            generateInitialReads();
+            updateDisplay();
+            showNotification('Assembly reset to initial state');
+        }
+        
+        function simulateAssemblyStep() {
+            const phaseKeys = Object.keys(ASSEMBLY_PHASES);
+            const currentPhaseKey = phaseKeys[currentStep - 1];
+            
+            // Add glow effect to current step
+            const currentStepElement = document.getElementById(`step-${currentStep}`);
+            if (currentStepElement) {
+                currentStepElement.classList.add('glow-animation');
+                setTimeout(() => {
+                    currentStepElement.classList.remove('glow-animation');
+                }, 1000);
+            }
+            
+            switch(currentPhaseKey) {
+                case 'fastq':
+                    simulateFastqProcessing();
+                    break;
+                case 'overlap':
+                    simulateOverlapDetection();
+                    break;
+                case 'graph':
+                    simulateGraphConstruction();
+                    break;
+                case 'paths':
+                    simulatePathFinding();
+                    break;
+                case 'contigs':
+                    simulateContigAssembly();
+                    break;
+                case 'scaffolds':
+                    simulateScaffolding();
+                    break;
+                case 'gaps':
+                    simulateGapFilling();
+                    break;
+            }
+        }
+        
+        function simulateFastqProcessing() {
+            showNotification('Processing FASTQ files and performing quality control...', 'info');
+            
+            // Update FASTQ display with more realistic data
+            const fastqDisplay = document.getElementById('fastq-display');
+            fastqDisplay.innerHTML = `
+                <div class="fastq-header">@read_1_processed</div>
+                <div class="fastq-sequence">ATGCGATCGTAGCAATCGGGCCAATTGGCCAATTGGATCGATCGATCGATCGATCG</div>
+                <div class="fastq-plus">+</div>
+                <div class="fastq-quality">IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII</div>
+                <br>
+                <div class="fastq-header">@read_2_processed</div>
+                <div class="fastq-sequence">CCAATTGGCCAATTGGATCGATCGATCGATCGATCGAATTCCGGATCCGTCGAC</div>
+                <div class="fastq-plus">+</div>
+                <div class="fastq-quality">IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII</div>
+                <br>
+                <div style="color: var(--success); font-size: 0.6rem;">✓ Quality trimming completed</div>
+                <div style="color: var(--success); font-size: 0.6rem;">✓ Adapter removal completed</div>
+                <div style="color: var(--success); font-size: 0.6rem;">✓ ${DATASETS[currentDataset].readCount.toLocaleString()} reads processed</div>
+            `;
+        }
+        
+        function simulateOverlapDetection() {
+            showNotification('Detecting overlaps between sequencing reads...', 'info');
+            
+            // Animate reads finding overlaps
+            const reads = document.querySelectorAll('.read-fragment');
+            reads.forEach((read, index) => {
+                setTimeout(() => {
+                    read.style.borderColor = 'var(--warning)';
+                    read.style.boxShadow = '0 0 10px var(--warning)';
+                }, index * 100);
+            });
+        }
+        
+        function simulateGraphConstruction() {
+            showNotification('Building assembly graph structure...', 'info');
+            
+            // Update reads info
+            document.getElementById('reads-info').textContent = 'Building overlap graph';
+            
+            // Animate graph construction
+            const reads = document.querySelectorAll('.read-fragment');
+            reads.forEach(read => {
+                read.style.borderColor = 'var(--info)';
+                read.style.boxShadow = '0 0 15px var(--info)';
+            });
+        }
+        
+        function simulatePathFinding() {
+            showNotification('Finding optimal paths through assembly graph...', 'warning');
+            
+            // Animate path finding
+            const reads = document.querySelectorAll('.read-fragment');
+            reads.forEach((read, index) => {
+                setTimeout(() => {
+                    read.style.borderColor = 'var(--primary)';
+                    read.style.boxShadow = '0 0 20px var(--primary)';
+                    read.classList.add('assembling');
+                }, index * 50);
+            });
+        }
+        
+        function simulateContigAssembly() {
+            showNotification('Assembling contiguous sequences (contigs)...', 'success');
+            
+            // Generate contigs
+            const contigDisplay = document.getElementById('contig-display');
+            contigDisplay.innerHTML = '';
+            
+            const numContigs = 8 + Math.floor(Math.random() * 12);
+            assemblyStats.numContigs = numContigs;
+            
+            for (let i = 0; i < numContigs; i++) {
+                const contig = document.createElement('div');
+                contig.className = 'contig slide-in';
+                const length = 50 + Math.random() * 200;
+                contig.style.width = length + 'px';
+                contig.style.animationDelay = (i * 0.1) + 's';
+                
+                // Add contig label
+                const label = document.createElement('span');
+                label.style.cssText = 'position: absolute; right: 5px; top: -2px; font-size: 0.6rem; color: var(--contig-color);';
+                label.textContent = `C${i+1}`;
+                contig.appendChild(label);
+                
+                contigDisplay.appendChild(contig);
+                
+                // Update stats
+                const contigLength = Math.floor(length * 100);
+                assemblyStats.totalLength += contigLength;
+                if (contigLength > assemblyStats.largestContig) {
+                    assemblyStats.largestContig = contigLength;
+                }
+            }
+            
+            // Calculate N50
+            assemblyStats.n50 = Math.floor(assemblyStats.totalLength / numContigs * 1.2);
+            
+            document.getElementById('contigs-info').textContent = `${numContigs} contigs assembled`;
+        }
+        
+        function simulateScaffolding() {
+            showNotification('Linking contigs into scaffolds using paired-end data...', 'info');
+            
+            // Generate scaffolds
+            const scaffoldDisplay = document.getElementById('scaffold-display');
+            scaffoldDisplay.innerHTML = '';
+            
+            const numScaffolds = Math.ceil(assemblyStats.numContigs / 3);
+            
+            for (let i = 0; i < numScaffolds; i++) {
+                const scaffoldContainer = document.createElement('div');
+                scaffoldContainer.style.cssText = 'display: flex; align-items: center; margin: 10px 0;';
+                
+                // Create scaffold with gaps
+                const scaffold = document.createElement('div');
+                scaffold.className = 'scaffold slide-in';
+                scaffold.style.width = (100 + Math.random() * 150) + 'px';
+                scaffold.style.animationDelay = (i * 0.2) + 's';
+                
+                // Add scaffold label
+                const label = document.createElement('span');
+                label.style.cssText = 'position: absolute; right: 5px; top: -3px; font-size: 0.6rem; color: var(--scaffold-color);';
+                label.textContent = `S${i+1}`;
+                scaffold.appendChild(label);
+                
+                scaffoldContainer.appendChild(scaffold);
+                
+                // Add gap if not last scaffold
+                if (i < numScaffolds - 1) {
+                    const gap = document.createElement('div');
+                    gap.className = 'gap';
+                    gap.style.width = (20 + Math.random() * 30) + 'px';
+                    scaffoldContainer.appendChild(gap);
+                }
+                
+                scaffoldDisplay.appendChild(scaffoldContainer);
+            }
+            
+            assemblyStats.numContigs = numScaffolds;
+            assemblyStats.n50 = Math.floor(assemblyStats.n50 * 1.5);
+            
+            document.getElementById('scaffolds-info').textContent = `${numScaffolds} scaffolds with gaps`;
+        }
+        
+        function simulateGapFilling() {
+            showNotification('Filling gaps and polishing final assembly...', 'success');
+            
+            // Animate gap filling
+            const gaps = document.querySelectorAll('.gap');
+            gaps.forEach((gap, index) => {
+                setTimeout(() => {
+                    gap.style.background = 'var(--success)';
+                    gap.style.height = '20px';
+                    gap.style.borderRadius = '10px';
+                }, index * 300);
+            });
+            
+            // Update final stats
+            setTimeout(() => {
+                assemblyStats.totalLength = Math.floor(assemblyStats.totalLength * 1.1);
+                assemblyStats.n50 = Math.floor(assemblyStats.n50 * 1.2);
+                assemblyStats.numContigs = Math.max(1, Math.floor(assemblyStats.numContigs * 0.7));
+                
+                updateAssemblyStats();
+                showNotification('Assembly polishing completed!', 'success');
+            }, 1000);
+        }
+        
+        function toggleFullscreen() {
+            isFullscreen = !isFullscreen;
+            const container = document.getElementById('platform-container');
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+            
+            if (isFullscreen) {
+                container.classList.add('fullscreen');
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                showNotification('Switched to fullscreen mode');
+            } else {
+                container.classList.remove('fullscreen');
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                showNotification('Switched to normal view');
+            }
+        }
+        
+        function showNotification(message, type = 'info', duration = 3000) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notification-text');
+            
+            // Set notification style based on type
+            const colors = {
+                success: 'var(--success)',
+                warning: 'var(--warning)',
+                error: 'var(--danger)',
+                info: 'var(--primary)'
+            };
+            
+            notification.style.borderLeftColor = colors[type] || colors.info;
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, duration);
+        }
+        
+        // Update time display
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toISOString().slice(0, 19).replace('T', ' ');
+            const timeElements = document.querySelectorAll('.text-primary.font-mono');
+            timeElements.forEach(el => {
+                if (el.textContent.includes('-') || el.textContent.includes(':')) {
+                    el.textContent = timeString;
+                }
+            });
+        }
+        
+        // Update time every second
+        setInterval(updateTime, 1000);
+        
+        // Sync fixed controls with main controls
+        function syncControls() {
+            const fixedPlayBtn = document.getElementById('fixed-play-pause-btn');
+            
+            // Update button states based on current status
+            if (isRunning) {
+                fixedPlayBtn.classList.add('active');
+                fixedPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                fixedPlayBtn.classList.remove('active');
+                fixedPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+        
+        // Call sync function periodically
+        setInterval(syncControls, 100);
+        
+        // Enhanced error handling
+        window.addEventListener('error', function(e) {
+            console.error('Assembly Platform Error:', e.error);
+            showNotification('An error occurred. Please refresh the page.', 'error', 5000);
+        });
+        
+        // Add accessibility features
+        function addAccessibilityFeatures() {
+            // Add ARIA labels
+            document.getElementById('fixed-play-pause-btn').setAttribute('aria-label', 'Play or pause assembly animation');
+            document.getElementById('fixed-next-btn').setAttribute('aria-label', 'Go to next assembly step');
+            document.getElementById('fixed-prev-btn').setAttribute('aria-label', 'Go to previous assembly step');
+            document.getElementById('fixed-reset-btn').setAttribute('aria-label', 'Reset assembly to beginning');
+            
+            // Add keyboard navigation hints
+            const keyboardHints = document.createElement('div');
+            keyboardHints.style.cssText = 'position: fixed; bottom: 5px; right: 10px; font-size: 10px; opacity: 0.7; z-index: 999; background: rgba(0,0,0,0.8); padding: 5px; border-radius: 3px;';
+            keyboardHints.innerHTML = 'Keys: Space/K=Play/Pause, ←/→=Step, R=Reset, F=Fullscreen, S=Start';
+            document.body.appendChild(keyboardHints);
+        }
+        
+        // Initialize accessibility features
+        setTimeout(addAccessibilityFeatures, 200);
+        
+        // Performance monitoring
+        let performanceMetrics = {
+            stepChanges: 0,
+            totalTime: 0,
+            startTime: Date.now()
+        };
+        
+        function trackPerformance(action) {
+            performanceMetrics[action] = (performanceMetrics[action] || 0) + 1;
+            console.log(`Performance: ${action} called ${performanceMetrics[action]} times`);
+        }
+        
+        // Add educational tooltips
+        function addTooltips() {
+            const tooltipElements = [
+                { id: 'fastq-display', text: 'FASTQ format contains sequence identifier, DNA sequence, separator, and quality scores' },
+                { id: 'reads-container', text: 'Sequencing reads are short DNA fragments with overlapping regions' },
+                { id: 'contig-display', text: 'Contigs are contiguous DNA sequences assembled from overlapping reads' },
+                { id: 'scaffold-display', text: 'Scaffolds link contigs together with estimated gap sizes' },
+                { id: 'fixed-play-pause-btn', text: 'Press Space or K to play/pause assembly process' }
+            ];
+            
+            tooltipElements.forEach(item => {
+                const element = document.getElementById(item.id);
+                if (element) {
+                    element.title = item.text;
+                }
+            });
+        }
+        
+        // Initialize tooltips
+        setTimeout(addTooltips, 100);
+        
+        // Add copy functionality for sequences
+        function addCopyFunctionality() {
+            const fastqDisplay = document.getElementById('fastq-display');
+            fastqDisplay.addEventListener('click', function() {
+                const selection = window.getSelection();
+                const range = document.createRange();
+                range.selectNodeContents(this);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                
+                try {
+                    document.execCommand('copy');
+                    showNotification('FASTQ content copied to clipboard', 'success', 2000);
+                } catch (err) {
+                    console.log('Copy failed:', err);
+                }
+                selection.removeAllRanges();
+            });
+        }
+        
+        // Initialize copy functionality
+        setTimeout(addCopyFunctionality, 300);
+        
+        // Advanced assembly simulation based on selected method
+        function simulateMethodSpecificStep() {
+            const methodSimulations = {
+                overlap: {
+                    description: 'Using overlap-layout-consensus approach',
+                    steps: [
+                        'Finding suffix-prefix overlaps',
+                        'Building overlap graph',
+                        'Finding optimal layout',
+                        'Generating consensus sequence'
+                    ]
+                },
+                debruijn: {
+                    description: 'Using De Bruijn graph approach',
+                    steps: [
+                        'Breaking reads into k-mers',
+                        'Building De Bruijn graph',
+                        'Simplifying graph structure',
+                        'Finding Eulerian paths'
+                    ]
+                },
+                string: {
+                    description: 'Using string graph approach',
+                    steps: [
+                        'Creating string graph',
+                        'Removing transitive edges',
+                        'Compressing linear paths',
+                        'Resolving complex structures'
+                    ]
+                },
+                hybrid: {
+                    description: 'Using hybrid assembly approach',
+                    steps: [
+                        'Combining multiple strategies',
+                        'Cross-validating assemblies',
+                        'Selecting best regions',
+                        'Merging final assembly'
+                    ]
+                }
+            };
+            
+            const currentMethod = methodSimulations[currentAssembler];
+            if (currentMethod && currentStep <= 4) {
+                const stepDesc = currentMethod.steps[currentStep - 1];
+                if (stepDesc) {
+                    showNotification(`${currentMethod.description}: ${stepDesc}`, 'info');
+                }
+            }
+        }
+        
+        // Export functions for debugging
+        window.assemblyDebug = {
+            getCurrentStep: () => currentStep,
+            getDataset: () => currentDataset,
+            getAssembler: () => currentAssembler,
+            getStats: () => assemblyStats,
+            forceStep: (step) => {
+                currentStep = Math.max(1, Math.min(step, totalSteps));
+                updateDisplay();
+            },
+            generateTestData: () => {
+                assemblyStats = {
+                    totalLength: 4850000,
+                    numContigs: 45,
+                    n50: 185000,
+                    largestContig: 420000,
+                    coverage: 30,
+                    gcContent: 42.3
+                };
+                updateAssemblyStats();
+            },
+            getPerformanceMetrics: () => performanceMetrics
+        };
+        
+        // Initialize platform when page loads
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            updateDisplay();
+            generateInitialReads();
+        });
+        
+        // Prevent context menu on control buttons
+        document.querySelectorAll('.control-btn, .assembly-btn').forEach(btn => {
+            btn.addEventListener('contextmenu', e => e.preventDefault());
+        });
+        
+        // Add drag and drop functionality for FASTQ files (simulation)
+        function addDragDropSimulation() {
+            const fastqDisplay = document.getElementById('fastq-display');
+            
+            fastqDisplay.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.borderColor = 'var(--primary)';
+                this.style.background = 'rgba(0, 212, 255, 0.1)';
+            });
+            
+            fastqDisplay.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '';
+                this.style.background = '';
+            });
+            
+            fastqDisplay.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '';
+                this.style.background = '';
+                showNotification('FASTQ file processing simulation started', 'info');
+                
+                // Simulate file processing
+                setTimeout(() => {
+                    this.innerHTML += '<br><div style="color: var(--success); font-size: 0.6rem;">✓ New FASTQ file loaded</div>';
+                }, 1000);
+            });
+        }
+        
+        // Initialize drag and drop
+        setTimeout(addDragDropSimulation, 400);
+        
+        // Add real-time stats updates during assembly
+        function startStatsAnimation() {
+            if (!isRunning) return;
+            
+            const animateValue = (element, start, end, duration) => {
+                const startTime = Date.now();
+                const updateValue = () => {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const current = Math.floor(start + (end - start) * progress);
+                    element.textContent = current.toLocaleString();
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(updateValue);
+                    }
+                };
+                updateValue();
+            };
+            
+            // Animate stats during assembly
+            if (currentStep >= 5) {
+                const n50Element = document.getElementById('n50-value');
+                const currentN50 = parseInt(n50Element.textContent.replace(/,/g, '')) || 0;
+                const targetN50 = assemblyStats.n50;
+                animateValue(n50Element, currentN50, targetN50, 1000);
+            }
+        }
+        
+        // Call stats animation when appropriate
+        const originalSimulateAssemblyStep = simulateAssemblyStep;
+        simulateAssemblyStep = function() {
+            originalSimulateAssemblyStep();
+            simulateMethodSpecificStep();
+            startStatsAnimation();
+        };
+        
+        console.log('🧬 Genome Assembly Platform fully loaded and ready!');
+        console.log('📊 Debug tools available at window.assemblyDebug');
+        console.log('⌨️  Keyboard shortcuts: Space=Play/Pause, ←/→=Step, R=Reset, F=Fullscreen, S=Start');
+        console.log('🗂️  Datasets: Bacterial, Viral, Plasmid, Human Chromosome');
+        console.log('🔧 Assemblers: OLC, De Bruijn, String Graph, Hybrid');
+    </script>
+</body>
+</html>

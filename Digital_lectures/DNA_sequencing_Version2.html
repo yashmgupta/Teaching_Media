@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanger DNA Sequencing Education Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --ddatp: #ef4444;  /* Red for ddATP */
+            --ddctp: #3b82f6;  /* Blue for ddCTP */
+            --ddgtp: #10b981;  /* Green for ddGTP */
+            --ddttp: #f59e0b;  /* Yellow for ddTTP */
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f1f5f9;
+            --panel-bg: rgba(15, 23, 42, 0.85);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        .platform-container {
+            display: grid;
+            grid-template-columns: 350px 1fr 320px;
+            grid-template-rows: 80px 1fr;
+            height: 100vh;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .platform-container.fullscreen {
+            grid-template-columns: 1fr;
+            grid-template-rows: 80px 1fr;
+            padding: 0;
+            gap: 0;
+        }
+        
+        .header {
+            grid-column: 1 / -1;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .platform-container.fullscreen .header {
+            border-radius: 0;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .logo {
+            font-size: 1.6rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+        }
+        
+        .reaction-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(0, 212, 255, 0.1);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .reaction-progress {
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .left-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .platform-container.fullscreen .left-panel {
+            display: none;
+        }
+        
+        .main-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .platform-container.fullscreen .main-panel {
+            border-radius: 0;
+        }
+        
+        .right-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .platform-container.fullscreen .right-panel {
+            display: none;
+        }
+        
+        /* Flowchart Styles */
+        .flowchart-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            position: relative;
+            min-height: 300px;
+        }
+        
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        
+        .flowchart-step {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            min-width: 200px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .flowchart-step.active {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3));
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            transform: scale(1.05);
+        }
+        
+        .flowchart-step.completed {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.2));
+            border-color: var(--success);
+        }
+        
+        .flowchart-step-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .flowchart-step-desc {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+        
+        .flowchart-arrow {
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(180deg, var(--primary), transparent);
+            position: relative;
+        }
+        
+        .flowchart-arrow::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: -3px;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 8px solid var(--primary);
+        }
+        
+        /* Fixed Control Panel */
+        .fixed-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .sequencing-visualization {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(241, 245, 249, 0.1);
+            min-height: 400px;
+        }
+        
+        .electrophoresis-gel {
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.6) 100%);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            min-height: 300px;
+            position: relative;
+            border: 2px solid rgba(100, 116, 139, 0.3);
+        }
+        
+        .gel-lane {
+            width: 60px;
+            height: 100%;
+            margin: 0 10px;
+            position: relative;
+            border-left: 1px solid rgba(100, 116, 139, 0.2);
+            display: inline-block;
+        }
+        
+        .dna-band {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            border-radius: 1px;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+        
+        .dna-band.A { background: var(--ddatp); }
+        .dna-band.C { background: var(--ddctp); }
+        .dna-band.G { background: var(--ddgtp); }
+        .dna-band.T { background: var(--ddttp); }
+        
+        .sequence-reader {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            letter-spacing: 0.2em;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .base-A { color: var(--ddatp); }
+        .base-C { color: var(--ddctp); }
+        .base-G { color: var(--ddgtp); }
+        .base-T { color: var(--ddttp); }
+        
+        .control-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            margin-top: 1rem;
+            margin-bottom: 100px; /* Add space for fixed controls */
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .control-btn {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1));
+            border: 1px solid rgba(241, 245, 249, 0.2);
+            color: var(--primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .control-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(124, 58, 237, 0.2));
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .control-btn.active {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3));
+            border-color: var(--primary);
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
+        }
+        
+        .sequence-btn {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(34, 197, 94, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+            padding: 0.875rem 2rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .sequence-btn:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(34, 197, 94, 0.2));
+            transform: translateY(-2px);
+        }
+        
+        .sequence-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .fullscreen-btn {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(124, 58, 237, 0.2));
+            border: 1px solid var(--primary);
+            border-radius: 0.5rem;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        
+        .fullscreen-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(124, 58, 237, 0.3));
+            transform: scale(1.05);
+        }
+        
+        .panel-section {
+            margin-bottom: 2rem;
+        }
+        
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .data-display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(241, 245, 249, 0.1);
+        }
+        
+        .data-row:last-child {
+            border-bottom: none;
+        }
+        
+        .template-input {
+            background: rgba(15, 23, 42, 0.9);
+            border: 2px solid rgba(241, 245, 249, 0.1);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            color: var(--light);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            resize: vertical;
+        }
+        
+        .template-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+        
+        .method-btn {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            color: var(--secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        
+        .method-btn:hover {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(139, 92, 246, 0.2));
+            transform: translateY(-1px);
+        }
+        
+        .method-btn.active {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(139, 92, 246, 0.3));
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
+        }
+        
+        .component-indicator {
+            display: inline-block;
+            width: 0.8rem;
+            height: 0.8rem;
+            border-radius: 50%;
+            margin-right: 0.4rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .ddntp-A { background: var(--ddatp); }
+        .ddntp-C { background: var(--ddctp); }
+        .ddntp-G { background: var(--ddgtp); }
+        .ddntp-T { background: var(--ddttp); }
+        .dna-polymerase { background: var(--warning); }
+        .primer { background: var(--success); }
+        
+        .notification {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            border-left: 4px solid var(--primary);
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .notification.show {
+            opacity: 1;
+        }
+        
+        .progress-indicator {
+            width: 100%;
+            height: 0.5rem;
+            background: rgba(241, 245, 249, 0.1);
+            border-radius: 0.25rem;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 0.25rem;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        
+        .phase-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .chromatogram {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            height: 200px;
+            position: relative;
+            overflow-x: auto;
+        }
+        
+        .peak {
+            position: absolute;
+            bottom: 20px;
+            width: 20px;
+            border-radius: 2px 2px 0 0;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+        
+        .peak.A { background: var(--ddatp); }
+        .peak.C { background: var(--ddctp); }
+        .peak.G { background: var(--ddgtp); }
+        .peak.T { background: var(--ddttp); }
+        
+        /* Animation keyframes */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 212, 255, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.6); }
+        }
+        
+        .glow-animation {
+            animation: glow 1.5s infinite;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .platform-container {
+                grid-template-columns: 300px 1fr 280px;
+            }
+        }
+        
+        @media (max-width: 968px) {
+            .platform-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+            
+            .left-panel,
+            .right-panel {
+                display: none;
+            }
+            
+            .header-center {
+                display: none;
+            }
+            
+            .fixed-controls {
+                flex-wrap: wrap;
+                padding: 0.75rem 1rem;
+            }
+        }
+        
+        /* Scrollbar styling */
+        .left-panel::-webkit-scrollbar,
+        .right-panel::-webkit-scrollbar,
+        .main-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .left-panel::-webkit-scrollbar-track,
+        .right-panel::-webkit-scrollbar-track,
+        .main-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .left-panel::-webkit-scrollbar-thumb,
+        .right-panel::-webkit-scrollbar-thumb,
+        .main-panel::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="platform-container" id="platform-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <div class="logo">🧬 Sanger Sequencing</div>
+                <div class="text-sm opacity-80">DNA Sequencing Education Platform</div>
+            </div>
+            <div class="header-center">
+                <div class="reaction-status">
+                    <i class="fas fa-dna"></i>
+                    <span>Step <span id="current-step">1</span> of <span id="total-steps">6</span></span>
+                </div>
+                <div class="reaction-progress" id="reaction-progress">
+                    0%
+                </div>
+                <div class="text-sm" id="current-phase-name">
+                    Template Preparation
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="text-xs">
+                    <span class="opacity-80">Made by:</span>
+                    <span class="text-primary">Dr. Yash Munnalal Gupta</span>
+                </div>
+                <div class="text-xs">
+                    <span class="opacity-80">Time:</span>
+                    <span class="text-primary font-mono">2025-06-01 05:37:16</span>
+                </div>
+                <button class="fullscreen-btn" id="fullscreen-btn" title="Toggle Fullscreen">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Left Panel: Template Input & Method Selection -->
+        <div class="left-panel">
+            <!-- Template Input -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-dna"></i>
+                    Template DNA
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-2">DNA Template Sequence:</label>
+                    <textarea 
+                        id="template-sequence" 
+                        class="template-input" 
+                        placeholder="Enter DNA template sequence (A, T, G, C only)..."
+                        rows="4"
+                    >ATGCGATCGTAGCAATCGGGCCAATTGGCCAATTGGATCGATCGATCGATCGATCG</textarea>
+                </div>
+                
+                <div class="grid grid-cols-1 gap-2 mb-3">
+                    <button class="method-btn" onclick="loadTemplate('short')">
+                        <i class="fas fa-dna"></i> Short Template (50 bp)
+                    </button>
+                    <button class="method-btn" onclick="loadTemplate('medium')">
+                        <i class="fas fa-dna"></i> Medium Template (100 bp)
+                    </button>
+                    <button class="method-btn" onclick="loadTemplate('long')">
+                        <i class="fas fa-dna"></i> Long Template (200 bp)
+                    </button>
+                    <button class="method-btn" onclick="loadTemplate('gene')">
+                        <i class="fas fa-dna"></i> Gene Sequence
+                    </button>
+                </div>
+                
+                <div class="text-xs space-y-1">
+                    <div class="data-row">
+                        <span>Template Length:</span>
+                        <span id="template-length" class="font-mono">55 bp</span>
+                    </div>
+                    <div class="data-row">
+                        <span>GC Content:</span>
+                        <span id="template-gc">45.5%</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Primer Binding:</span>
+                        <span id="primer-position">5' end</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sequencing Method -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-flask"></i>
+                    Sequencing Method
+                </div>
+                <div class="space-y-2">
+                    <button class="method-btn active" id="sanger-method" onclick="selectMethod('sanger')">
+                        <i class="fas fa-chart-line"></i> Sanger (Chain Termination)
+                    </button>
+                    <button class="method-btn" id="shotgun-method" onclick="selectMethod('shotgun')">
+                        <i class="fas fa-sitemap"></i> Shotgun Sequencing
+                    </button>
+                    <button class="method-btn" id="maxam-gilbert" onclick="selectMethod('maxam')">
+                        <i class="fas fa-cut"></i> Maxam-Gilbert
+                    </button>
+                </div>
+                
+                <div class="mt-4 text-xs">
+                    <div class="p-2 bg-primary/10 rounded">
+                        <div class="font-medium mb-1">Current Method: Sanger</div>
+                        <div>Uses DNA polymerase and dideoxynucleotides (ddNTPs) to terminate chain elongation at specific bases.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reaction Components -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-vials"></i>
+                    Reaction Components
+                </div>
+                <div class="data-display">
+                    <div class="data-row">
+                        <div class="flex items-center">
+                            <span class="component-indicator primer"></span>
+                            <span>Sequencing Primer</span>
+                        </div>
+                        <span class="text-success">0.5 μM</span>
+                    </div>
+                    <div class="data-row">
+                        <div class="flex items-center">
+                            <span class="component-indicator dna-polymerase"></span>
+                            <span>DNA Polymerase</span>
+                        </div>
+                        <span class="text-warning">1-2 units</span>
+                    </div>
+                    <div class="data-row">
+                        <div class="flex items-center">
+                            <span class="component-indicator ddntp-A"></span>
+                            <span>ddATP (Red)</span>
+                        </div>
+                        <span class="text-red-400">10 μM</span>
+                    </div>
+                    <div class="data-row">
+                        <div class="flex items-center">
+                            <span class="component-indicator ddntp-C"></span>
+                            <span>ddCTP (Blue)</span>
+                        </div>
+                        <span class="text-blue-400">10 μM</span>
+                    </div>
+                    <div class="data-row">
+                        <div class="flex items-center">
+                            <span class="component-indicator ddntp-G"></span>
+                            <span>ddGTP (Green)</span>
+                        </div>
+                        <span class="text-green-400">10 μM</span>
+                    </div>
+                    <div class="data-row">
+                        <div class="flex items-center">
+                            <span class="component-indicator ddntp-T"></span>
+                            <span>ddTTP (Yellow)</span>
+                        </div>
+                        <span class="text-yellow-400">10 μM</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Panel: Sequencing Visualization -->
+        <div class="main-panel">
+            <!-- Flowchart -->
+            <div class="flowchart-container">
+                <div class="phase-indicator" id="phase-indicator">
+                    Sanger Sequencing Process
+                </div>
+                <div class="flowchart" id="flowchart">
+                    <div class="flowchart-step active" id="step-1">
+                        <div class="flowchart-step-title">
+                            <i class="fas fa-dna"></i> Template Preparation
+                        </div>
+                        <div class="flowchart-step-desc">
+                            Single-stranded DNA template annealed with sequencing primer
+                        </div>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    
+                    <div class="flowchart-step" id="step-2">
+                        <div class="flowchart-step-title">
+                            <i class="fas fa-flask"></i> Add DNA Polymerase
+                        </div>
+                        <div class="flowchart-step-desc">
+                            DNA polymerase enzyme added to catalyze extension reaction
+                        </div>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    
+                    <div class="flowchart-step" id="step-3">
+                        <div class="flowchart-step-title">
+                            <i class="fas fa-vials"></i> Add dNTPs & ddNTPs
+                        </div>
+                        <div class="flowchart-step-desc">
+                            Normal dNTPs and chain-terminating ddNTPs added to reaction
+                        </div>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    
+                    <div class="flowchart-step" id="step-4">
+                        <div class="flowchart-step-title">
+                            <i class="fas fa-arrow-right"></i> Chain Extension
+                        </div>
+                        <div class="flowchart-step-desc">
+                            DNA polymerase extends primer until ddNTP incorporation terminates synthesis
+                        </div>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    
+                    <div class="flowchart-step" id="step-5">
+                        <div class="flowchart-step-title">
+                            <i class="fas fa-chart-bar"></i> Gel Electrophoresis
+                        </div>
+                        <div class="flowchart-step-desc">
+                            DNA fragments separated by size on polyacrylamide gel
+                        </div>
+                    </div>
+                    <div class="flowchart-arrow"></div>
+                    
+                    <div class="flowchart-step" id="step-6">
+                        <div class="flowchart-step-title">
+                            <i class="fas fa-search"></i> Sequence Analysis
+                        </div>
+                        <div class="flowchart-step-desc">
+                            DNA sequence determined from gel band pattern
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Electrophoresis Gel Visualization -->
+            <div class="sequencing-visualization">
+                <h3 class="text-lg font-semibold mb-3">Sanger Sequencing Process</h3>
+                
+                <!-- DNA Extension Visualization -->
+                <div id="extension-display" class="mb-4">
+                    <div class="text-sm opacity-80 mb-2">
+                        Current Extension: <span id="current-extension">0</span> bases • 
+                        Method: <span id="method-display">Sanger Chain Termination</span>
+                    </div>
+                    <div class="bg-black/30 rounded p-3 font-mono text-sm">
+                        <div class="text-blue-300 mb-1">Template: <span id="template-display">5'-ATGCGATCGTAGCAATCGGGCCAA-3'</span></div>
+                        <div class="text-green-300 mb-1">Primer:   <span id="primer-display">3'-TAC</span><span id="extension-sequence" class="text-yellow-300"></span></div>
+                        <div class="text-xs text-gray-400 mt-2">
+                            <span id="termination-info">DNA polymerase extends primer until ddNTP incorporation terminates synthesis</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gel Electrophoresis -->
+                <div class="electrophoresis-gel" id="gel-display">
+                    <div class="text-center text-sm mb-3 text-gray-300">Polyacrylamide Gel Electrophoresis</div>
+                    <div class="flex justify-center gap-4">
+                        <div class="text-center">
+                            <div class="text-xs text-red-400 mb-2">A Lane</div>
+                            <div class="gel-lane" id="lane-A"></div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xs text-blue-400 mb-2">C Lane</div>
+                            <div class="gel-lane" id="lane-C"></div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xs text-green-400 mb-2">G Lane</div>
+                            <div class="gel-lane" id="lane-G"></div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xs text-yellow-400 mb-2">T Lane</div>
+                            <div class="gel-lane" id="lane-T"></div>
+                        </div>
+                    </div>
+                    <div class="text-xs text-center mt-2 text-gray-400">
+                        Shorter fragments migrate further (bottom = shorter, top = longer)
+                    </div>
+                </div>
+                
+                <!-- Sequence Reader -->
+                <div class="sequence-reader" id="sequence-output">
+                    <div id="sequenced-bases">Sequencing in progress...</div>
+                </div>
+            </div>
+            
+            <!-- Progress Indicator -->
+            <div class="progress-indicator">
+                <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+            </div>
+            
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="control-group">
+                    <button id="prev-btn" class="control-btn" title="Previous Step" onclick="previousStep()">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button id="play-pause-btn" class="control-btn" title="Play/Pause" onclick="toggleSequencing()">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button id="next-btn" class="control-btn" title="Next Step" onclick="nextStep()">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                </div>
+                
+                <div class="control-group">
+                    <span class="text-sm">Speed:</span>
+                    <input type="range" id="speed-control" min="0.5" max="5" step="0.5" value="1" 
+                           class="w-20 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <span id="speed-display" class="text-xs opacity-80 w-8">1.0x</span>
+                </div>
+                
+                <div class="control-group">
+                    <button id="reset-btn" class="control-btn" title="Reset" onclick="resetSequencing()">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button class="sequence-btn" onclick="startSequencing()" id="start-sequence-btn">Start Sequencing</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel: Analysis & Theory -->
+        <div class="right-panel">
+            <!-- Current Step Info -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-info-circle"></i>
+                    Current Step
+                </div>
+                <div class="data-display" id="step-info">
+                    <h4 class="font-medium text-primary mb-2">Template Preparation</h4>
+                    <p class="text-sm mb-3">Single-stranded DNA template is prepared and annealed with a sequencing primer to initiate the reaction.</p>
+                    <div class="text-xs space-y-1">
+                        <div class="data-row">
+                            <span>Step:</span>
+                            <span>1 of 6</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Status:</span>
+                            <span class="text-yellow-400">Ready</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Next:</span>
+                            <span>Add DNA Polymerase</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sequence Analysis -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-chart-line"></i>
+                    Sequence Analysis
+                </div>
+                <div class="data-display">
+                    <div class="data-row">
+                        <span>Bases Sequenced:</span>
+                        <span id="bases-sequenced" class="text-primary font-bold">0</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Read Length:</span>
+                        <span id="read-length" class="text-success">- bp</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Quality Score:</span>
+                        <span id="quality-score" class="text-warning">-</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Coverage:</span>
+                        <span id="coverage" class="text-info">0%</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Confidence:</span>
+                        <span id="confidence" class="text-purple-400">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ddNTP Information -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-atom"></i>
+                    ddNTP Chemistry
+                </div>
+                <div class="data-display">
+                    <div class="text-xs space-y-2">
+                        <div class="p-2 bg-red-500/20 rounded">
+                            <div class="font-medium text-red-400 flex items-center">
+                                <span class="component-indicator ddntp-A mr-2"></span>
+                                ddATP (Dideoxy-Adenosine)
+                            </div>
+                            <div>Lacks 3'-OH group, terminates at A</div>
+                            <div>Formula: C₁₀H₁₄N₅O₉P₂</div>
+                        </div>
+                        <div class="p-2 bg-blue-500/20 rounded">
+                            <div class="font-medium text-blue-400 flex items-center">
+                                <span class="component-indicator ddntp-C mr-2"></span>
+                                ddCTP (Dideoxy-Cytidine)
+                            </div>
+                            <div>Lacks 3'-OH group, terminates at C</div>
+                            <div>Formula: C₉H₁₄N₃O₁₀P₂</div>
+                        </div>
+                        <div class="p-2 bg-green-500/20 rounded">
+                            <div class="font-medium text-green-400 flex items-center">
+                                <span class="component-indicator ddntp-G mr-2"></span>
+                                ddGTP (Dideoxy-Guanosine)
+                            </div>
+                            <div>Lacks 3'-OH group, terminates at G</div>
+                            <div>Formula: C₁₀H₁₄N₅O₁₀P₂</div>
+                        </div>
+                        <div class="p-2 bg-yellow-500/20 rounded">
+                            <div class="font-medium text-yellow-400 flex items-center">
+                                <span class="component-indicator ddntp-T mr-2"></span>
+                                ddTTP (Dideoxy-Thymidine)
+                            </div>
+                            <div>Lacks 3'-OH group, terminates at T</div>
+                            <div>Formula: C₁₀H₁₅N₂O₁₀P₂</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sanger Theory -->
+            <div class="panel-section">
+                <div class="panel-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    Sanger Method Theory
+                </div>
+                <div class="text-xs space-y-2">
+                    <div class="p-2 bg-primary/10 rounded">
+                        <div class="font-medium mb-1">Chain Termination:</div>
+                        <div>ddNTPs lack 3'-OH group, preventing further extension when incorporated by DNA polymerase</div>
+                    </div>
+                    <div class="p-2 bg-secondary/10 rounded">
+                        <div class="font-medium mb-1">Four Reactions:</div>
+                        <div>Separate reactions with each ddNTP create fragments ending at specific bases</div>
+                    </div>
+                    <div class="p-2 bg-success/10 rounded">
+                        <div class="font-medium mb-1">Gel Electrophoresis:</div>
+                        <div>Fragments separated by size; sequence read from bottom (shortest) to top (longest)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fixed Control Panel -->
+    <div class="fixed-controls" id="fixed-controls">
+        <button id="fixed-prev-btn" class="control-btn" title="Previous Step" onclick="previousStep()">
+            <i class="fas fa-step-backward"></i>
+        </button>
+        <button id="fixed-play-pause-btn" class="control-btn" title="Play/Pause" onclick="toggleSequencing()">
+            <i class="fas fa-play"></i>
+        </button>
+        <button id="fixed-next-btn" class="control-btn" title="Next Step" onclick="nextStep()">
+            <i class="fas fa-step-forward"></i>
+        </button>
+        <div class="text-sm opacity-80">|</div>
+        <button class="sequence-btn" onclick="startSequencing()" id="fixed-start-btn">Start Sequencing</button>
+        <button id="fixed-reset-btn" class="control-btn" title="Reset" onclick="resetSequencing()">
+            <i class="fas fa-undo"></i>
+        </button>
+    </div>
+    
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notification-text"></span>
+    </div>
+
+    <script>
+        // Global variables
+        let currentStep = 1;
+        let totalSteps = 6;
+        let currentPhase = 'template';
+        let isRunning = false;
+        let isSequencing = false;
+        let sequencingSpeed = 1;
+        let sequencedBases = 0;
+        let isFullscreen = false;
+        let animationFrame;
+        
+        // Template sequences
+        const TEMPLATES = {
+            short: 'ATGCGATCGTAGCAATCGGGCCAATTGGCCAATTGGATCGATCGATCGAT',
+            medium: 'ATGCGATCGTAGCAATCGGGCCAATTGGCCAATTGGATCGATCGATCGATCGATCGAATTCCGGATCCGTCGACCTGCAGCGATCG',
+            long: 'ATGCGATCGTAGCAATCGGGCCAATTGGCCAATTGGATCGATCGATCGATCGATCGAATTCCGGATCCGTCGACCTGCAGCGATCGAATTATGCGCGGATCCAATTGCGCGCAATTGGAATTCGATATCAAGCTTATCGATACCGTCGACCTGCAGCGATCG',
+            gene: 'ATGAAAGCACTGCCAGGGATCGTAGTTGGAGCAATTGAGCGATCGATCGCCGGCCTGGAAGAGGCAAATAAAGAGGCTGAGGCAGAGTAG'
+        };
+        
+        // Sequencing phases
+        const SEQUENCING_PHASES = {
+            template: { name: 'Template Preparation', description: 'Single-stranded DNA template prepared with primer' },
+            polymerase: { name: 'Add DNA Polymerase', description: 'DNA polymerase added to catalyze extension' },
+            dntp: { name: 'Add dNTPs & ddNTPs', description: 'Regular nucleotides and dideoxynucleotides added' },
+            extension: { name: 'Chain Extension', description: 'DNA polymerase extends primer until ddNTP incorporation' },
+            gel: { name: 'Gel Electrophoresis', description: 'Fragments separated by size on polyacrylamide gel' },
+            analysis: { name: 'Sequence Analysis', description: 'Sequence determined from gel band pattern' }
+        };
+        
+        // Current template and sequence
+        let currentTemplate = TEMPLATES.short;
+        let currentMethod = 'sanger';
+        let gelBands = { A: [], C: [], G: [], T: [] };
+        let sequencedSequence = '';
+        
+        // Initialize the platform
+        function init() {
+            console.log('🧬 Sanger Sequencing Platform initializing...');
+            console.log('📅 Current Date:', '2025-06-01 05:37:16');
+            console.log('👤 User:', 'yashmgupta');
+            
+            setupEventListeners();
+            updateDisplay();
+            updateTemplateStats();
+            updateFlowchart();
+            
+            showNotification('Welcome to Sanger DNA Sequencing Platform, yashmgupta!');
+            console.log('✅ Sequencing Platform initialization complete');
+        }
+        
+        function updateFlowchart() {
+            const steps = document.querySelectorAll('.flowchart-step');
+            steps.forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index + 1 === currentStep) {
+                    step.classList.add('active');
+                } else if (index + 1 < currentStep) {
+                    step.classList.add('completed');
+                }
+            });
+        }
+        
+        function setupEventListeners() {
+            // Template input change
+            document.getElementById('template-sequence').addEventListener('input', function() {
+                currentTemplate = this.value.toUpperCase().replace(/[^ATGC]/g, '');
+                this.value = currentTemplate;
+                updateTemplateStats();
+            });
+            
+            // Speed control
+            document.getElementById('speed-control').addEventListener('input', function() {
+                sequencingSpeed = parseFloat(this.value);
+                document.getElementById('speed-display').textContent = sequencingSpeed.toFixed(1) + 'x';
+            });
+            
+            // Fullscreen toggle
+            document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
+        }
+        
+        function loadTemplate(type) {
+            currentTemplate = TEMPLATES[type];
+            document.getElementById('template-sequence').value = currentTemplate;
+            updateTemplateStats();
+            resetSequencing();
+            showNotification(`Loaded ${type} template sequence`);
+        }
+        
+        function selectMethod(method) {
+            // Remove active class from all method buttons
+            document.querySelectorAll('.method-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to selected method
+            document.getElementById(method + '-method').classList.add('active');
+            
+            currentMethod = method;
+            resetSequencing();
+            showNotification(`Selected ${method.charAt(0).toUpperCase() + method.slice(1)} sequencing method`);
+        }
+        
+        function updateTemplateStats() {
+            const length = currentTemplate.length;
+            const gcCount = (currentTemplate.match(/[GC]/g) || []).length;
+            const gcContent = ((gcCount / length) * 100).toFixed(1);
+            
+            document.getElementById('template-length').textContent = length + ' bp';
+            document.getElementById('template-gc').textContent = gcContent + '%';
+            document.getElementById('template-display').textContent = '5\'-' + currentTemplate.substring(0, 24) + (currentTemplate.length > 24 ? '...' : '') + '-3\'';
+        }
+        
+        function updateDisplay() {
+            document.getElementById('current-step').textContent = currentStep;
+            document.getElementById('total-steps').textContent = totalSteps;
+            
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('reaction-progress').textContent = Math.round(progress) + '%';
+            document.getElementById('progress-fill').style.width = progress + '%';
+            
+            const phaseKeys = Object.keys(SEQUENCING_PHASES);
+            const currentPhaseKey = phaseKeys[currentStep - 1];
+            const phase = SEQUENCING_PHASES[currentPhaseKey];
+            
+            if (phase) {
+                document.getElementById('current-phase-name').textContent = phase.name;
+                document.getElementById('phase-indicator').textContent = phase.name;
+                
+                // Update step info
+                const stepInfo = document.getElementById('step-info');
+                stepInfo.innerHTML = `
+                    <h4 class="font-medium text-primary mb-2">${phase.name}</h4>
+                    <p class="text-sm mb-3">${phase.description}</p>
+                    <div class="text-xs space-y-1">
+                        <div class="data-row">
+                            <span>Step:</span>
+                            <span>${currentStep} of ${totalSteps}</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Status:</span>
+                            <span class="text-yellow-400">${isRunning ? 'Running' : 'Ready'}</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Next:</span>
+                            <span>${currentStep < totalSteps ? Object.values(SEQUENCING_PHASES)[currentStep].name : 'Complete'}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            updateFlowchart();
+        }
+        
+        function toggleSequencing() {
+            isRunning = !isRunning;
+            const playBtn = document.getElementById('play-pause-btn');
+            const fixedPlayBtn = document.getElementById('fixed-play-pause-btn');
+            
+            if (isRunning) {
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                fixedPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                playBtn.classList.add('active');
+                fixedPlayBtn.classList.add('active');
+                runSequencing();
+            } else {
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                fixedPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+                playBtn.classList.remove('active');
+                fixedPlayBtn.classList.remove('active');
+                if (animationFrame) {
+                    cancelAnimationFrame(animationFrame);
+                }
+            }
+        }
+        
+        function runSequencing() {
+            if (!isRunning) return;
+            
+            // Simulate sequencing progress
+            if (currentStep < totalSteps) {
+                setTimeout(() => {
+                    if (isRunning) {
+                        nextStep();
+                        runSequencing();
+                    }
+                }, 2000 / sequencingSpeed);
+            } else {
+                // Sequencing complete
+                isRunning = false;
+                document.getElementById('play-pause-btn').innerHTML = '<i class="fas fa-play"></i>';
+                document.getElementById('fixed-play-pause-btn').innerHTML = '<i class="fas fa-play"></i>';
+                document.getElementById('play-pause-btn').classList.remove('active');
+                document.getElementById('fixed-play-pause-btn').classList.remove('active');
+                showNotification('Sequencing completed successfully!');
+            }
+        }
+        
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateDisplay();
+                simulateSequencingStep();
+            }
+        }
+        
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateDisplay();
+            }
+        }
+        
+        function startSequencing() {
+            resetSequencing();
+            toggleSequencing();
+            showNotification('Starting Sanger sequencing reaction...');
+        }
+        
+        function resetSequencing() {
+            currentStep = 1;
+            isRunning = false;
+            sequencedBases = 0;
+            sequencedSequence = '';
+            gelBands = { A: [], C: [], G: [], T: [] };
+            
+            // Reset UI
+            document.getElementById('play-pause-btn').innerHTML = '<i class="fas fa-play"></i>';
+            document.getElementById('fixed-play-pause-btn').innerHTML = '<i class="fas fa-play"></i>';
+            document.getElementById('play-pause-btn').classList.remove('active');
+            document.getElementById('fixed-play-pause-btn').classList.remove('active');
+            
+            // Clear gel lanes
+            ['A', 'C', 'G', 'T'].forEach(base => {
+                document.getElementById('lane-' + base).innerHTML = '';
+            });
+            
+            // Reset sequence output
+            document.getElementById('sequenced-bases').textContent = 'Sequencing in progress...';
+            document.getElementById('current-extension').textContent = '0';
+            document.getElementById('extension-sequence').textContent = '';
+            
+            // Reset analysis data
+            document.getElementById('bases-sequenced').textContent = '0';
+            document.getElementById('read-length').textContent = '- bp';
+            document.getElementById('quality-score').textContent = '-';
+            document.getElementById('coverage').textContent = '0%';
+            document.getElementById('confidence').textContent = '-';
+            
+            updateDisplay();
+            showNotification('Sequencing reset to initial state');
+        }
+        
+        function simulateSequencingStep() {
+            // Add some animation or effects based on current step
+            const phaseKeys = Object.keys(SEQUENCING_PHASES);
+            const currentPhaseKey = phaseKeys[currentStep - 1];
+            
+            switch(currentPhaseKey) {
+                case 'extension':
+                    simulateChainExtension();
+                    break;
+                case 'gel':
+                    simulateGelElectrophoresis();
+                    break;
+                case 'analysis':
+                    simulateSequenceAnalysis();
+                    break;
+            }
+        }
+        
+        function simulateChainExtension() {
+            // Simulate extending the primer with bases from template
+            const extensionLength = Math.min(10, currentTemplate.length - sequencedBases);
+            let extension = '';
+            
+            for (let i = 0; i < extensionLength; i++) {
+                const templateBase = currentTemplate[sequencedBases + i];
+                const complement = getComplement(templateBase);
+                extension += complement;
+            }
+            
+            sequencedBases += extensionLength;
+            document.getElementById('current-extension').textContent = sequencedBases;
+            document.getElementById('extension-sequence').textContent = extension;
+        }
+        
+        function simulateGelElectrophoresis() {
+            // Add bands to gel lanes
+            ['A', 'C', 'G', 'T'].forEach(base => {
+                const lane = document.getElementById('lane-' + base);
+                const numBands = Math.floor(Math.random() * 5) + 3;
+                
+                for (let i = 0; i < numBands; i++) {
+                    const band = document.createElement('div');
+                    band.className = `dna-band ${base}`;
+                    band.style.top = (20 + Math.random() * 200) + 'px';
+                    lane.appendChild(band);
+                }
+            });
+        }
+        
+        function simulateSequenceAnalysis() {
+            // Generate a partial sequence read
+            const readLength = Math.min(20, currentTemplate.length);
+            sequencedSequence = currentTemplate.substring(0, readLength);
+            
+            // Color-code the bases
+            let coloredSequence = '';
+            for (let base of sequencedSequence) {
+                coloredSequence += `<span class="base-${base}">${base}</span>`;
+            }
+            
+            document.getElementById('sequenced-bases').innerHTML = coloredSequence;
+            
+            // Update analysis data
+            document.getElementById('bases-sequenced').textContent = readLength;
+            document.getElementById('read-length').textContent = readLength + ' bp';
+            document.getElementById('quality-score').textContent = 'Q' + (30 + Math.floor(Math.random() * 10));
+            document.getElementById('coverage').textContent = Math.round((readLength / currentTemplate.length) * 100) + '%';
+            document.getElementById('confidence').textContent = (85 + Math.random() * 15).toFixed(1) + '%';
+        }
+        
+        function getComplement(base) {
+            const complements = { 'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G' };
+            return complements[base] || base;
+        }
+        
+        function toggleFullscreen() {
+            isFullscreen = !isFullscreen;
+            const container = document.getElementById('platform-container');
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+            
+            if (isFullscreen) {
+                container.classList.add('fullscreen');
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                showNotification('Switched to fullscreen mode');
+            } else {
+                container.classList.remove('fullscreen');
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                showNotification('Switched to normal view');
+            }
+        }
+        
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notification-text');
+            
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Sync fixed controls with main controls
+        function syncControls() {
+            const mainPlayBtn = document.getElementById('play-pause-btn');
+            const fixedPlayBtn = document.getElementById('fixed-play-pause-btn');
+            
+            // Sync play/pause state
+            if (mainPlayBtn.classList.contains('active')) {
+                fixedPlayBtn.classList.add('active');
+                fixedPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                fixedPlayBtn.classList.remove('active');
+                fixedPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+        
+        // Call sync function when needed
+        setInterval(syncControls, 100);
+        
+        // Update time display
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toISOString().slice(0, 19).replace('T', ' ');
+            const timeElements = document.querySelectorAll('.text-primary.font-mono');
+            timeElements.forEach(el => {
+                if (el.textContent.includes('-')) {
+                    el.textContent = timeString;
+                }
+            });
+        }
+        
+        // Update time every second
+        setInterval(updateTime, 1000);
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            switch(e.key) {
+                case ' ':
+                case 'k':
+                    e.preventDefault();
+                    toggleSequencing();
+                    break;
+                case 'ArrowRight':
+                case 'l':
+                    e.preventDefault();
+                    nextStep();
+                    break;
+                case 'ArrowLeft':
+                case 'j':
+                    e.preventDefault();
+                    previousStep();
+                    break;
+                case 'r':
+                    e.preventDefault();
+                    resetSequencing();
+                    break;
+                case 'f':
+                    e.preventDefault();
+                    toggleFullscreen();
+                    break;
+                case 's':
+                    e.preventDefault();
+                    startSequencing();
+                    break;
+            }
+        });
+        
+        // Initialize platform when page loads
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            updateDisplay();
+        });
+        
+        // Prevent context menu on control buttons
+        document.querySelectorAll('.control-btn, .sequence-btn').forEach(btn => {
+            btn.addEventListener('contextmenu', e => e.preventDefault());
+        });
+        
+        // Add loading animation for template changes
+        function animateTemplateChange() {
+            const templateDisplay = document.getElementById('template-display');
+            templateDisplay.style.opacity = '0.5';
+            setTimeout(() => {
+                templateDisplay.style.opacity = '1';
+            }, 300);
+        }
+        
+        // Enhanced notification system
+        function showAdvancedNotification(message, type = 'info', duration = 3000) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notification-text');
+            
+            // Set notification style based on type
+            notification.style.borderLeftColor = type === 'success' ? 'var(--success)' : 
+                                                 type === 'warning' ? 'var(--warning)' :
+                                                 type === 'error' ? 'var(--danger)' : 'var(--primary)';
+            
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, duration);
+        }
+        
+        // Add pulse animation to active elements
+        function addPulseToActiveElements() {
+            const activeStep = document.querySelector('.flowchart-step.active');
+            if (activeStep) {
+                activeStep.classList.add('pulse-animation');
+                setTimeout(() => {
+                    activeStep.classList.remove('pulse-animation');
+                }, 2000);
+            }
+        }
+        
+        // Call pulse animation when step changes
+        function enhancedNextStep() {
+            nextStep();
+            addPulseToActiveElements();
+        }
+        
+        function enhancedPreviousStep() {
+            previousStep();
+            addPulseToActiveElements();
+        }
+        
+        // Add progress sound effects (optional - can be enabled if audio files are available)
+        function playSound(soundType) {
+            // Placeholder for sound effects
+            // const audio = new Audio(`sounds/${soundType}.mp3`);
+            // audio.play().catch(e => console.log('Audio play failed:', e));
+        }
+        
+        // Enhanced step simulation with more realistic timing
+        function enhancedSimulateSequencingStep() {
+            const phaseKeys = Object.keys(SEQUENCING_PHASES);
+            const currentPhaseKey = phaseKeys[currentStep - 1];
+            
+            // Add visual feedback
+            const currentStepElement = document.getElementById(`step-${currentStep}`);
+            if (currentStepElement) {
+                currentStepElement.classList.add('glow-animation');
+                setTimeout(() => {
+                    currentStepElement.classList.remove('glow-animation');
+                }, 1000);
+            }
+            
+            switch(currentPhaseKey) {
+                case 'template':
+                    showAdvancedNotification('Template and primer are being annealed...', 'info');
+                    break;
+                case 'polymerase':
+                    showAdvancedNotification('DNA polymerase added to reaction mixture', 'success');
+                    break;
+                case 'dntp':
+                    showAdvancedNotification('dNTPs and ddNTPs added for chain extension', 'info');
+                    break;
+                case 'extension':
+                    simulateChainExtension();
+                    showAdvancedNotification('Chain extension in progress...', 'warning');
+                    break;
+                case 'gel':
+                    simulateGelElectrophoresis();
+                    showAdvancedNotification('Running gel electrophoresis...', 'info');
+                    break;
+                case 'analysis':
+                    simulateSequenceAnalysis();
+                    showAdvancedNotification('Analyzing sequence data...', 'success');
+                    break;
+            }
+        }
+        
+        // Replace the original function
+        simulateSequencingStep = enhancedSimulateSequencingStep;
+        
+        // Add educational tooltips
+        function addTooltips() {
+            const tooltipElements = [
+                { id: 'template-sequence', text: 'Enter your DNA template sequence using only A, T, G, C nucleotides' },
+                { id: 'play-pause-btn', text: 'Press Space or K to play/pause sequencing' },
+                { id: 'speed-control', text: 'Adjust the speed of sequencing animation' },
+                { id: 'gel-display', text: 'Gel electrophoresis separates DNA fragments by size' }
+            ];
+            
+            tooltipElements.forEach(item => {
+                const element = document.getElementById(item.id);
+                if (element) {
+                    element.title = item.text;
+                }
+            });
+        }
+        
+        // Initialize tooltips
+        setTimeout(addTooltips, 100);
+        
+        // Add accessibility features
+        function addAccessibilityFeatures() {
+            // Add ARIA labels
+            document.getElementById('play-pause-btn').setAttribute('aria-label', 'Play or pause sequencing animation');
+            document.getElementById('next-btn').setAttribute('aria-label', 'Go to next sequencing step');
+            document.getElementById('prev-btn').setAttribute('aria-label', 'Go to previous sequencing step');
+            document.getElementById('reset-btn').setAttribute('aria-label', 'Reset sequencing to beginning');
+            
+            // Add keyboard navigation hints
+            const keyboardHints = document.createElement('div');
+            keyboardHints.style.cssText = 'position: fixed; bottom: 5px; right: 10px; font-size: 10px; opacity: 0.7; z-index: 999;';
+            keyboardHints.innerHTML = 'Keyboard: Space/K=Play/Pause, ←/→=Step, R=Reset, F=Fullscreen, S=Start';
+            document.body.appendChild(keyboardHints);
+        }
+        
+        // Initialize accessibility features
+        setTimeout(addAccessibilityFeatures, 200);
+        
+        // Performance monitoring
+        let performanceMetrics = {
+            stepChanges: 0,
+            totalTime: 0,
+            startTime: Date.now()
+        };
+        
+        function trackPerformance(action) {
+            performanceMetrics[action] = (performanceMetrics[action] || 0) + 1;
+            console.log(`Performance: ${action} called ${performanceMetrics[action]} times`);
+        }
+        
+        // Enhanced error handling
+        window.addEventListener('error', function(e) {
+            console.error('Sequencing Platform Error:', e.error);
+            showAdvancedNotification('An error occurred. Please refresh the page.', 'error', 5000);
+        });
+        
+        // Export functions for debugging (optional)
+        window.sangerDebug = {
+            getCurrentStep: () => currentStep,
+            getTemplate: () => currentTemplate,
+            getSequencedBases: () => sequencedBases,
+            forceStep: (step) => {
+                currentStep = Math.max(1, Math.min(step, totalSteps));
+                updateDisplay();
+            },
+            getPerformanceMetrics: () => performanceMetrics
+        };
+        
+        console.log('🧬 Sanger Sequencing Platform fully loaded and ready!');
+        console.log('📊 Debug tools available at window.sangerDebug');
+        console.log('⌨️  Keyboard shortcuts: Space=Play/Pause, ←/→=Step, R=Reset, F=Fullscreen, S=Start');
+    </script>
+</body>
+</html>
