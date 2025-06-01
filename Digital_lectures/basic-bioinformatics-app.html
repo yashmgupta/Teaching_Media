@@ -1,0 +1,2677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Bioinformatics - 16-Week Learning Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        :root {
+            --primary: #0ea5e9;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --lighter: #ffffff;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --bio-green: #22c55e;
+            --bio-blue: #3b82f6;
+            --bio-purple: #a855f7;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--lighter);
+            border-bottom: 2px solid var(--border);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .logo-icon {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--bio-blue));
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+        
+        .semester-nav {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--light);
+            padding: 0.5rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+        }
+        
+        .semester-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        
+        .semester-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+        }
+        
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            font-size: 0.875rem;
+            color: var(--dark);
+        }
+        
+        .course-progress {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--light);
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+        }
+        
+        /* Main Content */
+        .main-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            min-height: calc(100vh - 120px);
+        }
+        
+        /* Week Navigation Sidebar */
+        .week-sidebar {
+            background: var(--lighter);
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            height: fit-content;
+            box-shadow: 0 4px 20px var(--shadow);
+            position: sticky;
+            top: 140px;
+        }
+        
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .week-list {
+            list-style: none;
+            space-y: 0.5rem;
+        }
+        
+        .week-item {
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .week-item:hover {
+            background: var(--light);
+            border-color: var(--border);
+        }
+        
+        .week-item.active {
+            background: linear-gradient(135deg, var(--primary), var(--bio-blue));
+            color: white;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+        }
+        
+        .week-item.completed {
+            background: linear-gradient(135deg, var(--success), var(--bio-green));
+            color: white;
+        }
+        
+        .week-number {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+        
+        .week-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        .week-topics {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.25rem;
+        }
+        
+        .week-item.active .week-topics,
+        .week-item.completed .week-topics {
+            opacity: 0.9;
+        }
+        
+        /* Content Area */
+        .content-area {
+            background: var(--lighter);
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            overflow-y: auto;
+        }
+        
+        .content-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .week-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--bio-blue));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .content-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .content-subtitle {
+            color: var(--dark);
+            opacity: 0.7;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .content-description {
+            font-size: 1rem;
+            color: var(--dark);
+            opacity: 0.8;
+            line-height: 1.7;
+        }
+        
+        /* Learning Objectives */
+        .objectives-section {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+        
+        .objectives-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .objectives-list {
+            list-style: none;
+            space-y: 0.75rem;
+        }
+        
+        .objective-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--lighter);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            margin-bottom: 0.75rem;
+        }
+        
+        .objective-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+        
+        .objective-text {
+            flex: 1;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* Topics Grid */
+        .topics-section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .topic-card {
+            background: var(--light);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .topic-card:hover {
+            box-shadow: 0 8px 25px var(--shadow);
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+        
+        .topic-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .topic-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, var(--bio-green), var(--success));
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .topic-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+        
+        .topic-description {
+            font-size: 0.875rem;
+            color: var(--dark);
+            opacity: 0.8;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .topic-points {
+            list-style: none;
+        }
+        
+        .topic-point {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--dark);
+            opacity: 0.7;
+            margin-bottom: 0.25rem;
+        }
+        
+        .point-dot {
+            width: 0.25rem;
+            height: 0.25rem;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+        
+        /* Resources Section */
+        .resources-section {
+            background: linear-gradient(135deg, #fefce8, #fef3c7);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #fbbf24;
+        }
+        
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .resource-item {
+            background: var(--lighter);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .resource-item:hover {
+            box-shadow: 0 4px 15px var(--shadow);
+            transform: translateY(-1px);
+        }
+        
+        .resource-icon {
+            width: 2rem;
+            height: 2rem;
+            background: var(--warning);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+        }
+        
+        .resource-text {
+            flex: 1;
+        }
+        
+        .resource-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--dark);
+        }
+        
+        .resource-desc {
+            font-size: 0.75rem;
+            color: var(--dark);
+            opacity: 0.7;
+        }
+        
+        /* Assessment Section */
+        .assessment-section {
+            background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--secondary);
+        }
+        
+        .assessment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .assessment-item {
+            background: var(--lighter);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        
+        .assessment-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .assessment-label {
+            font-size: 0.875rem;
+            color: var(--dark);
+            opacity: 0.8;
+        }
+        
+        /* Navigation Controls */
+        .navigation-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .nav-btn {
+            padding: 0.875rem 2rem;
+            background: var(--lighter);
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+        }
+        
+        .nav-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .nav-btn.primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        .nav-btn.primary:hover {
+            background: var(--bio-blue);
+            border-color: var(--bio-blue);
+        }
+        
+        .week-progress {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .progress-circle {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) 0deg, var(--border) 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--dark);
+            position: relative;
+        }
+        
+        .progress-circle::before {
+            content: '';
+            position: absolute;
+            width: 2rem;
+            height: 2rem;
+            background: var(--lighter);
+            border-radius: 50%;
+        }
+        
+        .progress-text {
+            font-size: 0.875rem;
+            color: var(--dark);
+            z-index: 1;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .week-sidebar {
+                position: relative;
+                top: auto;
+            }
+            
+            .topics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .semester-nav {
+                display: none;
+            }
+            
+            .content-title {
+                font-size: 1.8rem;
+            }
+            
+            .navigation-controls {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .week-progress {
+                order: -1;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.4s ease-out;
+        }
+        
+        /* Progress Tracking */
+        .completion-badge {
+            position: absolute;
+            top: -0.5rem;
+            right: -0.5rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            border: 2px solid var(--lighter);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-dna"></i>
+                    </div>
+                    <div>
+                        <div>Basic Bioinformatics</div>
+                        <div style="font-size: 0.75rem; opacity: 0.7; font-weight: 400;">16-Week Learning Platform</div>
+                    </div>
+                </div>
+                
+                <nav class="semester-nav">
+                    <button class="semester-btn active" data-semester="1">Weeks 1-8</button>
+                    <button class="semester-btn" data-semester="2">Weeks 9-16</button>
+                </nav>
+                
+                <div class="header-info">
+                    <div class="course-progress">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Progress: <span id="overall-progress">6%</span></span>
+                    </div>
+                    <div>
+                        <span class="opacity-60">Instructor:</span>
+                        <span class="font-medium">Dr. Yash Munnalal Gupta</span>
+                    </div>
+                    <div>
+                        <span class="opacity-60">Date:</span>
+                        <span class="font-mono">2025-06-01 06:48:51</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Week Navigation Sidebar -->
+            <aside class="week-sidebar">
+                <div class="sidebar-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    Course Schedule
+                </div>
+                <ul class="week-list" id="week-list">
+                    <!-- Weeks will be dynamically generated -->
+                </ul>
+            </aside>
+            
+            <!-- Content Area -->
+            <section class="content-area">
+                <!-- Week Header -->
+                <div class="content-header fade-in-up">
+                    <div class="week-badge">
+                        <i class="fas fa-play-circle"></i>
+                        <span id="current-week-badge">Week 1</span>
+                    </div>
+                    <h1 class="content-title" id="week-title">Introduction to Bioinformatics</h1>
+                    <p class="content-subtitle" id="week-subtitle">Understanding the intersection of biology, computer science, and data analysis</p>
+                    <p class="content-description" id="week-description">
+                        Welcome to the fascinating world of bioinformatics! This week introduces the fundamental concepts, 
+                        historical development, and real-world applications of computational biology.
+                    </p>
+                </div>
+                
+                <!-- Learning Objectives -->
+                <div class="objectives-section fade-in-up">
+                    <div class="objectives-title">
+                        <i class="fas fa-bullseye"></i>
+                        Learning Objectives
+                    </div>
+                    <ul class="objectives-list" id="objectives-list">
+                        <!-- Objectives will be dynamically generated -->
+                    </ul>
+                </div>
+                
+                <!-- Topics Section -->
+                <div class="topics-section fade-in-up">
+                    <div class="section-title">
+                        <i class="fas fa-book-open"></i>
+                        Key Topics & Concepts
+                    </div>
+                    <div class="topics-grid" id="topics-grid">
+                        <!-- Topics will be dynamically generated -->
+                    </div>
+                </div>
+                
+                <!-- Resources Section -->
+                <div class="resources-section fade-in-up">
+                    <div class="section-title" style="color: #92400e;">
+                        <i class="fas fa-tools"></i>
+                        Resources & Tools
+                    </div>
+                    <div class="resources-grid" id="resources-grid">
+                        <!-- Resources will be dynamically generated -->
+                    </div>
+                </div>
+                
+                <!-- Assessment Section -->
+                <div class="assessment-section fade-in-up">
+                    <div class="section-title" style="color: #7c3aed;">
+                        <i class="fas fa-clipboard-check"></i>
+                        Assessment & Evaluation
+                    </div>
+                    <div class="assessment-grid" id="assessment-grid">
+                        <!-- Assessments will be dynamically generated -->
+                    </div>
+                </div>
+                
+                <!-- Navigation Controls -->
+                <div class="navigation-controls">
+                    <button class="nav-btn" id="prev-week-btn" onclick="previousWeek()">
+                        <i class="fas fa-chevron-left"></i>
+                        Previous Week
+                    </button>
+                    
+                    <div class="week-progress">
+                        <div class="progress-circle" id="week-progress-circle">
+                            <span class="progress-text" id="week-progress-text">6%</span>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600;">Week Progress</div>
+                            <div style="font-size: 0.875rem; opacity: 0.7;">
+                                Week <span id="current-week-number">1</span> of 16
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="nav-btn primary" id="next-week-btn" onclick="nextWeek()">
+                        Next Week
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Course content data structure
+        const bioinformaticsCourse = {
+            1: {
+                title: "Introduction to Bioinformatics",
+                subtitle: "Understanding the intersection of biology, computer science, and data analysis",
+                description: "Welcome to the fascinating world of bioinformatics! This week introduces the fundamental concepts, historical development, and real-world applications of computational biology.",
+                objectives: [
+                    "Define bioinformatics and understand its interdisciplinary nature",
+                    "Trace the historical development of computational biology",
+                    "Identify key applications in medicine, agriculture, and research",
+                    "Explore career opportunities in bioinformatics",
+                    "Understand the importance of computational tools in modern biology"
+                ],
+                topics: [
+                    {
+                        title: "What is Bioinformatics?",
+                        icon: "fas fa-question-circle",
+                        description: "Definition, scope, and interdisciplinary nature of bioinformatics",
+                        points: [
+                            "Computational analysis of biological data",
+                            "Integration of biology, computer science, and statistics",
+                            "Database management and algorithm development"
+                        ]
+                    },
+                    {
+                        title: "Historical Perspective",
+                        icon: "fas fa-history",
+                        description: "Evolution from early sequence analysis to modern genomics",
+                        points: [
+                            "1960s: First protein sequences",
+                            "1980s: DNA sequencing automation",
+                            "2000s: Human Genome Project completion"
+                        ]
+                    },
+                    {
+                        title: "Applications & Impact",
+                        icon: "fas fa-microscope",
+                        description: "Real-world applications in various fields",
+                        points: [
+                            "Drug discovery and development",
+                            "Personalized medicine",
+                            "Agricultural biotechnology"
+                        ]
+                    },
+                    {
+                        title: "Career Opportunities",
+                        icon: "fas fa-user-tie",
+                        description: "Professional paths in bioinformatics",
+                        points: [
+                            "Research scientist positions",
+                            "Pharmaceutical industry roles",
+                            "Academic and teaching positions"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "NCBI Education",
+                        icon: "fas fa-graduation-cap",
+                        description: "Free online courses and tutorials"
+                    },
+                    {
+                        title: "Bioinformatics.org",
+                        icon: "fas fa-globe",
+                        description: "Community portal and resources"
+                    },
+                    {
+                        title: "PubMed",
+                        icon: "fas fa-book",
+                        description: "Scientific literature database"
+                    },
+                    {
+                        title: "Nature Biotechnology",
+                        icon: "fas fa-newspaper",
+                        description: "Leading journal in the field"
+                    }
+                ],
+                assessments: [
+                    { label: "Reading Quiz", score: "10 pts" },
+                    { label: "Discussion Forum", score: "5 pts" },
+                    { label: "Reflection Essay", score: "15 pts" }
+                ]
+            },
+            2: {
+                title: "Basic Biology Concepts",
+                subtitle: "Fundamental biological principles essential for bioinformatics",
+                description: "Review core biological concepts including cell types, genetic material organization, and the central dogma of molecular biology.",
+                objectives: [
+                    "Distinguish between prokaryotic and eukaryotic organisms",
+                    "Understand DNA, RNA, and protein structure and function",
+                    "Explain the central dogma of molecular biology",
+                    "Describe gene expression and regulation mechanisms",
+                    "Connect molecular processes to computational analysis"
+                ],
+                topics: [
+                    {
+                        title: "Prokaryotes vs Eukaryotes",
+                        icon: "fas fa-cell",
+                        description: "Fundamental differences in cellular organization",
+                        points: [
+                            "Membrane-bound organelles",
+                            "Genetic material organization",
+                            "Gene expression complexity"
+                        ]
+                    },
+                    {
+                        title: "Central Dogma",
+                        icon: "fas fa-arrow-right",
+                        description: "DNA → RNA → Protein information flow",
+                        points: [
+                            "DNA replication and storage",
+                            "Transcription: DNA to RNA",
+                            "Translation: RNA to protein"
+                        ]
+                    },
+                    {
+                        title: "Genetic Code",
+                        icon: "fas fa-code",
+                        description: "Triplet codon system and protein synthesis",
+                        points: [
+                            "64 codons for 20 amino acids",
+                            "Start and stop signals",
+                            "Degeneracy and wobble base pairing"
+                        ]
+                    },
+                    {
+                        title: "Gene Regulation",
+                        icon: "fas fa-sliders-h",
+                        description: "Control of gene expression",
+                        points: [
+                            "Transcriptional control",
+                            "Post-transcriptional modifications",
+                            "Epigenetic mechanisms"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "Khan Academy Biology",
+                        icon: "fas fa-play-circle",
+                        description: "Interactive biology lessons"
+                    },
+                    {
+                        title: "NCBI Gene",
+                        icon: "fas fa-dna",
+                        description: "Gene information database"
+                    },
+                    {
+                        title: "Molecular Biology Web",
+                        icon: "fas fa-spider",
+                        description: "Online molecular biology resources"
+                    },
+                    {
+                        title: "BiologyOnline",
+                        icon: "fas fa-book-open",
+                        description: "Comprehensive biology dictionary"
+                    }
+                ],
+                assessments: [
+                    { label: "Concept Quiz", score: "15 pts" },
+                    { label: "Diagram Labeling", score: "10 pts" },
+                    { label: "Case Study", score: "20 pts" }
+                ]
+            },
+            3: {
+                title: "Genomics and Proteomics",
+                subtitle: "Comprehensive study of genomes and protein complements",
+                description: "Explore the structure and organization of genomes, understand proteomics principles, and learn about gene expression analysis.",
+                objectives: [
+                    "Define genomics and proteomics",
+                    "Understand genome organization and structure",
+                    "Explain protein families and domains",
+                    "Describe gene expression analysis methods",
+                    "Connect genomic variation to phenotypic differences"
+                ],
+                topics: [
+                    {
+                        title: "Genome Organization",
+                        icon: "fas fa-sitemap",
+                        description: "Structure and organization of genetic material",
+                        points: [
+                            "Chromosome structure",
+                            "Gene density and distribution",
+                            "Repetitive elements and intergenic regions"
+                        ]
+                    },
+                    {
+                        title: "Proteomics Introduction",
+                        icon: "fas fa-puzzle-piece",
+                        description: "Study of protein structure and function",
+                        points: [
+                            "Protein families and domains",
+                            "Structure-function relationships",
+                            "Post-translational modifications"
+                        ]
+                    },
+                    {
+                        title: "Gene Expression",
+                        icon: "fas fa-chart-line",
+                        description: "Measuring and analyzing gene activity",
+                        points: [
+                            "Microarray technology",
+                            "RNA-seq analysis",
+                            "Expression profiling"
+                        ]
+                    },
+                    {
+                        title: "Comparative Genomics",
+                        icon: "fas fa-balance-scale",
+                        description: "Comparing genomes across species",
+                        points: [
+                            "Synteny and orthology",
+                            "Evolutionary conservation",
+                            "Functional annotation transfer"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "Ensembl Genome Browser",
+                        icon: "fas fa-search",
+                        description: "Genome annotation and analysis"
+                    },
+                    {
+                        title: "UniProt",
+                        icon: "fas fa-protein",
+                        description: "Protein sequence and annotation"
+                    },
+                    {
+                        title: "KEGG",
+                        icon: "fas fa-project-diagram",
+                        description: "Pathway and genome databases"
+                    },
+                    {
+                        title: "Gene Ontology",
+                        icon: "fas fa-tags",
+                        description: "Functional annotation standards"
+                    }
+                ],
+                assessments: [
+                    { label: "Genome Analysis", score: "25 pts" },
+                    { label: "Protein Study", score: "20 pts" },
+                    { label: "Expression Data", score: "15 pts" }
+                ]
+            },
+            4: {
+                title: "Biological Databases",
+                subtitle: "Navigation and utilization of major biological data repositories",
+                description: "Learn to navigate and extract information from key biological databases including NCBI, EMBL, UniProt, and specialized repositories.",
+                objectives: [
+                    "Navigate major biological databases effectively",
+                    "Understand database structure and organization",
+                    "Perform complex searches and data retrieval",
+                    "Compare information across different databases",
+                    "Understand data quality and annotation standards"
+                ],
+                topics: [
+                    {
+                        title: "NCBI Resources",
+                        icon: "fas fa-database",
+                        description: "National Center for Biotechnology Information",
+                        points: [
+                            "GenBank sequence database",
+                            "PubMed literature search",
+                            "BLAST sequence similarity"
+                        ]
+                    },
+                    {
+                        title: "EMBL-EBI Services",
+                        icon: "fas fa-server",
+                        description: "European Molecular Biology Laboratory",
+                        points: [
+                            "Ensembl genome browser",
+                            "InterPro protein families",
+                            "ChEMBL chemical database"
+                        ]
+                    },
+                    {
+                        title: "Protein Databases",
+                        icon: "fas fa-cubes",
+                        description: "Specialized protein information repositories",
+                        points: [
+                            "UniProt protein sequences",
+                            "PDB protein structures",
+                            "Pfam protein families"
+                        ]
+                    },
+                    {
+                        title: "Specialized Databases",
+                        icon: "fas fa-star",
+                        description: "Domain-specific biological databases",
+                        points: [
+                            "OMIM genetic disorders",
+                            "GO functional annotation",
+                            "KEGG pathway information"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "NCBI Tutorial",
+                        icon: "fas fa-chalkboard-teacher",
+                        description: "Official NCBI learning center"
+                    },
+                    {
+                        title: "EBI Training",
+                        icon: "fas fa-user-graduate",
+                        description: "European Bioinformatics Institute courses"
+                    },
+                    {
+                        title: "UniProt Help",
+                        icon: "fas fa-question-circle",
+                        description: "Protein database documentation"
+                    },
+                    {
+                        title: "Database Guide",
+                        icon: "fas fa-map",
+                        description: "Comprehensive database directory"
+                    }
+                ],
+                assessments: [
+                    { label: "Database Navigation", score: "20 pts" },
+                    { label: "Search Exercises", score: "25 pts" },
+                    { label: "Data Comparison", score: "15 pts" }
+                ]
+            },
+            5: {
+                title: "Data Retrieval and Submission",
+                subtitle: "Managing biological data: retrieval, formats, and submission protocols",
+                description: "Master the techniques for retrieving biological data, understand common file formats, and learn submission protocols for public databases.",
+                objectives: [
+                    "Retrieve sequences from public databases",
+                    "Understand common biological file formats",
+                    "Learn database submission protocols",
+                    "Implement quality control measures",
+                    "Manage metadata and annotations effectively"
+                ],
+                topics: [
+                    {
+                        title: "Sequence Formats",
+                        icon: "fas fa-file-alt",
+                        description: "Standard formats for biological sequence data",
+                        points: [
+                            "FASTA format specifications",
+                            "GenBank flat file format",
+                            "FASTQ quality scores"
+                        ]
+                    },
+                    {
+                        title: "GenBank Submission",
+                        icon: "fas fa-upload",
+                        description: "Submitting sequences to public repositories",
+                        points: [
+                            "BankIt submission tool",
+                            "Sequin desktop application",
+                            "Submission requirements and standards"
+                        ]
+                    },
+                    {
+                        title: "Data Quality Control",
+                        icon: "fas fa-check-double",
+                        description: "Ensuring data accuracy and completeness",
+                        points: [
+                            "Quality score interpretation",
+                            "Contamination detection",
+                            "Sequence validation methods"
+                        ]
+                    },
+                    {
+                        title: "Metadata Management",
+                        icon: "fas fa-tags",
+                        description: "Organizing and annotating biological data",
+                        points: [
+                            "Sample information standards",
+                            "Experimental metadata",
+                            "Controlled vocabularies"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "GenBank Submission Guide",
+                        icon: "fas fa-book",
+                        description: "Official submission documentation"
+                    },
+                    {
+                        title: "FASTA Format Spec",
+                        icon: "fas fa-file-code",
+                        description: "Format specifications and examples"
+                    },
+                    {
+                        title: "Quality Control Tools",
+                        icon: "fas fa-tools",
+                        description: "Software for data validation"
+                    },
+                    {
+                        title: "MIAME Standards",
+                        icon: "fas fa-clipboard-list",
+                        description: "Microarray data annotation standards"
+                    }
+                ],
+                assessments: [
+                    { label: "Format Conversion", score: "15 pts" },
+                    { label: "Submission Practice", score: "25 pts" },
+                    { label: "Quality Assessment", score: "20 pts" }
+                ]
+            },
+            6: {
+                title: "Sequence Analysis Fundamentals",
+                subtitle: "Basic principles of biological sequence analysis and interpretation",
+                description: "Understand the fundamental concepts of sequence analysis including composition, reading frames, and basic sequence properties.",
+                objectives: [
+                    "Analyze nucleotide and amino acid composition",
+                    "Identify open reading frames (ORFs)",
+                    "Understand codon usage patterns",
+                    "Perform basic sequence statistics",
+                    "Interpret sequence features and annotations"
+                ],
+                topics: [
+                    {
+                        title: "Sequence Properties",
+                        icon: "fas fa-chart-pie",
+                        description: "Basic statistical analysis of biological sequences",
+                        points: [
+                            "Nucleotide composition",
+                            "GC content analysis",
+                            "Amino acid frequencies"
+                        ]
+                    },
+                    {
+                        title: "Reading Frames",
+                        icon: "fas fa-glasses",
+                        description: "Identifying protein-coding regions",
+                        points: [
+                            "Six-frame translation",
+                            "Start and stop codons",
+                            "Frame shift detection"
+                        ]
+                    },
+                    {
+                        title: "ORF Analysis",
+                        icon: "fas fa-search-plus",
+                        description: "Open Reading Frame identification and analysis",
+                        points: [
+                            "ORF finding algorithms",
+                            "Length distribution",
+                            "Coding potential assessment"
+                        ]
+                    },
+                    {
+                        title: "Codon Usage",
+                        icon: "fas fa-table",
+                        description: "Analysis of codon preference patterns",
+                        points: [
+                            "Codon bias analysis",
+                            "Species-specific patterns",
+                            "Expression level correlation"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "ORF Finder",
+                        icon: "fas fa-search",
+                        description: "NCBI ORF identification tool"
+                    },
+                    {
+                        title: "CodonW",
+                        icon: "fas fa-calculator",
+                        description: "Codon usage analysis software"
+                    },
+                    {
+                        title: "EMBOSS Tools",
+                        icon: "fas fa-toolbox",
+                        description: "European Molecular Biology Open Software Suite"
+                    },
+                    {
+                        title: "BioPerl",
+                        icon: "fas fa-code",
+                        description: "Perl modules for bioinformatics"
+                    }
+                ],
+                assessments: [
+                    { label: "Sequence Statistics", score: "20 pts" },
+                    { label: "ORF Identification", score: "25 pts" },
+                    { label: "Codon Analysis", score: "15 pts" }
+                ]
+            },
+            7: {
+                title: "Introduction to Sequence Alignment",
+                subtitle: "Fundamental concepts and principles of sequence comparison",
+                description: "Learn the basic principles of sequence alignment, understand different alignment types, and explore scoring systems used in sequence comparison.",
+                objectives: [
+                    "Understand the purpose and importance of sequence alignment",
+                    "Distinguish between pairwise and multiple sequence alignment",
+                    "Compare global vs local alignment strategies",
+                    "Learn about alignment scoring systems",
+                    "Understand gap penalties and their effects"
+                ],
+                topics: [
+                    {
+                        title: "Alignment Concepts",
+                        icon: "fas fa-align-left",
+                        description: "Basic principles of sequence comparison",
+                        points: [
+                            "Homology vs similarity",
+                            "Evolutionary relationships",
+                            "Conservation patterns"
+                        ]
+                    },
+                    {
+                        title: "Pairwise vs Multiple",
+                        icon: "fas fa-arrows-alt-h",
+                        description: "Different approaches to sequence alignment",
+                        points: [
+                            "Two-sequence comparison",
+                            "Multiple sequence families",
+                            "Computational complexity"
+                        ]
+                    },
+                    {
+                        title: "Global vs Local",
+                        icon: "fas fa-globe-americas",
+                        description: "Alignment strategies for different purposes",
+                        points: [
+                            "End-to-end alignment",
+                            "Best local similarity",
+                            "Application-specific choices"
+                        ]
+                    },
+                    {
+                        title: "Scoring Systems",
+                        icon: "fas fa-calculator",
+                        description: "Methods for evaluating alignment quality",
+                        points: [
+                            "Match and mismatch scores",
+                            "Substitution matrices",
+                            "Gap opening and extension"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "EMBOSS Needle",
+                        icon: "fas fa-syringe",
+                        description: "Global sequence alignment tool"
+                    },
+                    {
+                        title: "EMBOSS Water",
+                        icon: "fas fa-tint",
+                        description: "Local sequence alignment tool"
+                    },
+                    {
+                        title: "ClustalW",
+                        icon: "fas fa-layer-group",
+                        description: "Multiple sequence alignment"
+                    },
+                    {
+                        title: "MUSCLE",
+                        icon: "fas fa-dumbbell",
+                        description: "Fast multiple sequence alignment"
+                    }
+                ],
+                assessments: [
+                    { label: "Alignment Concepts", score: "15 pts" },
+                    { label: "Manual Alignment", score: "20 pts" },
+                    { label: "Scoring Exercise", score: "25 pts" }
+                ]
+            },
+            8: {
+                title: "Sequence Alignment Algorithms",
+                subtitle: "Dynamic programming and algorithmic approaches to sequence alignment",
+                description: "Deep dive into the algorithms that power sequence alignment tools, focusing on dynamic programming approaches and their implementations.",
+                objectives: [
+                    "Understand dynamic programming principles",
+                    "Learn the Needleman-Wunsch algorithm",
+                    "Master the Smith-Waterman algorithm",
+                    "Understand gap penalty models",
+                    "Implement basic alignment algorithms"
+                ],
+                topics: [
+                    {
+                        title: "Dynamic Programming",
+                        icon: "fas fa-project-diagram",
+                        description: "Algorithmic foundation of sequence alignment",
+                        points: [
+                            "Optimal substructure",
+                            "Overlapping subproblems",
+                            "Matrix filling strategies"
+                        ]
+                    },
+                    {
+                        title: "Needleman-Wunsch",
+                        icon: "fas fa-chess-board",
+                        description: "Global alignment algorithm",
+                        points: [
+                            "Score matrix initialization",
+                            "Recursive scoring formula",
+                            "Traceback procedure"
+                        ]
+                    },
+                    {
+                        title: "Smith-Waterman",
+                        icon: "fas fa-search-location",
+                        description: "Local alignment algorithm",
+                        points: [
+                            "Modified scoring scheme",
+                            "Zero minimum scores",
+                            "Multiple local alignments"
+                        ]
+                    },
+                    {
+                        title: "Gap Penalties",
+                        icon: "fas fa-minus-circle",
+                        description: "Modeling insertions and deletions",
+                        points: [
+                            "Linear gap penalties",
+                            "Affine gap models",
+                            "Biological justification"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "Algorithm Animations",
+                        icon: "fas fa-play",
+                        description: "Visual algorithm demonstrations"
+                    },
+                    {
+                        title: "Programming Exercise",
+                        icon: "fas fa-code",
+                        description: "Implement basic algorithms"
+                    },
+                    {
+                        title: "BLAST Paper",
+                        icon: "fas fa-file-pdf",
+                        description: "Original BLAST algorithm publication"
+                    },
+                    {
+                        title: "Alignment Tutorial",
+                        icon: "fas fa-chalkboard",
+                        description: "Step-by-step algorithm walkthrough"
+                    }
+                ],
+                assessments: [
+                    { label: "Algorithm Quiz", score: "20 pts" },
+                    { label: "Matrix Filling", score: "25 pts" },
+                    { label: "Programming Task", score: "35 pts" }
+                ]
+            },
+            9: {
+                title: "MIDTERM EXAM",
+                subtitle: "Comprehensive assessment of first half concepts",
+                description: "Comprehensive examination covering all topics from weeks 1-8, including theoretical concepts, practical applications, and problem-solving skills.",
+                objectives: [
+                    "Demonstrate understanding of bioinformatics fundamentals",
+                    "Apply sequence analysis techniques",
+                    "Solve alignment problems manually",
+                    "Navigate biological databases effectively",
+                    "Integrate knowledge across multiple topics"
+                ],
+                topics: [
+                    {
+                        title: "Exam Preparation",
+                        icon: "fas fa-study",
+                        description: "Review strategies and study materials",
+                        points: [
+                            "Concept review sessions",
+                            "Practice problems",
+                            "Study group formation"
+                        ]
+                    },
+                    {
+                        title: "Theory Questions",
+                        icon: "fas fa-question",
+                        description: "Conceptual understanding assessment",
+                        points: [
+                            "Multiple choice questions",
+                            "Short answer responses",
+                            "Essay questions"
+                        ]
+                    },
+                    {
+                        title: "Practical Exercises",
+                        icon: "fas fa-laptop",
+                        description: "Hands-on problem solving",
+                        points: [
+                            "Database navigation tasks",
+                            "Sequence analysis problems",
+                            "Algorithm implementation"
+                        ]
+                    },
+                    {
+                        title: "Case Studies",
+                        icon: "fas fa-microscope",
+                        description: "Real-world application scenarios",
+                        points: [
+                            "Research problem analysis",
+                            "Tool selection justification",
+                            "Result interpretation"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "Study Guide",
+                        icon: "fas fa-book-reader",
+                        description: "Comprehensive review materials"
+                    },
+                    {
+                        title: "Practice Exams",
+                        icon: "fas fa-clipboard-check",
+                        description: "Sample questions and solutions"
+                    },
+                    {
+                        title: "Office Hours",
+                        icon: "fas fa-user-clock",
+                        description: "Additional help sessions"
+                    },
+                    {
+                        title: "Review Videos",
+                        icon: "fas fa-video",
+                        description: "Recorded concept explanations"
+                    }
+                ],
+                assessments: [
+                    { label: "Written Exam", score: "60 pts" },
+                    { label: "Practical Exam", score: "40 pts" },
+                    { label: "Participation", score: "10 pts" }
+                ]
+            },
+            10: {
+                title: "Database Searching with BLAST",
+                subtitle: "Basic Local Alignment Search Tool for sequence similarity",
+                description: "Master the use of BLAST for database searching, understand different BLAST variants, and learn to interpret search results effectively.",
+                objectives: [
+                    "Understand BLAST algorithm principles",
+                    "Use different BLAST variants appropriately",
+                    "Interpret E-values and bit scores",
+                    "Analyze BLAST output effectively",
+                    "Optimize search parameters for different queries"
+                ],
+                topics: [
+                    {
+                        title: "BLAST Basics",
+                        icon: "fas fa-rocket",
+                        description: "Basic Local Alignment Search Tool fundamentals",
+                        points: [
+                            "Heuristic algorithm approach",
+                            "Speed vs sensitivity trade-offs",
+                            "Statistical significance"
+                        ]
+                    },
+                    {
+                        title: "BLAST Variants",
+                        icon: "fas fa-sitemap",
+                        description: "Different BLAST programs for specific needs",
+                        points: [
+                            "BLASTn: nucleotide vs nucleotide",
+                            "BLASTp: protein vs protein",
+                            "BLASTx: translated nucleotide vs protein"
+                        ]
+                    },
+                    {
+                        title: "E-values & Bit Scores",
+                        icon: "fas fa-chart-bar",
+                        description: "Understanding statistical measures",
+                        points: [
+                            "Expected value interpretation",
+                            "Bit score normalization",
+                            "Significance thresholds"
+                        ]
+                    },
+                    {
+                        title: "Result Interpretation",
+                        icon: "fas fa-search",
+                        description: "Analyzing and understanding BLAST output",
+                        points: [
+                            "Hit list organization",
+                            "Alignment visualization",
+                            "Functional inference"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "NCBI BLAST",
+                        icon: "fas fa-globe",
+                        description: "Web-based BLAST interface"
+                    },
+                    {
+                        title: "BLAST+ Software",
+                        icon: "fas fa-download",
+                        description: "Command-line BLAST tools"
+                    },
+                    {
+                        title: "BLAST Tutorial",
+                        icon: "fas fa-graduation-cap",
+                        description: "Comprehensive BLAST guide"
+                    },
+                    {
+                        title: "Statistics Guide",
+                        icon: "fas fa-calculator",
+                        description: "Understanding BLAST statistics"
+                    }
+                ],
+                assessments: [
+                    { label: "BLAST Searches", score: "25 pts" },
+                    { label: "Result Analysis", score: "30 pts" },
+                    { label: "Parameter Optimization", score: "20 pts" }
+                ]
+            },
+            11: {
+                title: "Advanced BLAST Topics",
+                subtitle: "Specialized BLAST variants and optimization strategies",
+                description: "Explore advanced BLAST variants including PSI-BLAST and PHI-BLAST, learn parameter optimization, and understand specialized database searching strategies.",
+                objectives: [
+                    "Master PSI-BLAST for distant homology detection",
+                    "Understand PHI-BLAST pattern-based searching",
+                    "Optimize BLAST parameters for specific applications",
+                    "Perform multiple database searches effectively",
+                    "Interpret complex search results"
+                ],
+                topics: [
+                    {
+                        title: "PSI-BLAST",
+                        icon: "fas fa-eye",
+                        description: "Position-Specific Iterated BLAST",
+                        points: [
+                            "Profile construction",
+                            "Iterative searching",
+                            "Distant homology detection"
+                        ]
+                    },
+                    {
+                        title: "PHI-BLAST",
+                        icon: "fas fa-puzzle-piece",
+                        description: "Pattern-Hit Initiated BLAST",
+                        points: [
+                            "Motif-based searching",
+                            "Pattern specification",
+                            "Structure-function relationships"
+                        ]
+                    },
+                    {
+                        title: "Parameter Optimization",
+                        icon: "fas fa-sliders-h",
+                        description: "Fine-tuning BLAST searches",
+                        points: [
+                            "Word size selection",
+                            "Scoring matrix choice",
+                            "Filtering options"
+                        ]
+                    },
+                    {
+                        title: "Multiple Databases",
+                        icon: "fas fa-database",
+                        description: "Searching across different sequence collections",
+                        points: [
+                            "Database selection strategies",
+                            "Taxonomic restrictions",
+                            "Specialized collections"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "PSI-BLAST Tutorial",
+                        icon: "fas fa-chalkboard-teacher",
+                        description: "Step-by-step PSI-BLAST guide"
+                    },
+                    {
+                        title: "PROSITE Patterns",
+                        icon: "fas fa-pattern",
+                        description: "Protein pattern database"
+                    },
+                    {
+                        title: "Scoring Matrices",
+                        icon: "fas fa-table",
+                        description: "BLOSUM and PAM matrices"
+                    },
+                    {
+                        title: "Database Collections",
+                        icon: "fas fa-archive",
+                        description: "Specialized sequence databases"
+                    }
+                ],
+                assessments: [
+                    { label: "PSI-BLAST Exercise", score: "30 pts" },
+                    { label: "Pattern Searching", score: "25 pts" },
+                    { label: "Optimization Task", score: "25 pts" }
+                ]
+            },
+            12: {
+                title: "Bioinformatics Tools and Portals",
+                subtitle: "Comprehensive overview of major bioinformatics resources",
+                description: "Explore major bioinformatics portals including EBI and ExPASy, learn about repeat detection software, and understand annotation tools.",
+                objectives: [
+                    "Navigate EBI services effectively",
+                    "Utilize ExPASy protein analysis tools",
+                    "Identify and analyze repetitive sequences",
+                    "Use annotation and prediction tools",
+                    "Integrate multiple bioinformatics resources"
+                ],
+                topics: [
+                    {
+                        title: "EBI Services",
+                        icon: "fas fa-server",
+                        description: "European Bioinformatics Institute resources",
+                        points: [
+                            "Ensembl genome browser",
+                            "InterPro protein analysis",
+                            "ChEMBL drug database"
+                        ]
+                    },
+                    {
+                        title: "ExPASy Portal",
+                        icon: "fas fa-globe",
+                        description: "Expert Protein Analysis System",
+                        points: [
+                            "ProtParam analysis",
+                            "SWISS-MODEL structure",
+                            "Proteomics tools"
+                        ]
+                    },
+                    {
+                        title: "Repeat Detection",
+                        icon: "fas fa-sync",
+                        description: "Software for identifying repetitive elements",
+                        points: [
+                            "RepeatMasker analysis",
+                            "Tandem repeat finder",
+                            "Transposable element identification"
+                        ]
+                    },
+                    {
+                        title: "Annotation Tools",
+                        icon: "fas fa-tags",
+                        description: "Functional annotation",
+                        points: [
+                            "Gene prediction software",
+                            "Functional annotation pipelines",
+                            "Pathway analysis tools"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "EBI Training",
+                        icon: "fas fa-user-graduate",
+                        description: "Comprehensive training materials"
+                    },
+                    {
+                        title: "ExPASy Help",
+                        icon: "fas fa-question-circle",
+                        description: "Tool documentation and tutorials"
+                    },
+                    {
+                        title: "RepBase",
+                        icon: "fas fa-database",
+                        description: "Repetitive element database"
+                    },
+                    {
+                        title: "Galaxy Platform",
+                        icon: "fas fa-star",
+                        description: "Web-based analysis platform"
+                    }
+                ],
+                assessments: [
+                    { label: "Portal Navigation", score: "20 pts" },
+                    { label: "Tool Comparison", score: "25 pts" },
+                    { label: "Analysis Project", score: "30 pts" }
+                ]
+            },
+            13: {
+                title: "Primer and Probe Design",
+                subtitle: "Computational design of PCR primers and hybridization probes",
+                description: "Learn the principles of primer design, use computational tools for optimal primer selection, and understand probe design for various applications.",
+                objectives: [
+                    "Understand PCR primer design principles",
+                    "Use Primer3 and similar tools effectively",
+                    "Design probes for hybridization experiments",
+                    "Perform in-silico PCR validation",
+                    "Optimize primers for specific applications"
+                ],
+                topics: [
+                    {
+                        title: "PCR Primer Design",
+                        icon: "fas fa-dna",
+                        description: "Principles of effective primer design",
+                        points: [
+                            "Primer length and GC content",
+                            "Melting temperature calculation",
+                            "Avoiding secondary structures"
+                        ]
+                    },
+                    {
+                        title: "Primer3 Software",
+                        icon: "fas fa-cogs",
+                        description: "Automated primer design tool",
+                        points: [
+                            "Parameter optimization",
+                            "Target specification",
+                            "Quality assessment"
+                        ]
+                    },
+                    {
+                        title: "Probe Design",
+                        icon: "fas fa-search-plus",
+                        description: "Hybridization probe development",
+                        points: [
+                            "Specificity requirements",
+                            "Labeling strategies",
+                            "Cross-hybridization avoidance"
+                        ]
+                    },
+                    {
+                        title: "In-silico PCR",
+                        icon: "fas fa-computer",
+                        description: "Computational PCR validation",
+                        points: [
+                            "Genome-wide primer mapping",
+                            "Product prediction",
+                            "Specificity checking"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "Primer3 Web",
+                        icon: "fas fa-globe",
+                        description: "Online primer design interface"
+                    },
+                    {
+                        title: "OligoAnalyzer",
+                        icon: "fas fa-calculator",
+                        description: "Oligonucleotide analysis tool"
+                    },
+                    {
+                        title: "UCSC In-Silico PCR",
+                        icon: "fas fa-flask",
+                        description: "Genome-wide PCR simulation"
+                    },
+                    {
+                        title: "Primer-BLAST",
+                        icon: "fas fa-search",
+                        description: "NCBI primer specificity tool"
+                    }
+                ],
+                assessments: [
+                    { label: "Primer Design", score: "25 pts" },
+                    { label: "Probe Development", score: "20 pts" },
+                    { label: "Validation Exercise", score: "25 pts" }
+                ]
+            },
+            14: {
+                title: "Phylogenetic Analysis",
+                subtitle: "Evolutionary relationships and tree construction methods",
+                description: "Understand phylogenetic principles, learn tree construction methods, explore molecular evolution concepts, and use phylogenetic software.",
+                objectives: [
+                    "Understand evolutionary relationship concepts",
+                    "Learn different tree construction methods",
+                    "Analyze molecular evolution patterns",
+                    "Use phylogenetic analysis software",
+                    "Interpret phylogenetic trees correctly"
+                ],
+                topics: [
+                    {
+                        title: "Evolutionary Relationships",
+                        icon: "fas fa-tree",
+                        description: "Understanding phylogenetic concepts",
+                        points: [
+                            "Homology vs homoplasy",
+                            "Monophyletic groups",
+                            "Evolutionary distance"
+                        ]
+                    },
+                    {
+                        title: "Tree Construction",
+                        icon: "fas fa-project-diagram",
+                        description: "Methods for building phylogenetic trees",
+                        points: [
+                            "Distance-based methods",
+                            "Maximum parsimony",
+                            "Maximum likelihood"
+                        ]
+                    },
+                    {
+                        title: "Molecular Evolution",
+                        icon: "fas fa-random",
+                        description: "Patterns of genetic change over time",
+                        points: [
+                            "Substitution models",
+                            "Rate variation",
+                            "Molecular clock hypothesis"
+                        ]
+                    },
+                    {
+                        title: "Phylogenetic Software",
+                        icon: "fas fa-laptop-code",
+                        description: "Tools for phylogenetic analysis",
+                        points: [
+                            "MEGA software suite",
+                            "PHYLIP package",
+                            "Online phylogeny services"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "MEGA Software",
+                        icon: "fas fa-download",
+                        description: "Molecular evolutionary genetics analysis"
+                    },
+                    {
+                        title: "Tree of Life",
+                        icon: "fas fa-seedling",
+                        description: "Web project for phylogeny"
+                    },
+                    {
+                        title: "PHYLIP",
+                        icon: "fas fa-leaf",
+                        description: "Phylogeny inference package"
+                    },
+                    {
+                        title: "iTOL",
+                        icon: "fas fa-eye",
+                        description: "Interactive tree of life"
+                    }
+                ],
+                assessments: [
+                    { label: "Tree Construction", score: "30 pts" },
+                    { label: "Evolution Analysis", score: "25 pts" },
+                    { label: "Software Exercise", score: "25 pts" }
+                ]
+            },
+            15: {
+                title: "Genome Assembly and Annotation",
+                subtitle: "Computational genome reconstruction and functional annotation",
+                description: "Learn genome assembly algorithms, understand quality assessment methods, explore gene prediction techniques, and study functional annotation approaches.",
+                objectives: [
+                    "Understand genome assembly strategies",
+                    "Assess assembly quality metrics",
+                    "Learn gene prediction methods",
+                    "Perform functional annotation",
+                    "Use genome browsers effectively"
+                ],
+                topics: [
+                    {
+                        title: "Assembly Algorithms",
+                        icon: "fas fa-puzzle-piece",
+                        description: "Computational approaches to genome reconstruction",
+                        points: [
+                            "Overlap-layout-consensus",
+                            "De Bruijn graph methods",
+                            "Hybrid assembly strategies"
+                        ]
+                    },
+                    {
+                        title: "Quality Assessment",
+                        icon: "fas fa-check-circle",
+                        description: "Evaluating assembly completeness and accuracy",
+                        points: [
+                            "N50 statistics",
+                            "BUSCO assessment",
+                            "Synteny analysis"
+                        ]
+                    },
+                    {
+                        title: "Gene Prediction",
+                        icon: "fas fa-search",
+                        description: "Computational identification of genes",
+                        points: [
+                            "Ab initio prediction",
+                            "Evidence-based annotation",
+                            "Comparative approaches"
+                        ]
+                    },
+                    {
+                        title: "Functional Annotation",
+                        icon: "fas fa-tags",
+                        description: "Assigning biological functions to genes",
+                        points: [
+                            "Homology-based annotation",
+                            "Domain identification",
+                            "Pathway mapping"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "SPAdes Assembler",
+                        icon: "fas fa-cogs",
+                        description: "Genome assembly software"
+                    },
+                    {
+                        title: "BUSCO",
+                        icon: "fas fa-clipboard-check",
+                        description: "Assembly quality assessment"
+                    },
+                    {
+                        title: "Augustus",
+                        icon: "fas fa-crown",
+                        description: "Gene prediction software"
+                    },
+                    {
+                        title: "MAKER",
+                        icon: "fas fa-hammer",
+                        description: "Genome annotation pipeline"
+                    }
+                ],
+                assessments: [
+                    { label: "Assembly Exercise", score: "35 pts" },
+                    { label: "Quality Analysis", score: "25 pts" },
+                    { label: "Annotation Project", score: "30 pts" }
+                ]
+            },
+            16: {
+                title: "Final Projects and Review",
+                subtitle: "Comprehensive case studies and course integration",
+                description: "Apply all learned concepts in comprehensive projects, present research findings, review the entire course, and explore future directions in bioinformatics.",
+                objectives: [
+                    "Integrate knowledge from all course modules",
+                    "Complete comprehensive bioinformatics projects",
+                    "Present research findings effectively",
+                    "Identify future learning opportunities",
+                    "Develop professional bioinformatics skills"
+                ],
+                topics: [
+                    {
+                        title: "Case Studies",
+                        icon: "fas fa-microscope",
+                        description: "Real-world bioinformatics applications",
+                        points: [
+                            "Disease gene identification",
+                            "Comparative genomics studies",
+                            "Drug target discovery"
+                        ]
+                    },
+                    {
+                        title: "Research Projects",
+                        icon: "fas fa-project-diagram",
+                        description: "Independent bioinformatics research",
+                        points: [
+                            "Project design and planning",
+                            "Data analysis and interpretation",
+                            "Scientific communication"
+                        ]
+                    },
+                    {
+                        title: "Course Review",
+                        icon: "fas fa-book-open",
+                        description: "Comprehensive concept integration",
+                        points: [
+                            "Key concept synthesis",
+                            "Skill assessment",
+                            "Knowledge gaps identification"
+                        ]
+                    },
+                    {
+                        title: "Future Directions",
+                        icon: "fas fa-rocket",
+                        description: "Emerging trends in bioinformatics",
+                        points: [
+                            "Machine learning applications",
+                            "Single-cell analysis",
+                            "Precision medicine"
+                        ]
+                    }
+                ],
+                resources: [
+                    {
+                        title: "Project Templates",
+                        icon: "fas fa-file-alt",
+                        description: "Research project guidelines"
+                    },
+                    {
+                        title: "Presentation Tools",
+                        icon: "fas fa-presentation",
+                        description: "Scientific presentation resources"
+                    },
+                    {
+                        title: "Career Resources",
+                        icon: "fas fa-briefcase",
+                        description: "Bioinformatics career guidance"
+                    },
+                    {
+                        title: "Future Learning",
+                        icon: "fas fa-graduation-cap",
+                        description: "Advanced course recommendations"
+                    }
+                ],
+                assessments: [
+                    { label: "Final Project", score: "50 pts" },
+                    { label: "Presentation", score: "30 pts" },
+                    { label: "Peer Review", score: "20 pts" }
+                ]
+            }
+        };
+
+        // Application state
+        let currentWeek = 1;
+        let completedWeeks = new Set([]);
+        let currentSemester = 1;
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupEventListeners();
+            loadWeek(currentWeek);
+        });
+
+        function initializeApp() {
+            buildWeekNavigation();
+            updateDisplay();
+            updateCurrentTime();
+        }
+
+        function setupEventListeners() {
+            // Semester navigation
+            document.querySelectorAll('.semester-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const semester = parseInt(this.dataset.semester);
+                    selectSemester(semester);
+                });
+            });
+
+            // Week navigation clicks
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.week-item')) {
+                    const week = parseInt(e.target.closest('.week-item').dataset.week);
+                    goToWeek(week);
+                }
+            });
+
+            // Topic card clicks
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.topic-card')) {
+                    const card = e.target.closest('.topic-card');
+                    expandTopicCard(card);
+                }
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.code === 'ArrowLeft') {
+                    e.preventDefault();
+                    previousWeek();
+                } else if (e.code === 'ArrowRight') {
+                    e.preventDefault();
+                    nextWeek();
+                } else if (e.code === 'Space') {
+                    e.preventDefault();
+                    markWeekCompleted();
+                } else if (e.code === 'KeyR') {
+                    e.preventDefault();
+                    resetProgress();
+                }
+            });
+        }
+
+        function buildWeekNavigation() {
+            const weekList = document.getElementById('week-list');
+            weekList.innerHTML = '';
+
+            Object.entries(bioinformaticsCourse).forEach(([weekNum, week]) => {
+                const weekNumber = parseInt(weekNum);
+                const li = document.createElement('li');
+                li.className = `week-item ${weekNumber === currentWeek ? 'active' : ''} ${completedWeeks.has(weekNumber) ? 'completed' : ''}`;
+                li.dataset.week = weekNumber;
+                
+                // Only show weeks for current semester
+                const isFirstSemester = weekNumber <= 8;
+                const shouldShow = (currentSemester === 1 && isFirstSemester) || (currentSemester === 2 && !isFirstSemester);
+                
+                if (shouldShow) {
+                    li.innerHTML = `
+                        <div class="week-number">Week ${weekNumber}</div>
+                        <div class="week-title">${week.title}</div>
+                        <div class="week-topics">${week.topics.length} topics</div>
+                        ${completedWeeks.has(weekNumber) ? '<div class="completion-badge"><i class="fas fa-check"></i></div>' : ''}
+                    `;
+                    weekList.appendChild(li);
+                }
+            });
+        }
+
+        function selectSemester(semester) {
+            currentSemester = semester;
+            
+            // Update UI
+            document.querySelectorAll('.semester-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-semester="${semester}"]`).classList.add('active');
+            
+            // Set current week to first week of semester
+            currentWeek = semester === 1 ? 1 : 9;
+            
+            buildWeekNavigation();
+            loadWeek(currentWeek);
+        }
+
+        function loadWeek(weekNumber) {
+            const week = bioinformaticsCourse[weekNumber];
+            if (!week) return;
+
+            currentWeek = weekNumber;
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const week = bioinformaticsCourse[currentWeek];
+            if (!week) return;
+
+            // Update header
+            document.getElementById('current-week-badge').textContent = `Week ${currentWeek}`;
+            document.getElementById('week-title').textContent = week.title;
+            document.getElementById('week-subtitle').textContent = week.subtitle;
+            document.getElementById('week-description').textContent = week.description;
+
+            // Update objectives
+            updateObjectives(week.objectives);
+            
+            // Update topics
+            updateTopics(week.topics);
+            
+            // Update resources
+            updateResources(week.resources);
+            
+            // Update assessments
+            updateAssessments(week.assessments);
+
+            // Update progress
+            updateProgress();
+
+            // Update navigation
+            updateNavigationButtons();
+
+            // Update week navigation
+            updateWeekNavigation();
+
+            // Add animation
+            document.querySelector('.content-area').classList.remove('fade-in-up');
+            setTimeout(() => {
+                document.querySelector('.content-area').classList.add('fade-in-up');
+            }, 50);
+        }
+
+        function updateObjectives(objectives) {
+            const objectivesList = document.getElementById('objectives-list');
+            objectivesList.innerHTML = '';
+
+            objectives.forEach((objective, index) => {
+                const li = document.createElement('li');
+                li.className = 'objective-item slide-in';
+                li.style.animationDelay = `${index * 0.1}s`;
+                li.innerHTML = `
+                    <div class="objective-icon">${index + 1}</div>
+                    <div class="objective-text">${objective}</div>
+                `;
+                objectivesList.appendChild(li);
+            });
+        }
+
+        function updateTopics(topics) {
+            const topicsGrid = document.getElementById('topics-grid');
+            topicsGrid.innerHTML = '';
+
+            topics.forEach((topic, index) => {
+                const topicCard = document.createElement('div');
+                topicCard.className = 'topic-card fade-in-up';
+                topicCard.style.animationDelay = `${index * 0.15}s`;
+                topicCard.innerHTML = `
+                    <div class="topic-header">
+                        <div class="topic-icon">
+                            <i class="${topic.icon}"></i>
+                        </div>
+                        <div class="topic-title">${topic.title}</div>
+                    </div>
+                    <div class="topic-description">${topic.description}</div>
+                    <ul class="topic-points">
+                        ${topic.points.map(point => `
+                            <li class="topic-point">
+                                <div class="point-dot"></div>
+                                <span>${point}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                topicsGrid.appendChild(topicCard);
+            });
+        }
+
+        function updateResources(resources) {
+            const resourcesGrid = document.getElementById('resources-grid');
+            resourcesGrid.innerHTML = '';
+
+            resources.forEach((resource, index) => {
+                const resourceItem = document.createElement('div');
+                resourceItem.className = 'resource-item slide-in';
+                resourceItem.style.animationDelay = `${index * 0.1}s`;
+                resourceItem.innerHTML = `
+                    <div class="resource-icon">
+                        <i class="${resource.icon}"></i>
+                    </div>
+                    <div class="resource-text">
+                        <div class="resource-title">${resource.title}</div>
+                        <div class="resource-desc">${resource.description}</div>
+                    </div>
+                `;
+                resourcesGrid.appendChild(resourceItem);
+            });
+        }
+
+        function updateAssessments(assessments) {
+            const assessmentGrid = document.getElementById('assessment-grid');
+            assessmentGrid.innerHTML = '';
+
+            assessments.forEach((assessment, index) => {
+                const assessmentItem = document.createElement('div');
+                assessmentItem.className = 'assessment-item slide-in';
+                assessmentItem.style.animationDelay = `${index * 0.1}s`;
+                assessmentItem.innerHTML = `
+                    <div class="assessment-score">${assessment.score}</div>
+                    <div class="assessment-label">${assessment.label}</div>
+                `;
+                assessmentGrid.appendChild(assessmentItem);
+            });
+        }
+
+        function updateProgress() {
+            const totalWeeks = 16;
+            const completedCount = completedWeeks.size;
+            const overallProgress = Math.round((completedCount / totalWeeks) * 100);
+            const weekProgress = Math.round((currentWeek / totalWeeks) * 100);
+
+            // Update overall progress
+            document.getElementById('overall-progress').textContent = `${overallProgress}%`;
+
+            // Update week progress
+            document.getElementById('week-progress-text').textContent = `${weekProgress}%`;
+            document.getElementById('current-week-number').textContent = currentWeek;
+
+            // Update progress circle
+            const progressCircle = document.getElementById('week-progress-circle');
+            const angle = (weekProgress / 100) * 360;
+            progressCircle.style.background = `conic-gradient(var(--primary) ${angle}deg, var(--border) ${angle}deg)`;
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prev-week-btn');
+            const nextBtn = document.getElementById('next-week-btn');
+
+            prevBtn.disabled = currentWeek === 1;
+            nextBtn.disabled = currentWeek === 16;
+        }
+
+        function updateWeekNavigation() {
+            document.querySelectorAll('.week-item').forEach(item => {
+                const weekNum = parseInt(item.dataset.week);
+                item.classList.remove('active');
+                if (weekNum === currentWeek) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toISOString().slice(0, 19).replace('T', ' ');
+            const timeElement = document.querySelector('.header-info .font-mono');
+            if (timeElement) {
+                timeElement.textContent = timeString;
+            }
+        }
+
+        // Navigation functions
+        function previousWeek() {
+            if (currentWeek > 1) {
+                loadWeek(currentWeek - 1);
+            }
+        }
+
+        function nextWeek() {
+            if (currentWeek < 16) {
+                loadWeek(currentWeek + 1);
+            }
+        }
+
+        function goToWeek(weekNumber) {
+            if (weekNumber >= 1 && weekNumber <= 16) {
+                // Update semester if needed
+                const newSemester = weekNumber <= 8 ? 1 : 2;
+                if (newSemester !== currentSemester) {
+                    selectSemester(newSemester);
+                } else {
+                    loadWeek(weekNumber);
+                }
+            }
+        }
+
+        function markWeekCompleted() {
+            completedWeeks.add(currentWeek);
+            updateProgress();
+            buildWeekNavigation();
+            saveProgress();
+            
+            // Show completion notification
+            showNotification(`Week ${currentWeek} marked as completed!`, 'success');
+        }
+
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset all progress?')) {
+                completedWeeks.clear();
+                updateProgress();
+                buildWeekNavigation();
+                saveProgress();
+                showNotification('Progress reset successfully!', 'info');
+            }
+        }
+
+        // Utility functions
+        function expandTopicCard(card) {
+            // Add expand/collapse functionality for topic cards
+            card.classList.toggle('expanded');
+            
+            // Could add more detailed content on expansion
+            const isExpanded = card.classList.contains('expanded');
+            if (isExpanded) {
+                card.style.transform = 'scale(1.02)';
+                card.style.zIndex = '10';
+            } else {
+                card.style.transform = 'scale(1)';
+                card.style.zIndex = '1';
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--primary)'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Progress tracking
+        function saveProgress() {
+            const progress = {
+                completedWeeks: Array.from(completedWeeks),
+                currentWeek: currentWeek,
+                currentSemester: currentSemester,
+                lastAccessed: Date.now()
+            };
+            localStorage.setItem('bioinformatics-progress', JSON.stringify(progress));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('bioinformatics-progress');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                completedWeeks = new Set(progress.completedWeeks || []);
+                currentWeek = progress.currentWeek || 1;
+                currentSemester = progress.currentSemester || 1;
+            }
+        }
+
+        // Export functionality
+        function exportWeekSummary() {
+            const week = bioinformaticsCourse[currentWeek];
+            
+            let summary = `# Week ${currentWeek}: ${week.title}\n\n`;
+            summary += `**${week.subtitle}**\n\n`;
+            summary += `${week.description}\n\n`;
+            summary += `## Learning Objectives\n\n`;
+            week.objectives.forEach((obj, index) => {
+                summary += `${index + 1}. ${obj}\n`;
+            });
+            summary += `\n## Topics\n\n`;
+            week.topics.forEach(topic => {
+                summary += `### ${topic.title}\n\n`;
+                summary += `${topic.description}\n\n`;
+                topic.points.forEach(point => {
+                    summary += `- ${point}\n`;
+                });
+                summary += `\n`;
+            });
+            summary += `## Resources\n\n`;
+            week.resources.forEach(resource => {
+                summary += `- **${resource.title}**: ${resource.description}\n`;
+            });
+            summary += `\n## Assessment\n\n`;
+            week.assessments.forEach(assessment => {
+                summary += `- ${assessment.label}: ${assessment.score}\n`;
+            });
+            
+            // Download as markdown file
+            const blob = new Blob([summary], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Week_${currentWeek}_${week.title.replace(/\s+/g, '_')}.md`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Search functionality
+        function searchCourse(query) {
+            if (!query.trim()) return [];
+            
+            const results = [];
+            const queryLower = query.toLowerCase();
+            
+            Object.entries(bioinformaticsCourse).forEach(([weekNum, week]) => {
+                // Search in week title and description
+                if (week.title.toLowerCase().includes(queryLower) || 
+                    week.description.toLowerCase().includes(queryLower)) {
+                    results.push({
+                        week: parseInt(weekNum),
+                        title: week.title,
+                        type: 'week',
+                        content: week.description
+                    });
+                }
+                
+                // Search in objectives
+                week.objectives.forEach((objective, index) => {
+                    if (objective.toLowerCase().includes(queryLower)) {
+                        results.push({
+                            week: parseInt(weekNum),
+                            title: week.title,
+                            type: 'objective',
+                            content: objective,
+                            index: index
+                        });
+                    }
+                });
+                
+                // Search in topics
+                week.topics.forEach((topic, index) => {
+                    if (topic.title.toLowerCase().includes(queryLower) || 
+                        topic.description.toLowerCase().includes(queryLower)) {
+                        results.push({
+                            week: parseInt(weekNum),
+                            title: week.title,
+                            type: 'topic',
+                            content: `${topic.title}: ${topic.description}`,
+                            index: index
+                        });
+                    }
+                });
+            });
+            
+            return results;
+        }
+
+        // Initialize progress tracking
+        loadProgress();
+
+        // Update time every minute
+        setInterval(updateCurrentTime, 60000);
+
+        // Add help system
+        function showHelp() {
+            const helpContent = `
+                <div style="background: white; padding: 2rem; border-radius: 1rem; max-width: 600px; box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
+                    <h3 style="margin-bottom: 1rem; color: var(--primary);">Keyboard Shortcuts & Navigation</h3>
+                    <div style="display: grid; gap: 0.5rem; margin-bottom: 1.5rem; font-family: 'JetBrains Mono', monospace;">
+                        <div><kbd style="background: #f1f5f9; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">←</kbd> Previous Week</div>
+                        <div><kbd style="background: #f1f5f9; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">→</kbd> Next Week</div>
+                        <div><kbd style="background: #f1f5f9; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">Space</kbd> Mark Week Complete</div>
+                        <div><kbd style="background: #f1f5f9; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">R</kbd> Reset Progress</div>
+                        <div><kbd style="background: #f1f5f9; padding: 0.25rem 0.5rem; border-radius: 0.25rem;">?</kbd> Show/Hide Help</div>
+                    </div>
+                    <h3 style="margin-bottom: 1rem; color: var(--primary);">Course Features</h3>
+                    <div style="display: grid; gap: 0.5rem; margin-bottom: 1.5rem;">
+                        <div>• 16-week comprehensive bioinformatics curriculum</div>
+                        <div>• Interactive topic exploration</div>
+                        <div>• Progress tracking and completion badges</div>
+                        <div>• Resource links and assessment guidelines</div>
+                        <div>• Export functionality for study materials</div>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; font-weight: 600;">
+                        Close Help
+                    </button>
+                </div>
+            `;
+            
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            `;
+            overlay.innerHTML = helpContent;
+            document.body.appendChild(overlay);
+        }
+
+        // Add help shortcut
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Slash' && e.shiftKey) { // ? key
+                e.preventDefault();
+                showHelp();
+            }
+        });
+
+        // Add context menu for additional options
+        document.addEventListener('contextmenu', function(e) {
+            if (e.target.closest('.topic-card')) {
+                e.preventDefault();
+                // Could add context menu with options like "Mark as read", "Add note", etc.
+            }
+        });
+
+        console.log('🧬 Basic Bioinformatics Learning Platform Loaded Successfully!');
+        console.log('👨‍🏫 Created by Dr. Yash Munnalal Gupta - yashmgupta');
+        console.log('📚 16-week comprehensive bioinformatics curriculum');
+        console.log('🎯 Press ? for keyboard shortcuts and help');
+        console.log(`📅 Current Date: ${new Date().toISOString().slice(0, 19).replace('T', ' ')}`);
+    </script>
+</body>
+</html>
