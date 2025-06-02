@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PigmentPro | Industrial Color Formulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .color-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .formula-card {
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(5px);
+        }
+        .color-input {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 48px;
+            background: transparent;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0;
+            cursor: pointer;
+        }
+        .color-input::-webkit-color-swatch {
+            border-radius: 6px;
+            border: none;
+        }
+        .color-input::-moz-color-swatch {
+            border-radius: 6px;
+            border: none;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 3px;
+        }
+        .formula-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .formula-table th, .formula-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .formula-table th {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+        .loading-spinner {
+            border: 3px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top: 3px solid #3b82f6;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl md:text-3xl font-semibold tracking-tight">
+                    <span class="text-blue-600">Pigment</span><span class="text-indigo-600">Pro</span>
+                </h1>
+                <div class="text-xs md:text-sm opacity-70">
+                    <span id="datetime" class="font-mono"></span>
+                </div>
+            </div>
+            <p class="mt-1 text-sm opacity-60">Advanced Industrial Pigment Formulation System v5.1.0</p>
+        </header>
+
+        <!-- Main App -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Color Input Section -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <h2 class="text-lg font-medium mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                        </svg>
+                        Color Selection
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm mb-1 opacity-70">Target Color</label>
+                            <input type="color" id="baseColor" value="#3b82f6" class="color-input">
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1 opacity-70">Application Type</label>
+                            <select id="applicationType" class="w-full border border-gray-200 rounded px-3 py-2 text-sm">
+                                <option value="paint">Architectural Paint</option>
+                                <option value="textile">Textile Printing</option>
+                                <option value="plastic">Plastic Coloring</option>
+                                <option value="ink">Printing Ink</option>
+                                <option value="cosmetic">Cosmetics</option>
+                                <option value="ceramic">Ceramic Glaze</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <button id="formulateBtn" class="bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded text-sm transition shadow-sm flex items-center justify-center">
+                            <span id="formulateText">Formulate</span>
+                            <span id="formulateSpinner" class="loading-spinner ml-2 hidden"></span>
+                        </button>
+                        <button id="randomBtn" class="bg-gray-600 hover:bg-gray-500 text-white py-2 px-4 rounded text-sm transition shadow-sm">
+                            Random Color
+                        </button>
+                        <button id="saveBtn" class="border border-gray-300 hover:bg-gray-100 text-gray-700 py-2 px-4 rounded text-sm transition shadow-sm">
+                            Save Formula
+                        </button>
+                        <button id="resetBtn" class="border border-gray-300 hover:bg-gray-100 text-gray-700 py-2 px-4 rounded text-sm transition shadow-sm">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Color Details & Formula -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <h2 class="text-lg font-medium mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                        Pigment Formulation (1kg batch)
+                    </h2>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div>
+                            <p class="text-xs opacity-50">HEX</p>
+                            <p id="hexValue" class="font-mono">#3b82f6</p>
+                        </div>
+                        <div>
+                            <p class="text-xs opacity-50">RGB</p>
+                            <p id="rgbValue" class="font-mono">59, 130, 246</p>
+                        </div>
+                        <div>
+                            <p class="text-xs opacity-50">CMYK</p>
+                            <p id="cmykValue" class="font-mono">76, 47, 0, 4</p>
+                        </div>
+                        <div>
+                            <p class="text-xs opacity-50">Color Type</p>
+                            <p id="colorType" class="font-mono">Blue</p>
+                        </div>
+                    </div>
+                    
+                    <div id="formulaContainer" class="mt-4 p-4 rounded-lg formula-card border border-gray-200">
+                        <div class="overflow-x-auto">
+                            <table class="formula-table">
+                                <thead>
+                                    <tr>
+                                        <th>Component</th>
+                                        <th>Chemical Name</th>
+                                        <th>Grams</th>
+                                        <th>Function</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="formulaContent">
+                                    <!-- Formula will be generated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div id="formulaNotes" class="mt-4 text-sm space-y-2">
+                            <!-- Additional notes will be added here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Shade Variations -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <h2 class="text-lg font-medium mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18V6m0 12l-4-4m4 4l4-4" />
+                        </svg>
+                        Shade Variations
+                    </h2>
+                    <div id="shadeCards" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <!-- Shade cards will be generated here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Color Palette & Database -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-medium flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                            </svg>
+                            Recent Colors
+                        </h2>
+                        <span id="paletteCount" class="text-xs bg-gray-100 px-2 py-1 rounded">0 colors</span>
+                    </div>
+                    
+                    <div id="colorPalette" class="space-y-3">
+                        <!-- Color cards will be generated here -->
+                        <p class="text-sm text-gray-500">No recent colors yet</p>
+                    </div>
+                </div>
+                
+                <!-- Pigment Database Info -->
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <h2 class="text-lg font-medium mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+                        </svg>
+                        Pigment Database
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-medium mb-2">Pigment Types</h3>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
+                                    <span>Organic: 142 pigments</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
+                                    <span>Inorganic: 98 pigments</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
+                                    <span>Extenders: 28 types</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 rounded-full bg-purple-500 mr-2"></span>
+                                    <span>Additives: 62 types</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-2 border-t border-gray-200">
+                            <h3 class="text-sm font-medium mb-2">System Status</h3>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="opacity-70">Database:</span>
+                                <span class="text-green-600 font-mono">Connected</span>
+                            </div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="opacity-70">Formulation Engine:</span>
+                                <span class="text-green-600 font-mono">Ready</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="opacity-70">Security:</span>
+                                <span class="text-green-600 font-mono">AES-256</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Console -->
+        <div class="mt-8 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div class="flex items-center mb-2">
+                <div class="flex space-x-2 mr-3">
+                    <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                </div>
+                <span class="text-sm opacity-70">SYSTEM CONSOLE</span>
+                <span class="ml-auto text-xs bg-gray-100 px-2 py-1 rounded">Live Updates</span>
+            </div>
+            <div id="console" class="font-mono text-sm h-24 overflow-y-auto p-2 bg-gray-50 rounded">
+                <p>> System initialized at <span id="initTime"></span></p>
+                <p>> Pigment database loaded successfully</p>
+                <p>> Formulation engine ready</p>
+                <p>> Waiting for color input...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pigment Database (expanded with more chemicals and details)
+        const pigmentDatabase = {
+            // White pigments (expanded)
+            white: [
+                { 
+                    name: "Titanium Dioxide", 
+                    chemName: "TiO₂ (Rutile)", 
+                    grades: ["R-5566", "R-706", "R-900", "R-960"],
+                    properties: { opacity: 98, brightness: 99, oilAbsorption: 18 }
+                },
+                { 
+                    name: "Zinc Oxide", 
+                    chemName: "ZnO", 
+                    grades: ["Kadox 930", "Zinc White 35", "Zinc White 72"],
+                    properties: { opacity: 85, brightness: 95, oilAbsorption: 20 }
+                },
+                { 
+                    name: "Lithopone", 
+                    chemName: "ZnS + BaSO₄", 
+                    grades: ["30% ZnS", "60% ZnS"],
+                    properties: { opacity: 75, brightness: 90, oilAbsorption: 15 }
+                },
+                { 
+                    name: "Barium Sulfate", 
+                    chemName: "BaSO₄", 
+                    grades: ["Blanc Fixe Micro", "Blanc Fixe N"],
+                    properties: { opacity: 65, brightness: 92, oilAbsorption: 12 }
+                }
+            ],
+            
+            // Black pigments (expanded)
+            black: [
+                { 
+                    name: "Carbon Black", 
+                    chemName: "Furnace Black", 
+                    grades: ["N110", "N220", "N330", "N550", "N660"],
+                    properties: { jetness: 99, undertone: "blue", oilAbsorption: 120 }
+                },
+                { 
+                    name: "Iron Oxide Black", 
+                    chemName: "Fe₃O₄", 
+                    grades: ["Bayferrox 318M", "Bayferrox 330", "Sicotrans Black L2715"],
+                    properties: { jetness: 85, undertone: "brown", oilAbsorption: 25 }
+                },
+                { 
+                    name: "Bone Black", 
+                    chemName: "Ca₃(PO₄)₂ + C", 
+                    grades: ["PBk9"],
+                    properties: { jetness: 80, undertone: "warm", oilAbsorption: 40 }
+                },
+                { 
+                    name: "Graphite", 
+                    chemName: "C (Graphitic)", 
+                    grades: ["Micro 850", "Micro 995"],
+                    properties: { jetness: 75, undertone: "silver", oilAbsorption: 35 }
+                }
+            ],
+            
+            // Blue pigments (expanded with more chemical details)
+            blue: [
+                { 
+                    name: "Phthalo Blue", 
+                    chemName: "Copper Phthalocyanine (CuPc)", 
+                    grades: ["PB15:0 (α-form)", "PB15:1 (α-form, stabilized)", "PB15:2 (β-form)", "PB15:3 (β-form, stabilized)", "PB15:4 (ε-form)", "PB15:6 (γ-form)"],
+                    properties: { strength: 150, undertone: "green/red", lightfastness: 8, heatResistance: 200 }
+                },
+                { 
+                    name: "Ultramarine Blue", 
+                    chemName: "Sodium Aluminum Sulfosilicate (Na₇Al₆Si₆O₂₄S₃)", 
+                    grades: ["PB29", "PB29:1 (acid resistant)", "PB29:2 (enhanced brightness)"],
+                    properties: { strength: 50, undertone: "red", lightfastness: 7, heatResistance: 300 }
+                },
+                { 
+                    name: "Cobalt Blue", 
+                    chemName: "Cobalt Aluminum Oxide (CoO·Al₂O₃)", 
+                    grades: ["PB28", "PB28:1 (enhanced opacity)", "PB36 (cobalt chromite)"],
+                    properties: { strength: 30, undertone: "green", lightfastness: 8, heatResistance: 1000 }
+                },
+                { 
+                    name: "Indanthrone Blue", 
+                    chemName: "Dibenzanthrone (C28H12N2O4)", 
+                    grades: ["PB60", "PB60:1 (enhanced dispersion)"],
+                    properties: { strength: 80, undertone: "red", lightfastness: 8, heatResistance: 180 }
+                },
+                { 
+                    name: "Prussian Blue", 
+                    chemName: "Ferric Ferrocyanide (Fe₄[Fe(CN)₆]₃)", 
+                    grades: ["PB27", "PB27:1 (enhanced stability)"],
+                    properties: { strength: 70, undertone: "green", lightfastness: 6, heatResistance: 120 }
+                }
+            ],
+            
+            // Red pigments (expanded)
+            red: [
+                { 
+                    name: "Quinacridone Red", 
+                    chemName: "2,9-Dimethylquinacridone (C20H12N2O2)", 
+                    grades: ["PR122 (magenta)", "PR192 (red)", "PR202 (violet)", "PR209 (scarlet)"],
+                    properties: { strength: 100, undertone: "blue/yellow", lightfastness: 8, heatResistance: 200 }
+                },
+                { 
+                    name: "Naphthol Red", 
+                    chemName: "Azo Pigment (C17H12ClN3O4)", 
+                    grades: ["PR5 (light red)", "PR9 (medium red)", "PR112 (bright red)", "PR170 (deep red)"],
+                    properties: { strength: 90, undertone: "yellow/blue", lightfastness: 7, heatResistance: 180 }
+                },
+                { 
+                    name: "Perylene Red", 
+                    chemName: "Perylene Tetracarboxylic Diimide (C24H10N2O4)", 
+                    grades: ["PR123 (scarlet)", "PR149 (maroon)", "PR178 (red)", "PR179 (maroon)"],
+                    properties: { strength: 80, undertone: "blue", lightfastness: 8, heatResistance: 220 }
+                },
+                { 
+                    name: "Iron Oxide Red", 
+                    chemName: "Ferric Oxide (Fe₂O₃)", 
+                    grades: ["PR101", "PR101:1 (yellow shade)", "PR101:2 (blue shade)"],
+                    properties: { strength: 50, undertone: "yellow/blue", lightfastness: 8, heatResistance: 1000 }
+                },
+                { 
+                    name: "Cadmium Red", 
+                    chemName: "Cadmium Selenosulfide (CdS·CdSe)", 
+                    grades: ["PR108", "PR108:1 (light shade)", "PR108:2 (deep shade)"],
+                    properties: { strength: 60, undertone: "yellow", lightfastness: 7, heatResistance: 600 }
+                }
+            ],
+            
+            // Green pigments (expanded)
+            green: [
+                { 
+                    name: "Phthalo Green", 
+                    chemName: "Chlorinated Copper Phthalocyanine (CuPc-Cl)", 
+                    grades: ["PG7 (blue shade)", "PG36 (yellow shade)"],
+                    properties: { strength: 140, undertone: "blue/yellow", lightfastness: 8, heatResistance: 200 }
+                },
+                { 
+                    name: "Chromium Oxide Green", 
+                    chemName: "Chromium(III) Oxide (Cr₂O₃)", 
+                    grades: ["PG17", "PG17:1 (enhanced brightness)"],
+                    properties: { strength: 30, undertone: "yellow", lightfastness: 8, heatResistance: 1000 }
+                },
+                { 
+                    name: "Cobalt Green", 
+                    chemName: "Cobalt Zinc Oxide (CoO·ZnO)", 
+                    grades: ["PG19", "PG19:1 (enhanced opacity)"],
+                    properties: { strength: 25, undertone: "blue", lightfastness: 8, heatResistance: 800 }
+                },
+                { 
+                    name: "Hydrated Chromium Oxide", 
+                    chemName: "Cr₂O₃·2H₂O", 
+                    grades: ["PG18", "PG18:1 (enhanced brightness)"],
+                    properties: { strength: 40, undertone: "blue", lightfastness: 8, heatResistance: 150 }
+                }
+            ],
+            
+            // Yellow pigments (expanded)
+            yellow: [
+                { 
+                    name: "Hansa Yellow", 
+                    chemName: "Arylide Yellow (C16H12Cl2N4O4)", 
+                    grades: ["PY1 (green shade)", "PY3 (red shade)", "PY65 (medium shade)", "PY73 (green shade)", "PY74 (red shade)"],
+                    properties: { strength: 90, undertone: "green/red", lightfastness: 7, heatResistance: 180 }
+                },
+                { 
+                    name: "Diarylide Yellow", 
+                    chemName: "Disazo Condensation (C34H32Cl2N6O4)", 
+                    grades: ["PY12 (green shade)", "PY13 (red shade)", "PY14 (medium shade)", "PY83 (deep shade)"],
+                    properties: { strength: 100, undertone: "green/red", lightfastness: 6, heatResistance: 200 }
+                },
+                { 
+                    name: "Iron Oxide Yellow", 
+                    chemName: "Iron(III) Oxide Hydroxide (FeO(OH))", 
+                    grades: ["PY42", "PY42:1 (enhanced brightness)"],
+                    properties: { strength: 40, undertone: "red", lightfastness: 8, heatResistance: 250 }
+                },
+                { 
+                    name: "Cadmium Yellow", 
+                    chemName: "Cadmium Sulfide (CdS)", 
+                    grades: ["PY35", "PY35:1 (light shade)", "PY35:2 (deep shade)"],
+                    properties: { strength: 50, undertone: "red", lightfastness: 7, heatResistance: 600 }
+                },
+                { 
+                    name: "Bismuth Vanadate", 
+                    chemName: "BiVO₄", 
+                    grades: ["PY184", "PY184:1 (enhanced opacity)"],
+                    properties: { strength: 110, undertone: "green", lightfastness: 8, heatResistance: 300 }
+                }
+            ],
+            
+            // Extenders (expanded with more options)
+            extenders: [
+                { 
+                    name: "Barium Sulfate", 
+                    chemName: "BaSO₄", 
+                    grades: ["Blanc Fixe Micro", "Blanc Fixe N", "Barytes 325 mesh"],
+                    properties: { density: 4.5, refractiveIndex: 1.64, pH: 7 },
+                    applications: ["paint", "plastic", "ink", "cosmetic"]
+                },
+                { 
+                    name: "Calcium Carbonate", 
+                    chemName: "CaCO₃", 
+                    grades: ["Omyacarb 2", "Omyacarb 5", "Hubercarb Q325"],
+                    properties: { density: 2.7, refractiveIndex: 1.59, pH: 9 },
+                    applications: ["paint", "plastic", "ink"]
+                },
+                { 
+                    name: "Kaolin Clay", 
+                    chemName: "Al₂Si₂O₅(OH)₄", 
+                    grades: ["Hydrite R", "Hydrite PXS", "ASP 170"],
+                    properties: { density: 2.6, refractiveIndex: 1.56, pH: 5 },
+                    applications: ["paint", "ink", "ceramic"]
+                },
+                { 
+                    name: "Talc", 
+                    chemName: "Mg₃Si₄O₁₀(OH)₂", 
+                    grades: ["Mistron Vapor", "Nytal 300", "Nytal 1000"],
+                    properties: { density: 2.8, refractiveIndex: 1.59, pH: 9 },
+                    applications: ["paint", "plastic", "cosmetic"]
+                },
+                { 
+                    name: "Silica", 
+                    chemName: "SiO₂", 
+                    grades: ["Siltex 44", "Sipernat 22", "Aerosil 200"],
+                    properties: { density: 2.2, refractiveIndex: 1.46, pH: 7 },
+                    applications: ["paint", "ink", "cosmetic"]
+                },
+                { 
+                    name: "Alumina Hydrate", 
+                    chemName: "Al(OH)₃", 
+                    grades: ["Hydral 710", "Hygillite H42"],
+                    properties: { density: 2.4, refractiveIndex: 1.57, pH: 8 },
+                    applications: ["paint", "plastic", "ceramic"]
+                }
+            ],
+            
+            // Dispersants (expanded)
+            dispersants: [
+                { 
+                    name: "Polyacrylate sodium salt", 
+                    chemName: "(C3H3NaO2)n", 
+                    grades: ["Dispex AA4040", "Tamol 1124"],
+                    properties: { activeContent: 40, pH: 8 },
+                    applications: ["paint", "ink"]
+                },
+                { 
+                    name: "Polycarboxylate", 
+                    chemName: "Complex copolymer", 
+                    grades: ["Tamol 165A", "Orotan 1124"],
+                    properties: { activeContent: 35, pH: 7 },
+                    applications: ["paint", "plastic"]
+                },
+                { 
+                    name: "Ammonium polyacrylate", 
+                    chemName: "(C3H3O2·NH4)n", 
+                    grades: ["Dispex N40", "Darvan 821A"],
+                    properties: { activeContent: 40, pH: 7 },
+                    applications: ["paint", "ceramic"]
+                },
+                { 
+                    name: "Sulfonated naphthalene formaldehyde", 
+                    chemName: "C10H6(SO3Na)(CH2)n", 
+                    grades: ["Daxad 19", "Lomar D"],
+                    properties: { activeContent: 90, pH: 9 },
+                    applications: ["textile", "ink"]
+                }
+            ],
+            
+            // Binders by application (expanded)
+            binders: {
+                paint: [
+                    { 
+                        name: "Acrylic resin", 
+                        chemName: "Poly(methyl methacrylate)", 
+                        grades: ["Acronal S760", "Joncryl 678"],
+                        properties: { solids: 45, viscosity: 1000, pH: 8 }
+                    },
+                    { 
+                        name: "Alkyd resin", 
+                        chemName: "Polyester modified with fatty acids", 
+                        grades: ["Synolac 6000", "Beckosol 10-908"],
+                        properties: { solids: 70, viscosity: 5000, pH: 7 }
+                    },
+                    { 
+                        name: "Vinyl acetate copolymer", 
+                        chemName: "Poly(vinyl acetate-co-ethylene)", 
+                        grades: ["Vinnapas LL6110", "Airflex 600BP"],
+                        properties: { solids: 55, viscosity: 1500, pH: 5 }
+                    }
+                ],
+                textile: [
+                    { 
+                        name: "Polyurethane binder", 
+                        chemName: "Polyurethane dispersion", 
+                        grades: ["Impranil DLN", "Permutex PU-40"],
+                        properties: { solids: 40, viscosity: 200, pH: 7 }
+                    },
+                    { 
+                        name: "Acrylic copolymer", 
+                        chemName: "Acrylic emulsion", 
+                        grades: ["Helizarin Binder ET", "Acramin Binder FKL"],
+                        properties: { solids: 38, viscosity: 100, pH: 8 }
+                    }
+                ],
+                plastic: [
+                    { 
+                        name: "Polyolefin wax", 
+                        chemName: "Polyethylene wax", 
+                        grades: ["Licowax PE520", "Honeywell A-C 6A"],
+                        properties: { meltPoint: 105, viscosity: 500, acidValue: 0 }
+                    },
+                    { 
+                        name: "EVA copolymer", 
+                        chemName: "Ethylene-vinyl acetate", 
+                        grades: ["Elvax 40W", "Evatane 28-05"],
+                        properties: { meltPoint: 85, viscosity: 300, acidValue: 0 }
+                    }
+                ],
+                ink: [
+                    { 
+                        name: "Nitrocellulose", 
+                        chemName: "Cellulose nitrate", 
+                        grades: ["RS 1/2 sec", "SS 1/4 sec"],
+                        properties: { nitrogenContent: 11.8, viscosity: 1/2, solubility: 30 }
+                    },
+                    { 
+                        name: "Polyamide resin", 
+                        chemName: "Versamid 756", 
+                        grades: ["Versamid 756", "Macromelt 6900"],
+                        properties: { meltPoint: 125, viscosity: 200, acidValue: 5 }
+                    }
+                ],
+                cosmetic: [
+                    { 
+                        name: "Acrylates copolymer", 
+                        chemName: "Acrylates/C10-30 alkyl acrylate crosspolymer", 
+                        grades: ["Pemulen TR-2", "Carbopol Ultrez 21"],
+                        properties: { solids: 100, viscosity: 50000, pH: 3 }
+                    },
+                    { 
+                        name: "Dimethicone", 
+                        chemName: "Polydimethylsiloxane", 
+                        grades: ["DC 200", "DC 345"],
+                        properties: { viscosity: 100, specificGravity: 0.97, refractiveIndex: 1.4 }
+                    }
+                ],
+                ceramic: [
+                    { 
+                        name: "Sodium silicate", 
+                        chemName: "Na₂SiO₃", 
+                        grades: ["N Grade", "PQ Corp 40"],
+                        properties: { solids: 42, viscosity: 200, pH: 11 }
+                    },
+                    { 
+                        name: "Potassium feldspar", 
+                        chemName: "KAlSi₃O₈", 
+                        grades: ["Custer Feldspar", "Kona F-4"],
+                        properties: { meltPoint: 1200, density: 2.56, pH: 7 }
+                    }
+                ]
+            },
+            
+            // Wetting agents
+            wettingAgents: [
+                { 
+                    name: "Alkylphenol ethoxylate", 
+                    chemName: "C8H17C6H4O(CH2CH2O)nH", 
+                    grades: ["Triton X-100", "Igepal CO-630"],
+                    properties: { HLB: 13, cloudPoint: 65 }
+                },
+                { 
+                    name: "Silicone surfactant", 
+                    chemName: "Modified polysiloxane", 
+                    grades: ["BYK-345", "Tegoglide 410"],
+                    properties: { HLB: 5, surfaceTension: 21 }
+                },
+                { 
+                    name: "Acetylenic diol", 
+                    chemName: "2,4,7,9-Tetramethyl-5-decyne-4,7-diol", 
+                    grades: ["Surfynol 104", "Dynol 604"],
+                    properties: { HLB: 4, surfaceTension: 30 }
+                }
+            ],
+            
+            // Defoamers
+            defoamers: [
+                { 
+                    name: "Mineral oil based", 
+                    chemName: "Petroleum hydrocarbons + silica", 
+                    grades: ["Foamaster 111", "Byk 022"],
+                    properties: { activeContent: 100, viscosity: 500 }
+                },
+                { 
+                    name: "Silicone based", 
+                    chemName: "Polydimethylsiloxane", 
+                    grades: ["Foamaster SA-3", "Byk 028"],
+                    properties: { activeContent: 100, viscosity: 1000 }
+                },
+                { 
+                    name: "Polyether modified polysiloxane", 
+                    chemName: "Modified polysiloxane", 
+                    grades: ["Byk-345", "Tego Foamex 810"],
+                    properties: { activeContent: 100, viscosity: 300 }
+                }
+            ]
+        };
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial time in console
+            const now = new Date();
+            document.getElementById('initTime').textContent = now.toLocaleTimeString();
+            
+            // Initialize with default color
+            updateColorInfo('#3b82f6');
+            generateFormula('#3b82f6', 'paint');
+            
+            // Set up event listeners
+            document.getElementById('baseColor').addEventListener('input', function() {
+                const color = this.value;
+                updateColorInfo(color);
+                const application = document.getElementById('applicationType').value;
+                generateFormula(color, application);
+            });
+            
+            document.getElementById('applicationType').addEventListener('change', function() {
+                const color = document.getElementById('baseColor').value;
+                const application = this.value;
+                generateFormula(color, application);
+            });
+            
+            document.getElementById('formulateBtn').addEventListener('click', function() {
+                const color = document.getElementById('baseColor').value;
+                const application = document.getElementById('applicationType').value;
+                generateFormula(color, application);
+            });
+            
+            document.getElementById('randomBtn').addEventListener('click', function() {
+                const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+                document.getElementById('baseColor').value = randomColor;
+                updateColorInfo(randomColor);
+                const application = document.getElementById('applicationType').value;
+                generateFormula(randomColor, application);
+            });
+            
+            document.getElementById('saveBtn').addEventListener('click', function() {
+                addToPalette(document.getElementById('baseColor').value);
+                addConsoleMessage("Color formula saved to palette");
+            });
+            
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                document.getElementById('baseColor').value = '#3b82f6';
+                updateColorInfo('#3b82f6');
+                const application = document.getElementById('applicationType').value;
+                generateFormula('#3b82f6', application);
+                addConsoleMessage("System reset to default color");
+            });
+        });
+
+        // Update color information display
+        function updateColorInfo(hex) {
+            document.getElementById('hexValue').textContent = hex;
+            document.getElementById('rgbValue').textContent = hexToRgb(hex);
+            document.getElementById('cmykValue').textContent = hexToCmyk(hex);
+            document.getElementById('colorType').textContent = getColorType(hex);
+            
+            // Generate shade variations
+            generateShadeVariations(hex);
+        }
+
+        // Generate pigment formula based on color and application
+        function generateFormula(hex, application) {
+            // Show loading state
+            const btnText = document.getElementById('formulateText');
+            const spinner = document.getElementById('formulateSpinner');
+            btnText.textContent = "Formulating...";
+            spinner.classList.remove('hidden');
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                // Extract RGB components
+                const r = parseInt(hex.slice(1, 3), 16);
+                const g = parseInt(hex.slice(3, 5), 16);
+                const b = parseInt(hex.slice(5, 7), 16);
+                
+                // Determine color characteristics
+                const isBlue = b > r && b > g;
+                const isRed = r > g && r > b;
+                const isGreen = g > r && g > b;
+                const isYellow = r > 200 && g > 150 && b < 100;
+                const isDark = (r + g + b) < 300;
+                const isLight = (r + g + b) > 600;
+                const isNeutral = Math.abs(r - g) < 30 && Math.abs(g - b) < 30;
+                
+                // Base formula components
+                let formula = [];
+                let notes = [];
+                
+                // Select appropriate binders based on application
+                let binders = [];
+                if (pigmentDatabase.binders[application]) {
+                    binders = pigmentDatabase.binders[application];
+                } else {
+                    binders = pigmentDatabase.binders.paint; // Default to paint
+                }
+                
+                // Select extenders based on application
+                let extenders = pigmentDatabase.extenders.filter(ext => 
+                    ext.applications.includes(application)
+                );
+                
+                // Select dispersant based on application
+                let dispersant = pigmentDatabase.dispersants.find(d => 
+                    d.applications.includes(application)
+                );
+                
+                // Select wetting agent
+                let wettingAgent = pigmentDatabase.wettingAgents[0];
+                
+                // Select defoamer
+                let defoamer = pigmentDatabase.defoamers[0];
+                
+                // For light colors, start with white pigment
+                if (isLight) {
+                    const whitePigment = pigmentDatabase.white[0]; // Titanium Dioxide
+                    formula.push({
+                        name: whitePigment.name,
+                        chemName: whitePigment.chemName,
+                        grade: whitePigment.grades[0],
+                        grams: Math.min(700, 300 + Math.floor(r/5)),
+                        function: "Base opacity provider"
+                    });
+                }
+                
+                // Add color pigments based on dominant color
+                if (isBlue) {
+                    const bluePigment = pigmentDatabase.blue[0]; // Phthalo Blue
+                    formula.push({
+                        name: bluePigment.name,
+                        chemName: bluePigment.chemName,
+                        grade: bluePigment.grades[3], // PB15:3
+                        grams: Math.min(500, 200 + Math.floor(b/10)),
+                        function: "Primary colorant"
+                    });
+                    
+                    if (g > 100) {
+                        const greenPigment = pigmentDatabase.green[0]; // Phthalo Green
+                        formula.push({
+                            name: greenPigment.name,
+                            chemName: greenPigment.chemName,
+                            grade: greenPigment.grades[0], // PG7
+                            grams: Math.min(200, Math.floor(g/15)),
+                            function: "Green tone modifier"
+                        });
+                    }
+                    
+                    if (isDark) {
+                        const blackPigment = pigmentDatabase.black[0]; // Carbon Black
+                        formula.push({
+                            name: blackPigment.name,
+                            chemName: blackPigment.chemName,
+                            grade: blackPigment.grades[2], // N330
+                            grams: Math.min(100, Math.floor((255-b)/30)),
+                            function: "Shade darkener"
+                        });
+                    }
+                } 
+                else if (isRed) {
+                    const redPigment = pigmentDatabase.red[0]; // Quinacridone Red
+                    formula.push({
+                        name: redPigment.name,
+                        chemName: redPigment.chemName,
+                        grade: redPigment.grades[2], // PR202
+                        grams: Math.min(500, 200 + Math.floor(r/10)),
+                        function: "Primary colorant"
+                    });
+                    
+                    if (g > 100) {
+                        const yellowPigment = pigmentDatabase.yellow[0]; // Hansa Yellow
+                        formula.push({
+                            name: yellowPigment.name,
+                            chemName: yellowPigment.chemName,
+                            grade: yellowPigment.grades[4], // PY74
+                            grams: Math.min(200, Math.floor(g/15)),
+                            function: "Yellow tone modifier"
+                        });
+                    }
+                    
+                    if (isDark) {
+                        const blackPigment = pigmentDatabase.black[0]; // Carbon Black
+                        formula.push({
+                            name: blackPigment.name,
+                            chemName: blackPigment.chemName,
+                            grade: blackPigment.grades[2], // N330
+                            grams: Math.min(100, Math.floor((255-r)/30)),
+                            function: "Shade darkener"
+                        });
+                    }
+                }
+                else if (isGreen) {
+                    const greenPigment = pigmentDatabase.green[0]; // Phthalo Green
+                    formula.push({
+                        name: greenPigment.name,
+                        chemName: greenPigment.chemName,
+                        grade: greenPigment.grades[0], // PG7
+                        grams: Math.min(500, 200 + Math.floor(g/10)),
+                        function: "Primary colorant"
+                    });
+                    
+                    if (r > 100) {
+                        const yellowPigment = pigmentDatabase.yellow[0]; // Hansa Yellow
+                        formula.push({
+                            name: yellowPigment.name,
+                            chemName: yellowPigment.chemName,
+                            grade: yellowPigment.grades[4], // PY74
+                            grams: Math.min(200, Math.floor(r/15)),
+                            function: "Yellow tone modifier"
+                        });
+                    }
+                    
+                    if (isDark) {
+                        const blackPigment = pigmentDatabase.black[0]; // Carbon Black
+                        formula.push({
+                            name: blackPigment.name,
+                            chemName: blackPigment.chemName,
+                            grade: blackPigment.grades[2], // N330
+                            grams: Math.min(100, Math.floor((255-g)/30)),
+                            function: "Shade darkener"
+                        });
+                    }
+                }
+                else if (isYellow) {
+                    const yellowPigment = pigmentDatabase.yellow[0]; // Hansa Yellow
+                    formula.push({
+                        name: yellowPigment.name,
+                        chemName: yellowPigment.chemName,
+                        grade: yellowPigment.grades[4], // PY74
+                        grams: Math.min(500, 200 + Math.floor((r+g)/20)),
+                        function: "Primary colorant"
+                    });
+                    
+                    if (b > 50) {
+                        const bluePigment = pigmentDatabase.blue[0]; // Phthalo Blue
+                        formula.push({
+                            name: bluePigment.name,
+                            chemName: bluePigment.chemName,
+                            grade: bluePigment.grades[3], // PB15:3
+                            grams: Math.min(100, Math.floor(b/5)),
+                            function: "Green tone modifier"
+                        });
+                    }
+                    
+                    if (isDark) {
+                        const blackPigment = pigmentDatabase.black[0]; // Carbon Black
+                        formula.push({
+                            name: blackPigment.name,
+                            chemName: blackPigment.chemName,
+                            grade: blackPigment.grades[2], // N330
+                            grams: Math.min(100, Math.floor((255-(r+g)/2)/30)),
+                            function: "Shade darkener"
+                        });
+                    }
+                }
+                else if (isNeutral) {
+                    // For neutral/gray colors
+                    const blackPigment = pigmentDatabase.black[0]; // Carbon Black
+                    formula.push({
+                        name: blackPigment.name,
+                        chemName: blackPigment.chemName,
+                        grade: blackPigment.grades[2], // N330
+                        grams: Math.min(400, Math.floor((765-(r+g+b))/4)),
+                        function: "Primary colorant"
+                    });
+                    
+                    if (isLight) {
+                        const whitePigment = pigmentDatabase.white[0]; // Titanium Dioxide
+                        formula.push({
+                            name: whitePigment.name,
+                            chemName: whitePigment.chemName,
+                            grade: whitePigment.grades[0],
+                            grams: Math.min(600, 200 + Math.floor((r+g+b)/5)),
+                            function: "Lightness adjuster"
+                        });
+                    }
+                }
+                
+                // Add extender if needed (based on application)
+                if (application !== 'cosmetic' && application !== 'ink') {
+                    const extender = extenders[0]; // First suitable extender
+                    const extenderAmount = Math.min(200, 50 + Math.floor((r+g+b)/20));
+                    
+                    if (extenderAmount > 0) {
+                        formula.push({
+                            name: extender.name,
+                            chemName: extender.chemName,
+                            grade: extender.grades[0],
+                            grams: extenderAmount,
+                            function: "Volume builder, cost reducer"
+                        });
+                    }
+                }
+                
+                // Calculate total pigment weight
+                const totalPigmentWeight = formula.reduce((sum, item) => sum + item.grams, 0);
+                
+                // Add binder/dispersant recommendations
+                notes.push({
+                    title: "Vehicle System",
+                    content: `${binders[0].name} (${binders[0].chemName}), ${binders[0].grades[0]} - ${Math.round(1000 - totalPigmentWeight)}g`
+                });
+                
+                if (dispersant) {
+                    notes.push({
+                        title: "Dispersant",
+                        content: `${dispersant.name} (${dispersant.chemName}) - ${Math.max(5, Math.floor(totalPigmentWeight/50))}g`
+                    });
+                }
+                
+                notes.push({
+                    title: "Wetting Agent",
+                    content: `${wettingAgent.name} (${wettingAgent.chemName}) - 2g`
+                });
+                
+                notes.push({
+                    title: "Defoamer",
+                    content: `${defoamer.name} (${defoamer.chemName}) - 1g`
+                });
+                
+                // Add process recommendations
+                let processNote = "High-speed dispersion (";
+                if (application === 'paint' || application === 'ink') {
+                    processNote += "30min @ 2000rpm)";
+                } else if (application === 'plastic') {
+                    processNote += "Melt compounding @ 180°C)";
+                } else if (application === 'textile') {
+                    processNote += "Paste preparation with rotor-stator)";
+                } else if (application === 'cosmetic') {
+                    processNote += "Low-shear mixing @ 500rpm)";
+                } else {
+                    processNote += "Ball milling for 2h)";
+                }
+                
+                notes.push({
+                    title: "Process",
+                    content: processNote
+                });
+                
+                // Render the formula
+                renderFormula(formula, notes);
+                
+                // Add to console
+                addConsoleMessage(`Formulated ${getColorType(hex)} color for ${getApplicationName(application)}`);
+                
+                // Reset button state
+                btnText.textContent = "Formulate";
+                spinner.classList.add('hidden');
+            }, 800); // Simulate processing time
+        }
+
+        // Render the formula table
+        function renderFormula(formula, notes) {
+            const formulaContent = document.getElementById('formulaContent');
+            formulaContent.innerHTML = '';
+            
+            formula.forEach(item => {
+                const row = document.createElement('tr');
+                
+                const nameCell = document.createElement('td');
+                nameCell.textContent = item.name;
+                row.appendChild(nameCell);
+                
+                const chemCell = document.createElement('td');
+                chemCell.textContent = item.chemName;
+                row.appendChild(chemCell);
+                
+                const gramsCell = document.createElement('td');
+                gramsCell.textContent = `${item.grams}g`;
+                row.appendChild(gramsCell);
+                
+                const funcCell = document.createElement('td');
+                funcCell.textContent = item.function;
+                row.appendChild(funcCell);
+                
+                formulaContent.appendChild(row);
+            });
+            
+            // Render additional notes
+            const notesContainer = document.getElementById('formulaNotes');
+            notesContainer.innerHTML = '';
+            
+            notes.forEach(note => {
+                const noteDiv = document.createElement('div');
+                noteDiv.className = 'bg-gray-50 p-2 rounded';
+                
+                const title = document.createElement('span');
+                title.className = 'font-medium';
+                title.textContent = `${note.title}: `;
+                noteDiv.appendChild(title);
+                
+                const content = document.createElement('span');
+                content.textContent = note.content;
+                noteDiv.appendChild(content);
+                
+                notesContainer.appendChild(noteDiv);
+            });
+        }
+
+        // Generate shade variations
+        function generateShadeVariations(hex) {
+            const shadeCards = document.getElementById('shadeCards');
+            shadeCards.innerHTML = '';
+            
+            // Convert hex to RGB
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            
+            // Create variations
+            const variations = [
+                { name: "Light", modifier: (c) => Math.min(255, c + 50) },
+                { name: "Standard", modifier: (c) => c },
+                { name: "Dark", modifier: (c) => Math.max(0, c - 50) },
+                { name: "Warm", modifier: (c, i) => i === 0 ? Math.min(255, c + 30) : c },
+                { name: "Cool", modifier: (c, i) => i === 2 ? Math.min(255, c + 30) : c },
+                { name: "Pastel", modifier: (c) => Math.min(255, Math.floor(c * 0.7 + 255 * 0.3)) }
+            ];
+            
+            variations.forEach(variation => {
+                const newR = variation.modifier(r, 0);
+                const newG = variation.modifier(g, 1);
+                const newB = variation.modifier(b, 2);
+                
+                const newHex = rgbToHex(newR, newG, newB);
+                
+                const card = document.createElement('div');
+                card.className = 'border border-gray-200 rounded-lg overflow-hidden color-card transition-all duration-200';
+                
+                const colorDiv = document.createElement('div');
+                colorDiv.className = 'h-24';
+                colorDiv.style.backgroundColor = newHex;
+                card.appendChild(colorDiv);
+                
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'p-3';
+                
+                const nameP = document.createElement('p');
+                nameP.className = 'text-xs font-medium';
+                nameP.textContent = variation.name;
+                infoDiv.appendChild(nameP);
+                
+                const hexP = document.createElement('p');
+                hexP.className = 'text-xs opacity-70 font-mono';
+                hexP.textContent = newHex;
+                infoDiv.appendChild(hexP);
+                
+                card.appendChild(infoDiv);
+                shadeCards.appendChild(card);
+                
+                // Make cards clickable to apply the color
+                card.addEventListener('click', () => {
+                    document.getElementById('baseColor').value = newHex;
+                    updateColorInfo(newHex);
+                    const application = document.getElementById('applicationType').value;
+                    generateFormula(newHex, application);
+                });
+            });
+        }
+
+        // Add color to palette
+        function addToPalette(hex) {
+            const palette = document.getElementById('colorPalette');
+            
+            // Check if color already exists
+            const existing = Array.from(palette.children).find(child => {
+                return child.style.backgroundColor === hexToRgbString(hex);
+            });
+            
+            if (existing) return;
+            
+            // Create new color card
+            const card = document.createElement('div');
+            card.className = 'color-card h-16 rounded-lg flex items-end p-3 transition-all duration-200 cursor-pointer';
+            card.style.backgroundColor = hex;
+            
+            const hexDiv = document.createElement('div');
+            hexDiv.className = 'text-xs bg-white bg-opacity-80 px-2 py-1 rounded';
+            
+            const hexSpan = document.createElement('span');
+            hexSpan.className = 'font-mono';
+            hexSpan.textContent = hex;
+            hexDiv.appendChild(hexSpan);
+            
+            card.appendChild(hexDiv);
+            
+            // Add to beginning of palette
+            if (palette.firstChild && palette.firstChild.textContent.includes("No recent")) {
+                palette.removeChild(palette.firstChild);
+            }
+            
+            palette.insertBefore(card, palette.firstChild);
+            
+            // Limit to 10 colors
+            if (palette.children.length > 10) {
+                palette.removeChild(palette.lastChild);
+            }
+            
+            // Update count
+            document.getElementById('paletteCount').textContent = `${palette.children.length} colors`;
+            
+            // Make card clickable to apply the color
+            card.addEventListener('click', () => {
+                document.getElementById('baseColor').value = hex;
+                updateColorInfo(hex);
+                const application = document.getElementById('applicationType').value;
+                generateFormula(hex, application);
+            });
+        }
+
+        // Add message to console
+        function addConsoleMessage(message) {
+            const console = document.getElementById('console');
+            const p = document.createElement('p');
+            p.textContent = `> ${message}`;
+            console.appendChild(p);
+            console.scrollTop = console.scrollHeight;
+        }
+
+        // Helper functions
+        function hexToRgb(hex) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `${r}, ${g}, ${b}`;
+        }
+        
+        function hexToRgbString(hex) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+        
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(x => {
+                const hex = x.toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+        }
+        
+        function hexToCmyk(hex) {
+            let r = parseInt(hex.slice(1, 3), 16) / 255;
+            let g = parseInt(hex.slice(3, 5), 16) / 255;
+            let b = parseInt(hex.slice(5, 7), 16) / 255;
+            
+            let k = 1 - Math.max(r, g, b);
+            let c = (1 - r - k) / (1 - k);
+            let m = (1 - g - k) / (1 - k);
+            let y = (1 - b - k) / (1 - k);
+            
+            c = Math.round(c * 100);
+            m = Math.round(m * 100);
+            y = Math.round(y * 100);
+            k = Math.round(k * 100);
+            
+            return `${c}, ${m}, ${y}, ${k}`;
+        }
+        
+        function getColorType(hex) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            const delta = max - min;
+            
+            if (delta < 30) {
+                const avg = (r + g + b) / 3;
+                if (avg < 85) return "Black";
+                if (avg > 170) return "White";
+                return "Gray";
+            }
+            
+            if (max === r && g >= b + 30) return "Orange";
+            if (max === r) return "Red";
+            if (max === g && b >= r + 30) return "Cyan";
+            if (max === g) return "Green";
+            if (max === b && g >= r + 30) return "Blue";
+            if (max === b) return "Violet";
+            if (r > 200 && g > 150 && b < 100) return "Yellow";
+            
+            return "Mixed";
+        }
+        
+        function getApplicationName(code) {
+            const names = {
+                paint: "Architectural Paint",
+                textile: "Textile Printing",
+                plastic: "Plastic Coloring",
+                ink: "Printing Ink",
+                cosmetic: "Cosmetics",
+                ceramic: "Ceramic Glaze"
+            };
+            return names[code] || "Paint";
+        }
+        
+        // Update datetime
+        function updateDateTime() {
+            const now = new Date();
+            const datetime = now.toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+            document.getElementById('datetime').textContent = datetime;
+        }
+        setInterval(updateDateTime, 60000);
+        updateDateTime();
+    </script>
+</body>
+</html>
