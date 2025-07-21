@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenses and Voice in Scientific Writing (Biology)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #f8fafc; /* Light blue-gray background */
+            color: #334155; /* Darker text */
+        }
+        .container {
+            max-width: 90%; /* Fluid width */
+            margin-left: auto;
+            margin-right: auto;
+            padding: 1.5rem;
+        }
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            color: #1e293b; /* Even darker for headings */
+        }
+        .example-box {
+            background-color: #e2e8f0; /* Lighter gray for examples */
+            border-left: 4px solid #3b82f6; /* Blue border */
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            font-style: italic;
+            color: #475569;
+        }
+        .exercise-box {
+            background-color: #f0f9ff; /* Very light blue for exercises */
+            border: 1px solid #bfdbfe; /* Light blue border */
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 0.75rem;
+        }
+        .exercise-question {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .exercise-options label {
+            display: block;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+        .exercise-options input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        .correct-answer {
+            color: #16a34a; /* Green for correct */
+            font-weight: 600;
+        }
+        .incorrect-answer {
+            color: #dc2626; /* Red for incorrect */
+            font-weight: 600;
+        }
+        .feedback {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+        .feedback.correct {
+            background-color: #dcfce7; /* Light green */
+            color: #16a34a;
+        }
+        .feedback.incorrect {
+            background-color: #fee2e2; /* Light red */
+            color: #dc2626;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+    <div class="container bg-white shadow-lg rounded-xl p-6 sm:p-8 md:p-10 lg:p-12 mb-8">
+        <h1 class="text-3xl sm:text-4xl font-bold text-center mb-6 text-blue-700">Tenses and Voice in Scientific Writing (Biology)</h1>
+        <p class="text-lg text-center mb-8">Mastering the appropriate use of tenses and voice is crucial for clear, concise, and professional scientific communication in biology manuscripts, reports, and presentations.</p>
+
+        <!-- Section: Understanding Tenses -->
+        <section class="mb-10">
+            <h2 class="text-2xl sm:text-3xl font-semibold mb-6 pb-2 border-b-2 border-blue-200">1. Understanding Tenses in Scientific Context</h2>
+            <p class="mb-4">Tenses indicate when an action occurred. In scientific writing, specific tenses are preferred for different types of information.</p>
+
+            <!-- Present Simple -->
+            <h3 class="text-xl sm:text-2xl font-semibold mt-6 mb-3 text-blue-600">1.1. Present Simple Tense</h3>
+            <p class="mb-2">Used for:</p>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li>General truths, facts, and established scientific principles.</li>
+                <li>Referring to figures, tables, or sections within the manuscript.</li>
+                <li>Stating conclusions or interpretations that are generally true.</li>
+            </ul>
+            <div class="example-box">
+                <p><strong>Example 1 (General Truth):</strong> Photosynthesis <em>is</em> the process by which green plants convert light energy into chemical energy.</p>
+                <p><strong>Example 2 (Referring to Manuscript):</strong> Figure 3 <em>shows</em> the growth curve of <em>E. coli</em> under different conditions.</p>
+                <p><strong>Example 3 (Conclusion):</strong> Our results suggest that gene X <em>plays</em> a critical role in cellular differentiation.</p>
+            </div>
+
+            <!-- Past Simple -->
+            <h3 class="text-xl sm:text-2xl font-semibold mt-6 mb-3 text-blue-600">1.2. Past Simple Tense</h3>
+            <p class="mb-2">Used for:</p>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li>Describing specific experimental procedures (Methods section).</li>
+                <li>Presenting your results (what you observed or measured).</li>
+                <li>Referring to specific past research or events.</li>
+            </ul>
+            <div class="example-box">
+                <p><strong>Example 1 (Methods):</strong> Cells <em>were cultured</em> in DMEM medium supplemented with 10% FBS.</p>
+                <p><strong>Example 2 (Results):</strong> The treatment group <em>exhibited</em> a significant increase in biomass compared to the control.</p>
+                <p><strong>Example 3 (Past Research):</strong> Mendel <em>discovered</em> the basic principles of heredity in the 19th century.</p>
+            </div>
+
+            <!-- Present Perfect -->
+            <h3 class="text-xl sm:text-2xl font-semibold mt-6 mb-3 text-blue-600">1.3. Present Perfect Tense</h3>
+            <p class="mb-2">Used for:</p>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li>Actions that started in the past and continue to the present.</li>
+                <li>Past actions that have a present relevance or consequence.</li>
+                <li>Summarizing previous research or findings (often in Introduction).</li>
+            </ul>
+            <div class="example-box">
+                <p><strong>Example 1 (Continuing Action):</strong> Research on CRISPR-Cas9 technology <em>has advanced</em> rapidly in recent years.</p>
+                <p><strong>Example 2 (Past Action, Present Relevance):</strong> Our experiments <em>have confirmed</em> the hypothesis proposed by Smith et al. (2020).</p>
+                <p><strong>Example 3 (Summarizing Research):</strong> Numerous studies <em>have investigated</em> the effects of climate change on marine ecosystems.</p>
+            </div>
+
+            <!-- Future Simple (Less Common, but useful) -->
+            <h3 class="text-xl sm:text-2xl font-semibold mt-6 mb-3 text-blue-600">1.4. Future Simple Tense</h3>
+            <p class="mb-2">Used for:</p>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li>Discussing future work, implications, or predictions based on your findings.</li>
+            </ul>
+            <div class="example-box">
+                <p><strong>Example 1 (Future Work):</strong> Future studies <em>will focus</em> on the molecular mechanisms underlying this interaction.</p>
+                <p><strong>Example 2 (Implication/Prediction):</strong> This discovery <em>will open</em> new avenues for therapeutic development.</p>
+            </div>
+        </section>
+
+        <!-- Section: Understanding Voice -->
+        <section class="mb-10">
+            <h2 class="text-2xl sm:text-3xl font-semibold mb-6 pb-2 border-b-2 border-blue-200">2. Understanding Voice: Active vs. Passive</h2>
+            <p class="mb-4">Voice indicates whether the subject of the verb performs or receives the action. Both active and passive voices have their place in scientific writing.</p>
+
+            <!-- Active Voice -->
+            <h3 class="text-xl sm:text-2xl font-semibold mt-6 mb-3 text-blue-600">2.1. Active Voice</h3>
+            <p class="mb-2">In active voice, the subject performs the action. It is generally preferred for clarity, conciseness, and emphasizing the actor (e.g., the researcher or a specific gene).</p>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li><strong>Structure:</strong> Subject + Verb + Object</li>
+                <li><strong>When to use:</strong>
+                    <ul class="list-circle list-inside ml-4">
+                        <li>To emphasize the agent (who or what performed the action).</li>
+                        <li>For clarity and directness, especially in the Introduction, Discussion, and Conclusion.</li>
+                        <li>When referring to your own actions (e.g., "We analyzed the data...").</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="example-box">
+                <p><strong>Example 1:</strong> <em>We incubated</em> the cells for 24 hours. (Clear who performed the action)</p>
+                <p><strong>Example 2:</strong> The enzyme <em>catalyzes</em> the reaction. (Emphasizes the enzyme's role)</p>
+                <p><strong>Example 3:</strong> Smith et al. (2020) <em>reported</em> similar findings.</p>
+            </div>
+
+            <!-- Passive Voice -->
+            <h3 class="text-xl sm:text-2xl font-semibold mt-6 mb-3 text-blue-600">2.2. Passive Voice</h3>
+            <p class="mb-2">In passive voice, the subject receives the action. It is often used when the actor is unknown, unimportant, or when the focus is on the action or the object being acted upon.</p>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li><strong>Structure:</strong> Object + "to be" verb + Past Participle + (by Agent - optional)</li>
+                <li><strong>When to use:</strong>
+                    <ul class="list-circle list-inside ml-4">
+                        <li>To emphasize the action or the recipient of the action, rather than the performer.</li>
+                        <li>When the agent is unknown or irrelevant.</li>
+                        <li>Commonly used in the Materials and Methods section to describe experimental procedures objectively.</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="example-box">
+                <p><strong>Example 1:</strong> The cells <em>were incubated</em> for 24 hours. (Focus on the cells and incubation, not who did it)</p>
+                <p><strong>Example 2:</strong> The reaction <em>is catalyzed</em> by an unknown enzyme. (Agent unknown)</p>
+                <p><strong>Example 3:</strong> Similar findings <em>were reported</em> by Smith et al. (2020). (Slightly less direct than active)</p>
+            </div>
+
+            <h3 class="text-xl sm:text-2xl font-semibold mt-6 mb-3 text-blue-600">2.3. Active vs. Passive: When to Choose?</h3>
+            <p class="mb-4">While passive voice has been traditionally common in scientific writing, especially in Methods, many journals and style guides now encourage the use of active voice for greater clarity and conciseness, particularly in the Introduction, Results, and Discussion sections.</p>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li><strong>Generally prefer Active:</strong> For clarity, conciseness, and when you want to emphasize the agent (e.g., "We observed...", "The protein binds...").</li>
+                <li><strong>Use Passive when appropriate:</strong> When the agent is truly unknown or unimportant, or when the focus must be on the action or object (e.g., "Samples were collected...", "Data were analyzed...").</li>
+            </ul>
+        </section>
+
+        <!-- Section: Tenses and Voice in Manuscript Sections -->
+        <section class="mb-10">
+            <h2 class="text-2xl sm:text-3xl font-semibold mb-6 pb-2 border-b-2 border-blue-200">3. Tenses and Voice in Manuscript Sections</h2>
+            <p class="mb-4">The choice of tense and voice often varies depending on the section of your scientific manuscript or report.</p>
+
+            <h3 class="text-xl sm:text-2xl font-semibold mt-6 mb-3 text-blue-600">3.1. Abstract</h3>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li><strong>Purpose:</strong> Summarize the entire study.</li>
+                <li><strong>Tenses/Voice:</strong>
+                    <ul class="list-circle list-inside ml-4">
+                        <li><strong>Background/Objective:</strong> Present simple ("This study investigates...").</li>
+                        <li><strong>Methods/Results:</strong> Past simple (often passive) ("Cells were treated...", "Results showed...").</li>
+                        <li><strong>Conclusions:</strong> Present simple ("Our findings suggest...", "This research highlights...").</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="example-box">
+                <p><strong>Example:</strong> The effects of nutrient limitation on algal growth <em>were investigated</em>. We <em>found</em> that biomass production <em>decreased</em> significantly under phosphate depletion. These results <em>indicate</em> the critical role of phosphate in algal blooms.</p>
+            </div>
+
+            <h3 class="text-xl sm:text-2xl font-semibold mt-6 mb-3 text-blue-600">3.2. Introduction</h3>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li><strong>Purpose:</strong> Provide background, state the problem, review literature, and state the hypothesis/objective.</li>
+                <li><strong>Tenses/Voice:</strong>
+                    <ul class="list-circle list-inside ml-4">
+                        <li><strong>General Background/Facts:</strong> Present simple ("DNA replication occurs...", "Climate change is a global issue...").</li>
+                        <li><strong>Previous Research:</strong> Present perfect (for ongoing relevance, "Studies have shown...") or Past simple (for specific past studies, "Smith et al. (2020) reported...").</li>
+                        <li><strong>Gap/Problem/Hypothesis/Objective:</strong> Present simple ("However, the mechanism remains unclear.", "This study aims to elucidate...", "We hypothesize that...").</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="example-box">
+                <p><strong>Example:</strong> Apoptosis <em>is</em> a fundamental biological process. Recent research <em>has highlighted</em> the involvement of microRNAs in its regulation. However, the specific role of miR-123 in liver cell apoptosis <em>is</em> not fully understood. Therefore, this study <em>investigates</em> the impact of miR-123 on apoptosis in hepatocellular carcinoma cells.</p>
+            </div>
+
+            <h3 class="text-xl sm:text-2xl font-semibold mt-6 mb-3 text-blue-600">3.3. Materials and Methods</h3>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li><strong>Purpose:</strong> Describe how the study was conducted, allowing for replication.</li>
+                <li><strong>Tenses/Voice:</strong>
+                    <ul class="list-circle list-inside ml-4">
+                        <li><strong>Primarily Past Simple Passive:</strong> To emphasize the procedures and materials, not the researchers. ("Cells were harvested...", "DNA was extracted...", "Statistical analysis was performed...").</li>
+                        <li><strong>Past Simple Active (less common but acceptable):</strong> If you want to emphasize your specific actions, especially in "We" statements. ("We prepared the samples...", "We then analyzed the data...").</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="example-box">
+                <p><strong>Example:</strong> Plant samples <em>were collected</em> from three different sites. DNA <em>was extracted</em> using a commercial kit. PCR amplification <em>was performed</em> with specific primers. The resulting amplicons <em>were sequenced</em>, and the data <em>were analyzed</em> using bioinformatics software.</p>
+            </div>
+
+            <h3 class="text-xl sm:text-2xl font-semibold mt-6 mb-3 text-blue-600">3.4. Results</h3>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li><strong>Purpose:</strong> Present the findings objectively.</li>
+                <li><strong>Tenses/Voice:</strong>
+                    <ul class="list-circle list-inside ml-4">
+                        <li><strong>Primarily Past Simple:</strong> For describing what you observed or measured. ("The growth rate increased...", "We observed a significant reduction...").</li>
+                        <li><strong>Present Simple:</strong> When referring to figures/tables, or stating universally true observations from your data. ("Figure 1 shows...", "The data indicate...").</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="example-box">
+                <p><strong>Example:</strong> The control group <em>showed</em> a consistent growth pattern (Figure 2A). In contrast, the treated group <em>exhibited</em> a 40% reduction in cell viability. These findings <em>suggest</em> a dose-dependent effect of the compound.</p>
+            </div>
+
+            <h3 class="text-xl sm:text-2xl font-semibold mt-6 mb-3 text-blue-600">3.5. Discussion</h3>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li><strong>Purpose:</strong> Interpret results, relate them to previous research, discuss limitations, and suggest future directions.</li>
+                <li><strong>Tenses/Voice:</strong>
+                    <ul class="list-circle list-inside ml-4">
+                        <li><strong>Referring to your results:</strong> Past simple ("Our results demonstrated...", "We found that...").</li>
+                        <li><strong>Interpreting results, general truths, implications:</strong> Present simple ("This suggests that...", "The findings are consistent with...", "Gene X plays a crucial role...").</li>
+                        <li><strong>Referring to previous research:</strong> Past simple or Present perfect ("Smith et al. (2020) reported...", "Other studies have shown...").</li>
+                        <li><strong>Future work/recommendations:</strong> Future simple ("Future research will investigate...", "Further studies are needed...").</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="example-box">
+                <p><strong>Example:</strong> Our findings <em>are consistent</em> with previous studies that <em>have identified</em> this pathway. The observed decrease in viability <em>could be attributed</em> to mitochondrial dysfunction. Further research <em>will explore</em> the specific molecular targets involved.</p>
+            </div>
+
+            <h3 class="text-xl sm:text-2xl font-semibold mt-6 mb-3 text-blue-600">3.6. Conclusion</h3>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li><strong>Purpose:</strong> Briefly summarize the main findings and their significance.</li>
+                <li><strong>Tenses/Voice:</strong>
+                    <ul class="list-circle list-inside ml-4">
+                        <li><strong>Primarily Present Simple:</strong> For stating the main conclusions and their broader implications. ("This study demonstrates...", "Our research provides new insights...").</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="example-box">
+                <p><strong>Example:</strong> In conclusion, this study definitively <em>shows</em> that compound Z <em>inhibits</em> bacterial growth, offering a potential new strategy for antimicrobial development.</p>
+            </div>
+        </section>
+
+        <!-- Section: Exercises -->
+        <section class="mb-10">
+            <h2 class="text-2xl sm:text-3xl font-semibold mb-6 pb-2 border-b-2 border-blue-200">4. Exercises</h2>
+            <p class="mb-4">Test your understanding by choosing the best tense or voice for each sentence in a scientific context.</p>
+
+            <div class="exercise-box" id="exercise1">
+                <p class="exercise-question"><strong>Exercise 1: Choose the correct tense.</strong></p>
+                <p class="mb-3">"In our experiment, the samples _______ at 37°C for 2 hours."</p>
+                <div class="exercise-options">
+                    <label><input type="radio" name="q1" value="a"> are incubated</label>
+                    <label><input type="radio" name="q1" value="b"> were incubated</label>
+                    <label><input type="radio" name="q1" value="c"> have been incubated</label>
+                </div>
+                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300" onclick="checkAnswer('q1', 'b', 'feedback1')">Check Answer</button>
+                <div id="feedback1" class="feedback hidden"></div>
+            </div>
+
+            <div class="exercise-box mt-6" id="exercise2">
+                <p class="exercise-question"><strong>Exercise 2: Choose the correct voice.</strong></p>
+                <p class="mb-3">"Figure 1 _______ the expression levels of gene X."</p>
+                <div class="exercise-options">
+                    <label><input type="radio" name="q2" value="a"> shows</label>
+                    <label><input type="radio" name="q2" value="b"> is shown by</label>
+                    <label><input type="radio" name="q2" value="c"> was shown by</label>
+                </div>
+                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300" onclick="checkAnswer('q2', 'a', 'feedback2')">Check Answer</button>
+                <div id="feedback2" class="feedback hidden"></div>
+            </div>
+
+            <div class="exercise-box mt-6" id="exercise3">
+                <p class="exercise-question"><strong>Exercise 3: Choose the correct tense and voice.</strong></p>
+                <p class="mb-3">"Future research _______ the long-term effects of this treatment."</p>
+                <div class="exercise-options">
+                    <label><input type="radio" name="q3" value="a"> investigates</label>
+                    <label><input type="radio" name="q3" value="b"> will investigate</label>
+                    <label><input type="radio" name="q3" value="c"> is investigated</label>
+                </div>
+                <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300" onclick="checkAnswer('q3', 'b', 'feedback3')">Check Answer</button>
+                <div id="feedback3" class="feedback hidden"></div>
+            </div>
+
+        </section>
+
+        <section class="mb-10">
+            <h2 class="text-2xl sm:text-3xl font-semibold mb-6 pb-2 border-b-2 border-blue-200">5. Key Takeaways</h2>
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li><strong>Present Simple:</strong> For general truths, referring to figures, and conclusions.</li>
+                <li><strong>Past Simple:</strong> For methods and results (what you did and what happened).</li>
+                <li><strong>Present Perfect:</strong> For actions started in the past with present relevance, or summarizing previous research.</li>
+                <li><strong>Active Voice:</strong> Preferred for clarity, conciseness, and emphasizing the actor (especially in Introduction, Results, Discussion).</li>
+                <li><strong>Passive Voice:</strong> Useful when the actor is unknown/unimportant, or the focus is on the action/object (common in Methods).</li>
+                <li><strong>Context is Key:</strong> The best choice depends on the specific section of your manuscript and what you want to emphasize.</li>
+            </ul>
+        </section>
+
+    </div>
+
+    <script>
+        function checkAnswer(questionName, correctAnswer, feedbackId) {
+            const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+            const feedbackDiv = document.getElementById(feedbackId);
+
+            if (selectedOption) {
+                if (selectedOption.value === correctAnswer) {
+                    feedbackDiv.textContent = "Correct! Well done.";
+                    feedbackDiv.className = "feedback correct block";
+                } else {
+                    feedbackDiv.textContent = `Incorrect. The correct answer was '${correctAnswer}'.`;
+                    feedbackDiv.className = "feedback incorrect block";
+                }
+            } else {
+                feedbackDiv.textContent = "Please select an answer.";
+                feedbackDiv.className = "feedback incorrect block";
+            }
+            feedbackDiv.classList.remove('hidden'); // Ensure feedback is visible
+        }
+    </script>
+</body>
+</html>
