@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenses and Voice in Biology Manuscripts - Teaching Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        header {
+            text-align: center;
+            border-bottom: 3px solid #2c5530;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+        }
+        h1 {
+            color: #2c5530;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            font-style: italic;
+            font-size: 1.2em;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            border-left: 4px solid #4a7c59;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            color: #2c5530;
+            border-bottom: 2px solid #4a7c59;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #4a7c59;
+            margin-top: 25px;
+        }
+        .example-box {
+            background-color: #e8f5e8;
+            border: 1px solid #4a7c59;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .correct {
+            background-color: #d4edda;
+            border-color: #155724;
+            color: #155724;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+            border-color: #721c24;
+            color: #721c24;
+        }
+        .voice-comparison {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .voice-box {
+            flex: 1;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .active-voice {
+            background-color: #e3f2fd;
+            border: 1px solid #1976d2;
+        }
+        .passive-voice {
+            background-color: #fff3e0;
+            border: 1px solid #f57c00;
+        }
+        .tense-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .tense-table th, .tense-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .tense-table th {
+            background-color: #4a7c59;
+            color: white;
+        }
+        .tense-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .quick-ref {
+            background-color: #fff9c4;
+            border: 2px solid #fbc02d;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        .exercise {
+            background-color: #f3e5f5;
+            border: 2px solid #7b1fa2;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        .highlight {
+            background-color: #ffeb3b;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .manuscript-section {
+            background-color: #e1f5fe;
+            border-left: 4px solid #0277bd;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Tenses and Voice in Biology Manuscripts</h1>
+            <p class="subtitle">A Comprehensive Teaching Guide for Scientific Writing</p>
+        </header>
+
+        <!-- Introduction -->
+        <div class="section">
+            <h2>🎯 Learning Objectives</h2>
+            <ul>
+                <li>Understand appropriate tense usage in different manuscript sections</li>
+                <li>Master active vs. passive voice in scientific writing</li>
+                <li>Apply tense and voice rules to research presentations</li>
+                <li>Recognize common errors in biological manuscripts</li>
+            </ul>
+        </div>
+
+        <!-- Quick Reference Guide -->
+        <div class="quick-ref">
+            <h2>📋 Quick Reference: Tenses by Manuscript Section</h2>
+            <table class="tense-table">
+                <thead>
+                    <tr>
+                        <th>Manuscript Section</th>
+                        <th>Primary Tense</th>
+                        <th>Purpose</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Abstract</strong></td>
+                        <td>Past (results), Present (conclusions)</td>
+                        <td>Report completed work, state current implications</td>
+                        <td>"We <span class="highlight">found</span> that... This <span class="highlight">suggests</span>..."</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Introduction</strong></td>
+                        <td>Present, Present Perfect</td>
+                        <td>Describe established knowledge</td>
+                        <td>"Cancer cells <span class="highlight">exhibit</span>... Studies <span class="highlight">have shown</span>..."</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Methods</strong></td>
+                        <td>Past</td>
+                        <td>Describe what was done</td>
+                        <td>"Cells <span class="highlight">were cultured</span>... We <span class="highlight">analyzed</span>..."</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Results</strong></td>
+                        <td>Past</td>
+                        <td>Report findings</td>
+                        <td>"Expression <span class="highlight">increased</span>... We <span class="highlight">observed</span>..."</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Discussion</strong></td>
+                        <td>Past (your results), Present (interpretations)</td>
+                        <td>Interpret findings, relate to field</td>
+                        <td>"Our results <span class="highlight">showed</span>... This <span class="highlight">indicates</span>..."</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Detailed Section Analysis -->
+        <div class="section">
+            <h2>📝 Detailed Analysis by Manuscript Section</h2>
+
+            <h3>1. Abstract</h3>
+            <div class="manuscript-section">
+                <h4>Tense Guidelines:</h4>
+                <ul>
+                    <li><strong>Past tense:</strong> For methods and results</li>
+                    <li><strong>Present tense:</strong> For conclusions and implications</li>
+                </ul>
+            </div>
+            
+            <div class="example-box correct">
+                <strong>✓ Correct Example:</strong><br>
+                "We <strong>investigated</strong> the role of protein X in cell division. Cell cultures <strong>were treated</strong> with inhibitor Y for 24 hours. Results <strong>showed</strong> a 50% reduction in mitotic activity. These findings <strong>suggest</strong> that protein X <strong>plays</strong> a crucial role in cellular proliferation."
+            </div>
+
+            <h3>2. Introduction</h3>
+            <div class="manuscript-section">
+                <h4>Tense Guidelines:</h4>
+                <ul>
+                    <li><strong>Present tense:</strong> For established facts and current knowledge</li>
+                    <li><strong>Present perfect:</strong> For recent developments</li>
+                    <li><strong>Past tense:</strong> For specific completed studies</li>
+                </ul>
+            </div>
+
+            <div class="example-box correct">
+                <strong>✓ Correct Examples:</strong><br>
+                • "Photosynthesis <strong>occurs</strong> in chloroplasts." (established fact)<br>
+                • "Recent studies <strong>have revealed</strong> new mechanisms..." (recent development)<br>
+                • "Smith et al. (2022) <strong>demonstrated</strong> that..." (specific past study)
+            </div>
+
+            <h3>3. Methods</h3>
+            <div class="manuscript-section">
+                <h4>Tense Guidelines:</h4>
+                <ul>
+                    <li><strong>Past tense:</strong> For all procedures performed</li>
+                    <li><strong>Passive voice preferred:</strong> Focus on procedures, not researchers</li>
+                </ul>
+            </div>
+
+            <div class="voice-comparison">
+                <div class="voice-box passive-voice">
+                    <h4>✓ Preferred (Passive)</h4>
+                    "Samples <strong>were collected</strong> at 4°C."<br>
+                    "DNA <strong>was extracted</strong> using..."<br>
+                    "Cells <strong>were incubated</strong> for 2 hours."
+                </div>
+                <div class="voice-box active-voice">
+                    <h4>✓ Also Acceptable (Active)</h4>
+                    "We <strong>collected</strong> samples at 4°C."<br>
+                    "We <strong>extracted</strong> DNA using..."<br>
+                    "We <strong>incubated</strong> cells for 2 hours."
+                </div>
+            </div>
+
+            <h3>4. Results</h3>
+            <div class="manuscript-section">
+                <h4>Tense Guidelines:</h4>
+                <ul>
+                    <li><strong>Past tense:</strong> For reporting findings</li>
+                    <li><strong>Present tense:</strong> When describing figures/tables</li>
+                </ul>
+            </div>
+
+            <div class="example-box correct">
+                <strong>✓ Correct Examples:</strong><br>
+                • "Gene expression <strong>increased</strong> by 200%." (finding)<br>
+                • "Figure 2 <strong>shows</strong> the distribution of..." (describing figure)<br>
+                • "The treatment <strong>resulted</strong> in significant changes."
+            </div>
+
+            <h3>5. Discussion</h3>
+            <div class="manuscript-section">
+                <h4>Tense Guidelines:</h4>
+                <ul>
+                    <li><strong>Past tense:</strong> For your specific results</li>
+                    <li><strong>Present tense:</strong> For interpretations and general principles</li>
+                    <li><strong>Present tense:</strong> For established knowledge</li>
+                </ul>
+            </div>
+
+            <div class="example-box correct">
+                <strong>✓ Correct Example:</strong><br>
+                "Our results <strong>demonstrated</strong> increased enzyme activity under stress conditions. This <strong>suggests</strong> that the enzyme <strong>plays</strong> a protective role. Previous studies <strong>support</strong> this hypothesis, as they <strong>showed</strong> similar patterns in related species."
+            </div>
+        </div>
+
+        <!-- Voice in Scientific Writing -->
+        <div class="section">
+            <h2>🎭 Active vs. Passive Voice in Biology Writing</h2>
+
+            <h3>When to Use Passive Voice</h3>
+            <div class="example-box">
+                <strong>Preferred in:</strong>
+                <ul>
+                    <li>Methods sections</li>
+                    <li>When the action is more important than the actor</li>
+                    <li>When the actor is obvious or irrelevant</li>
+                </ul>
+                <strong>Examples:</strong><br>
+                • "Specimens <strong>were preserved</strong> in ethanol."<br>
+                • "The hypothesis <strong>was tested</strong> using..."<br>
+                • "Results <strong>were analyzed</strong> using SPSS."
+            </div>
+
+            <h3>When to Use Active Voice</h3>
+            <div class="example-box">
+                <strong>Preferred in:</strong>
+                <ul>
+                    <li>When emphasizing the researcher's role</li>
+                    <li>For clarity and directness</li>
+                    <li>In discussion and conclusion sections</li>
+                </ul>
+                <strong>Examples:</strong><br>
+                • "We <strong>propose</strong> a new mechanism for..."<br>
+                • "This study <strong>demonstrates</strong> that..."<br>
+                • "Our findings <strong>suggest</strong> that..."
+            </div>
+
+            <h3>Voice Transformation Examples</h3>
+            <div class="voice-comparison">
+                <div class="voice-box incorrect">
+                    <h4>❌ Problematic</h4>
+                    "The experiment was performed by us."<br>
+                    "Mistakes were made in the analysis."<br>
+                    "The conclusion was reached by the researchers."
+                </div>
+                <div class="voice-box correct">
+                    <h4>✓ Improved</h4>
+                    "We performed the experiment."<br>
+                    "We made mistakes in the analysis."<br>
+                    "We concluded that..."
+                </div>
+            </div>
+        </div>
+
+        <!-- Common Errors -->
+        <div class="section">
+            <h2>⚠️ Common Tense and Voice Errors</h2>
+
+            <h3>Error 1: Inconsistent Tense in Abstracts</h3>
+            <div class="example-box incorrect">
+                <strong>❌ Incorrect:</strong><br>
+                "We investigate the effects of temperature on enzyme activity. Results showed that activity increases at higher temperatures."
+            </div>
+            <div class="example-box correct">
+                <strong>✓ Correct:</strong><br>
+                "We <strong>investigated</strong> the effects of temperature on enzyme activity. Results <strong>showed</strong> that activity <strong>increased</strong> at higher temperatures."
+            </div>
+
+            <h3>Error 2: Wrong Tense for Established Facts</h3>
+            <div class="example-box incorrect">
+                <strong>❌ Incorrect:</strong><br>
+                "DNA was the genetic material of all living organisms."
+            </div>
+            <div class="example-box correct">
+                <strong>✓ Correct:</strong><br>
+                "DNA <strong>is</strong> the genetic material of all living organisms."
+            </div>
+
+            <h3>Error 3: Unnecessary Passive Voice</h3>
+            <div class="example-box incorrect">
+                <strong>❌ Awkward:</strong><br>
+                "It was concluded by us that the hypothesis was supported by the data."
+            </div>
+            <div class="example-box correct">
+                <strong>✓ Clear:</strong><br>
+                "We <strong>concluded</strong> that the data <strong>supported</strong> our hypothesis."
+            </div>
+        </div>
+
+        <!-- Presentation Guidelines -->
+        <div class="section">
+            <h2>🎤 Tenses in Scientific Presentations</h2>
+
+            <h3>Oral Presentation Tense Guidelines</h3>
+            <table class="tense-table">
+                <thead>
+                    <tr>
+                        <th>Presentation Section</th>
+                        <th>Recommended Tense</th>
+                        <th>Example</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Introduction/Background</td>
+                        <td>Present</td>
+                        <td>"Cancer <strong>is</strong> a leading cause of death worldwide."</td>
+                    </tr>
+                    <tr>
+                        <td>Objectives</td>
+                        <td>Past or Present</td>
+                        <td>"We <strong>aimed</strong> to investigate..." or "Our goal <strong>is</strong> to..."</td>
+                    </tr>
+                    <tr>
+                        <td>Methods</td>
+                        <td>Past</td>
+                        <td>"We <strong>cultured</strong> cells under sterile conditions."</td>
+                    </tr>
+                    <tr>
+                        <td>Results</td>
+                        <td>Past</td>
+                        <td>"Expression levels <strong>decreased</strong> significantly."</td>
+                    </tr>
+                    <tr>
+                        <td>Conclusions</td>
+                        <td>Present</td>
+                        <td>"These results <strong>indicate</strong> that..."</td>
+                    </tr>
+                    <tr>
+                        <td>Future Work</td>
+                        <td>Future/Present</td>
+                        <td>"We <strong>will investigate</strong>..." or "Future studies <strong>should</strong>..."</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Teaching Exercises -->
+        <div class="exercise">
+            <h2>🏃‍♂️ Classroom Exercises</h2>
+
+            <h3>Exercise 1: Tense Identification</h3>
+            <p><strong>Instructions:</strong> Identify the correct tense for each sentence based on the manuscript section.</p>
+            <ol>
+                <li>Chlorophyll _____ (absorb/absorbed/absorbs) light energy. <em>(Introduction)</em></li>
+                <li>We _____ (analyze/analyzed/have analyzed) the data using statistical software. <em>(Methods)</em></li>
+                <li>Figure 3 _____ (show/showed/shows) the correlation between variables. <em>(Results)</em></li>
+                <li>Recent studies _____ (reveal/revealed/have revealed) new insights. <em>(Introduction)</em></li>
+                <li>Our findings _____ (suggest/suggested/will suggest) a new mechanism. <em>(Discussion)</em></li>
+            </ol>
+
+            <h3>Exercise 2: Voice Conversion</h3>
+            <p><strong>Instructions:</strong> Convert these sentences to appropriate voice for scientific writing.</p>
+            <ol>
+                <li>"We performed PCR amplification." → (Convert to passive for Methods section)</li>
+                <li>"The samples were analyzed by the research team." → (Convert to active for clarity)</li>
+                <li>"Errors were made in the calculation." → (Convert to active for accountability)</li>
+            </ol>
+
+            <h3>Exercise 3: Section-Specific Writing</h3>
+            <p><strong>Instructions:</strong> Write a sentence for each section using appropriate tense and voice.</p>
+            <ul>
+                <li><strong>Abstract:</strong> Describe a completed experiment and its implications</li>
+                <li><strong>Methods:</strong> Describe a laboratory procedure</li>
+                <li><strong>Results:</strong> Report a finding while referring to a figure</li>
+                <li><strong>Discussion:</strong> Interpret your results in context of existing knowledge</li>
+            </ul>
+        </div>
+
+        <!-- Answer Key -->
+        <div class="section">
+            <h2>🔑 Answer Key</h2>
+            
+            <h3>Exercise 1 Answers:</h3>
+            <ol>
+                <li><strong>absorbs</strong> (present - established fact)</li>
+                <li><strong>analyzed</strong> (past - completed method)</li>
+                <li><strong>shows</strong> (present - describing current figure)</li>
+                <li><strong>have revealed</strong> (present perfect - recent developments)</li>
+                <li><strong>suggest</strong> (present - current interpretation)</li>
+            </ol>
+
+            <h3>Exercise 2 Answers:</h3>
+            <ol>
+                <li>"PCR amplification <strong>was performed</strong>."</li>
+                <li>"The research team <strong>analyzed</strong> the samples." or "We <strong>analyzed</strong> the samples."</li>
+                <li>"We <strong>made errors</strong> in the calculation."</li>
+            </ol>
+        </div>
+
+        <!-- Summary -->
+        <div class="quick-ref">
+            <h2>📚 Key Takeaways for Teachers</h2>
+            <ul>
+                <li><strong>Consistency is crucial:</strong> Maintain appropriate tenses within each section</li>
+                <li><strong>Voice depends on purpose:</strong> Use passive for methods, active for interpretations</li>
+                <li><strong>Present for facts:</strong> Established knowledge should be in present tense</li>
+                <li><strong>Past for actions:</strong> Completed procedures and findings use past tense</li>
+                <li><strong>Practice with real examples:</strong> Use published papers from your field for exercises</li>
+                <li><strong>Presentations differ:</strong> More present tense acceptable in oral presentations</li>
+            </ul>
+        </div>
+
+        <footer style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #666;">
+            <p>Teaching Guide for Biology Manuscript Writing | Focus on Tenses and Voice</p>
+            <p><em>Encourage students to read published papers in their field to see these principles in action!</em></p>
+        </footer>
+    </div>
+</body>
+</html>
